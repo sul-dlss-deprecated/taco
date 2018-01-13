@@ -55,11 +55,11 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  show_resource:
     handler: handler.show_resource
     events:
       - http:
-          path: users/create
+          path: resource/{id}
           method: get
 
 #    Define function environment variables here
