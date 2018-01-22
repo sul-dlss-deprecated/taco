@@ -1,0 +1,105 @@
+swagger: '2.0'
+info:
+  description: The SDR management interface
+  version: 3.0.0
+  title: Stanford Digital Repository
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: sdr.dlss.stanford.edu
+basePath: /v1
+tags:
+  - name: work
+    description: A sdr managed object
+schemes:
+  - https
+paths:
+  /resource:
+    post:
+      tags:
+        - work
+      summary: Add a new work
+      description: ''
+      operationId: addWork
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Work object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Work'
+      responses:
+        '405':
+          description: Invalid input
+    put:
+      tags:
+        - work
+      summary: Update an existing work
+      description: ''
+      operationId: updateWork
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/Work'
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Work not found
+        '405':
+          description: Validation exception
+  '/resource/{id}':
+    get:
+      tags:
+        - work
+      summary: Find work by ID
+      description: Returns a single work
+      operationId: findWorkById
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to return
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Work'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+definitions:
+  Work:
+    type: object
+    required:
+      - title
+    properties:
+      id:
+        type: string
+        example: oo000oo0001
+      title:
+        type: string
+        example: My work
+      status:
+        type: string
+        description: lifecycle status
+        enum:
+          - registered
+          - published
