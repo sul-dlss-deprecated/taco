@@ -9,6 +9,7 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
 ## Building
 
 ```shell
+% go get -t
 % go build
 ```
 
