@@ -1,1 +1,5 @@
+# For the local build
 taco
+
+# For the docker build
+main
