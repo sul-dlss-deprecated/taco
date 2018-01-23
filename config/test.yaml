@@ -1,0 +1,4 @@
+db:
+  region: "us-east"
+  endpoint: "localhost:4569"
+  disable_ssl: true

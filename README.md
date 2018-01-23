@@ -44,8 +44,26 @@ docker run -p 8080:8080 taco
 
 ## Running the TACO Binary
 
+First start up DynamoDB:
 ```shell
-% taco
+SERVICES=dynamodb localstack start
+```
+
+Then create the table:
+```shell
+awslocal dynamodb create-table --table-name resources \
+  --attribute-definitions "AttributeName=id,AttributeType=S" \
+  --key-schema "AttributeName=id,KeyType=HASH" \
+  --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
+```
+
+And add a stub record:
+```
+awslocal dynamodb put-item --table-name resources --item '{"id": {"S":"99"}, "title":{"S":"Ta-da!"}}'
+```
+
+```shell
+% AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./taco -e development
 ```
 
 Now visit: http://localhost:8080/v1/resource/99
