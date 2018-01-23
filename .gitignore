@@ -12,5 +12,10 @@
 *.out
 
 # TACO Specific
-taco
 vendor
+
+# For the local build
+taco
+
+# For the docker build
+main
