@@ -30,18 +30,16 @@ run main.go
 
 ## Building to TACO Binary
 
-### Build for the local OS
+### Building for Docker
+```shell
+docker build -t taco  .
+docker run -p 8080:8080 taco
+```
 
+### Build for the local OS
 ```shell
 % go get -t
 % go build
-```
-
-### Building for Docker
-```shell
-CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
-docker build -t taco
-docker run -p 8080:8080 taco
 ```
 
 ## Running the TACO Binary
