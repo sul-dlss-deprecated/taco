@@ -9,7 +9,7 @@ info:
 host: "sdr.dlss.stanford.edu"
 basePath: "/v1"
 schemes:
-  - "http"
+  - http
 paths:
   /resource:
     post:
