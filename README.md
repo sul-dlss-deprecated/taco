@@ -9,13 +9,19 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
 ## Building
 
 ```shell
-% go build main.go
+% go build
 ```
 
 ## Running
 
 ```shell
-% main
+% taco
 ```
 
 Now visit: http://localhost:8080/v1/resource/99
+
+## Testing
+
+```shell
+% go test -v ./...
+```

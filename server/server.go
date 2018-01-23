@@ -5,6 +5,7 @@ import (
 	"github.com/sul-dlss-labs/taco/controllers"
 )
 
+// Init -- setup the server
 func Init() {
 	router := gin.Default()
 	v1 := router.Group("/v1")
