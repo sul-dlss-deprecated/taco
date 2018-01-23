@@ -1,11 +1,11 @@
 package server
 
 import (
-	"./controllers"
 	"github.com/gin-gonic/gin"
+	"github.com/sul-dlss-labs/taco/controllers"
 )
 
-func main() {
+func Init() {
 	router := gin.Default()
 	v1 := router.Group("/v1")
 	{
