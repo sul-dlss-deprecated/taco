@@ -17,7 +17,10 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
     $ cd ~/go
     ```
     Your Go code repositories will reside within `~/go/src/...` in the `$GOPATH`. Name these paths to avoid library clash, for example TACO Go code could be in `~/go/src/github.com/sul-dlss-labs/taco`. This should be where your Github repository resides too.
-3. Change into your TACO Go code repository and get code into it: `go get`
+3. In order to download the project code to `~/go/src/github.com/sul-dlss-labs/taco`, from any directory, run:
+```bash
+go get github.com/sul-dlss-labs/taco
+```
 4. Handle dependencies with the Go Dep package: install Go Dep via `brew install dep` then `brew upgrade dep`.
 5. Add and install your dependencies for your Go TACO repository by running `dep init`.
 
