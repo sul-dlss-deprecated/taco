@@ -6,3 +6,16 @@ The next generation repository system for DLSS
 
 This configuration is for AWS API Gateway.  It was retrieved by going to the API, selecting the "prod" under "Stages" and then doing "Export" and selecting "Export as Swagger + API Gateway Extensions"
 
+## Building
+
+```shell
+% go build import.go
+```
+
+## Running
+
+```shell
+% import
+```
+
+Now visit: http://localhost:8080/you
