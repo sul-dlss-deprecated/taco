@@ -76,3 +76,40 @@ Now visit: http://localhost:8080/v1/resource/99
 ```shell
 % go test -v ./...
 ```
+
+## API Code Structure
+
+We use `go-swagger` to generate the API code within `generated/`, and we connect that API code to our own handlers defined with `handlers/`. The handlers are where we add our own logic for processing requests. Our handlers and the generated API code is connected within `main.go`, which is the file to start the API.
+
+### To generate the API code
+
+The API code is generated from `swagger.yml` using `go-swagger` library. TBD: best way to handle regeneration (i.e. currently you're recommended to delete the generated code before re-running):
+
+```shell
+swagger generate server -t generated --exclude-main
+```
+
+### To run the API code
+
+```shell
+go run main.go
+```
+
+### Non-generated code
+
+The API code generation does **not** touch the following, which we are writing locally:
+- `main.go`
+- `handlers/`
+
+(basically anything outside of `generated`).
+
+
+## SWAGGER Generated Documentation
+
+To see the SWAGGER generated documentation, run the following:
+
+```shell
+swagger serve swagger.yml
+```
+
+This should prompt you to your web browser for the HTML generated docs. TBD: how we can have this consistently running on our servers de facto at a URL for the documentation.
