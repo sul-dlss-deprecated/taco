@@ -1,0 +1,18 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "taco",
+      "image": "suldlss/taco:REPLACE_TAG",
+      "essential": true,
+      "memory": 150,
+      "cpu": 10,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 0
+        }
+      ]
+    }
+  ],
+  "family": "taco"
+}
