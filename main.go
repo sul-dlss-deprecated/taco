@@ -13,28 +13,36 @@ import (
 var portFlag = flag.Int("port", 3000, "Port to run this service on")
 
 func main() {
-	// load embedded swagger file
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
+	server := createServer()
+	// serve API
+	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
+}
 
-	// create new service API
-	api := operations.NewTacoAPI(swaggerSpec)
-	api.RetrieveResourceHandler = handlers.NewRetrieveResource()
-
-	server := restapi.NewServer(api)
+func createServer() *restapi.Server {
+	server := restapi.NewServer(buildAPI())
 	defer server.Shutdown()
 
 	// parse flags
 	flag.Parse()
 	// set the port this service will be run on
 	server.Port = *portFlag
+	return server
+}
 
-	// TODO: Set Handle
+// create new service API
+func buildAPI() *operations.TacoAPI {
+	api := operations.NewTacoAPI(swaggerSpec())
+	api.RetrieveResourceHandler = handlers.NewRetrieveResource()
+	return api
+}
 
-	// serve API
-	if err := server.Serve(); err != nil {
+func swaggerSpec() *loads.Document {
+	// load embedded swagger file
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
 		log.Fatalln(err)
 	}
+	return swaggerSpec
 }
