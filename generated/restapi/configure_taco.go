@@ -11,18 +11,18 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
-	"github.com/sul-dlss-labs/taco/restapi/operations"
+	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target .. --name  --spec ../swagger.yml
+//go:generate swagger generate server --target ../generated --name  --spec ../swagger.yml --exclude-main
 
-func configureFlags(api *operations.TACOAPI) {
+func configureFlags(api *operations.TacoAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.TACOAPI) http.Handler {
+func configureAPI(api *operations.TacoAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 

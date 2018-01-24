@@ -20,9 +20,9 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// NewTACOAPI creates a new TACO instance
-func NewTACOAPI(spec *loads.Document) *TACOAPI {
-	return &TACOAPI{
+// NewTacoAPI creates a new Taco instance
+func NewTacoAPI(spec *loads.Document) *TacoAPI {
+	return &TacoAPI{
 		handlers:            make(map[string]map[string]http.Handler),
 		formats:             strfmt.Default,
 		defaultConsumes:     "application/json",
@@ -50,8 +50,8 @@ func NewTACOAPI(spec *loads.Document) *TACOAPI {
 	}
 }
 
-/*TACOAPI TACO, the Stanford Digital Repository (SDR) Management Layer interface */
-type TACOAPI struct {
+/*TacoAPI TACO, the Stanford Digital Repository (SDR) Management Layer interface */
+type TacoAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
 	handlers        map[string]map[string]http.Handler
@@ -101,42 +101,42 @@ type TACOAPI struct {
 }
 
 // SetDefaultProduces sets the default produces media type
-func (o *TACOAPI) SetDefaultProduces(mediaType string) {
+func (o *TacoAPI) SetDefaultProduces(mediaType string) {
 	o.defaultProduces = mediaType
 }
 
 // SetDefaultConsumes returns the default consumes media type
-func (o *TACOAPI) SetDefaultConsumes(mediaType string) {
+func (o *TacoAPI) SetDefaultConsumes(mediaType string) {
 	o.defaultConsumes = mediaType
 }
 
 // SetSpec sets a spec that will be served for the clients.
-func (o *TACOAPI) SetSpec(spec *loads.Document) {
+func (o *TacoAPI) SetSpec(spec *loads.Document) {
 	o.spec = spec
 }
 
 // DefaultProduces returns the default produces media type
-func (o *TACOAPI) DefaultProduces() string {
+func (o *TacoAPI) DefaultProduces() string {
 	return o.defaultProduces
 }
 
 // DefaultConsumes returns the default consumes media type
-func (o *TACOAPI) DefaultConsumes() string {
+func (o *TacoAPI) DefaultConsumes() string {
 	return o.defaultConsumes
 }
 
 // Formats returns the registered string formats
-func (o *TACOAPI) Formats() strfmt.Registry {
+func (o *TacoAPI) Formats() strfmt.Registry {
 	return o.formats
 }
 
 // RegisterFormat registers a custom format validator
-func (o *TACOAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
+func (o *TacoAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
 	o.formats.Add(name, format, validator)
 }
 
-// Validate validates the registrations in the TACOAPI
-func (o *TACOAPI) Validate() error {
+// Validate validates the registrations in the TacoAPI
+func (o *TacoAPI) Validate() error {
 	var unregistered []string
 
 	if o.JSONConsumer == nil {
@@ -171,26 +171,26 @@ func (o *TACOAPI) Validate() error {
 }
 
 // ServeErrorFor gets a error handler for a given operation id
-func (o *TACOAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
+func (o *TacoAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
 	return o.ServeError
 }
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
-func (o *TACOAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
+func (o *TacoAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
 	return nil
 
 }
 
 // Authorizer returns the registered authorizer
-func (o *TACOAPI) Authorizer() runtime.Authorizer {
+func (o *TacoAPI) Authorizer() runtime.Authorizer {
 
 	return nil
 
 }
 
 // ConsumersFor gets the consumers for the specified media types
-func (o *TACOAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
+func (o *TacoAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 
 	result := make(map[string]runtime.Consumer)
 	for _, mt := range mediaTypes {
@@ -206,7 +206,7 @@ func (o *TACOAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer 
 }
 
 // ProducersFor gets the producers for the specified media types
-func (o *TACOAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
+func (o *TacoAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 
 	result := make(map[string]runtime.Producer)
 	for _, mt := range mediaTypes {
@@ -222,7 +222,7 @@ func (o *TACOAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer 
 }
 
 // HandlerFor gets a http.Handler for the provided operation method and path
-func (o *TACOAPI) HandlerFor(method, path string) (http.Handler, bool) {
+func (o *TacoAPI) HandlerFor(method, path string) (http.Handler, bool) {
 	if o.handlers == nil {
 		return nil, false
 	}
@@ -237,8 +237,8 @@ func (o *TACOAPI) HandlerFor(method, path string) (http.Handler, bool) {
 	return h, ok
 }
 
-// Context returns the middleware context for the t a c o API
-func (o *TACOAPI) Context() *middleware.Context {
+// Context returns the middleware context for the taco API
+func (o *TacoAPI) Context() *middleware.Context {
 	if o.context == nil {
 		o.context = middleware.NewRoutableContext(o.spec, o, nil)
 	}
@@ -246,7 +246,7 @@ func (o *TACOAPI) Context() *middleware.Context {
 	return o.context
 }
 
-func (o *TACOAPI) initHandlerCache() {
+func (o *TacoAPI) initHandlerCache() {
 	o.Context() // don't care about the result, just that the initialization happened
 
 	if o.handlers == nil {
@@ -277,7 +277,7 @@ func (o *TACOAPI) initHandlerCache() {
 
 // Serve creates a http handler to serve the API over HTTP
 // can be used directly in http.ListenAndServe(":8000", api.Serve(nil))
-func (o *TACOAPI) Serve(builder middleware.Builder) http.Handler {
+func (o *TacoAPI) Serve(builder middleware.Builder) http.Handler {
 	o.Init()
 
 	if o.Middleware != nil {
@@ -287,7 +287,7 @@ func (o *TACOAPI) Serve(builder middleware.Builder) http.Handler {
 }
 
 // Init allows you to just initialize the handler cache, you can then recompose the middelware as you see fit
-func (o *TACOAPI) Init() {
+func (o *TacoAPI) Init() {
 	if len(o.handlers) == 0 {
 		o.initHandlerCache()
 	}

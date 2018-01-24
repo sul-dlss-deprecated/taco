@@ -20,7 +20,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "TACO, the Stanford Digital Repository (SDR) Management Layer interface",
-    "title": "TACO",
+    "title": "taco",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -106,20 +106,14 @@ func init() {
             "name": "ID",
             "in": "path",
             "required": true
-          },
-          {
-            "description": "JSON-LD Representation of the resource metadata for the SDR identifier provided. Metadata is JSON-LD following the SDR MAP.",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Resource"
-            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
           },
           "404": {
             "description": "Resource not found"
