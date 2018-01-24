@@ -18,13 +18,11 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	"github.com/sul-dlss-labs/taco/restapi/operations/work"
 )
 
-// NewStanfordDigitalRepositoryAPI creates a new StanfordDigitalRepository instance
-func NewStanfordDigitalRepositoryAPI(spec *loads.Document) *StanfordDigitalRepositoryAPI {
-	return &StanfordDigitalRepositoryAPI{
+// NewTACOAPI creates a new TACO instance
+func NewTACOAPI(spec *loads.Document) *TACOAPI {
+	return &TACOAPI{
 		handlers:            make(map[string]map[string]http.Handler),
 		formats:             strfmt.Default,
 		defaultConsumes:     "application/json",
@@ -36,23 +34,24 @@ func NewStanfordDigitalRepositoryAPI(spec *loads.Document) *StanfordDigitalRepos
 		APIKeyAuthenticator: security.APIKeyAuth,
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
-		XMLConsumer:         runtime.XMLConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		XMLProducer:         runtime.XMLProducer(),
-		WorkAddWorkHandler: work.AddWorkHandlerFunc(func(params work.AddWorkParams) middleware.Responder {
-			return middleware.NotImplemented("operation WorkAddWork has not yet been implemented")
+		DepositNewFileHandler: DepositNewFileHandlerFunc(func(params DepositNewFileParams) middleware.Responder {
+			return middleware.NotImplemented("operation DepositNewFile has not yet been implemented")
 		}),
-		WorkFindWorkByIDHandler: work.FindWorkByIDHandlerFunc(func(params work.FindWorkByIDParams) middleware.Responder {
-			return middleware.NotImplemented("operation WorkFindWorkByID has not yet been implemented")
+		DepositNewResourceHandler: DepositNewResourceHandlerFunc(func(params DepositNewResourceParams) middleware.Responder {
+			return middleware.NotImplemented("operation DepositNewResource has not yet been implemented")
 		}),
-		WorkUpdateWorkHandler: work.UpdateWorkHandlerFunc(func(params work.UpdateWorkParams) middleware.Responder {
-			return middleware.NotImplemented("operation WorkUpdateWork has not yet been implemented")
+		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams) middleware.Responder {
+			return middleware.NotImplemented("operation RetrieveResource has not yet been implemented")
+		}),
+		UpdateResourceHandler: UpdateResourceHandlerFunc(func(params UpdateResourceParams) middleware.Responder {
+			return middleware.NotImplemented("operation UpdateResource has not yet been implemented")
 		}),
 	}
 }
 
-/*StanfordDigitalRepositoryAPI The SDR management interface */
-type StanfordDigitalRepositoryAPI struct {
+/*TACOAPI TACO, the Stanford Digital Repository (SDR) Management Layer interface */
+type TACOAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
 	handlers        map[string]map[string]http.Handler
@@ -73,20 +72,18 @@ type StanfordDigitalRepositoryAPI struct {
 
 	// JSONConsumer registers a consumer for a "application/json" mime type
 	JSONConsumer runtime.Consumer
-	// XMLConsumer registers a consumer for a "application/xml" mime type
-	XMLConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
-	// XMLProducer registers a producer for a "application/xml" mime type
-	XMLProducer runtime.Producer
 
-	// WorkAddWorkHandler sets the operation handler for the add work operation
-	WorkAddWorkHandler work.AddWorkHandler
-	// WorkFindWorkByIDHandler sets the operation handler for the find work by Id operation
-	WorkFindWorkByIDHandler work.FindWorkByIDHandler
-	// WorkUpdateWorkHandler sets the operation handler for the update work operation
-	WorkUpdateWorkHandler work.UpdateWorkHandler
+	// DepositNewFileHandler sets the operation handler for the deposit new file operation
+	DepositNewFileHandler DepositNewFileHandler
+	// DepositNewResourceHandler sets the operation handler for the deposit new resource operation
+	DepositNewResourceHandler DepositNewResourceHandler
+	// RetrieveResourceHandler sets the operation handler for the retrieve resource operation
+	RetrieveResourceHandler RetrieveResourceHandler
+	// UpdateResourceHandler sets the operation handler for the update resource operation
+	UpdateResourceHandler UpdateResourceHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -104,70 +101,66 @@ type StanfordDigitalRepositoryAPI struct {
 }
 
 // SetDefaultProduces sets the default produces media type
-func (o *StanfordDigitalRepositoryAPI) SetDefaultProduces(mediaType string) {
+func (o *TACOAPI) SetDefaultProduces(mediaType string) {
 	o.defaultProduces = mediaType
 }
 
 // SetDefaultConsumes returns the default consumes media type
-func (o *StanfordDigitalRepositoryAPI) SetDefaultConsumes(mediaType string) {
+func (o *TACOAPI) SetDefaultConsumes(mediaType string) {
 	o.defaultConsumes = mediaType
 }
 
 // SetSpec sets a spec that will be served for the clients.
-func (o *StanfordDigitalRepositoryAPI) SetSpec(spec *loads.Document) {
+func (o *TACOAPI) SetSpec(spec *loads.Document) {
 	o.spec = spec
 }
 
 // DefaultProduces returns the default produces media type
-func (o *StanfordDigitalRepositoryAPI) DefaultProduces() string {
+func (o *TACOAPI) DefaultProduces() string {
 	return o.defaultProduces
 }
 
 // DefaultConsumes returns the default consumes media type
-func (o *StanfordDigitalRepositoryAPI) DefaultConsumes() string {
+func (o *TACOAPI) DefaultConsumes() string {
 	return o.defaultConsumes
 }
 
 // Formats returns the registered string formats
-func (o *StanfordDigitalRepositoryAPI) Formats() strfmt.Registry {
+func (o *TACOAPI) Formats() strfmt.Registry {
 	return o.formats
 }
 
 // RegisterFormat registers a custom format validator
-func (o *StanfordDigitalRepositoryAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
+func (o *TACOAPI) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
 	o.formats.Add(name, format, validator)
 }
 
-// Validate validates the registrations in the StanfordDigitalRepositoryAPI
-func (o *StanfordDigitalRepositoryAPI) Validate() error {
+// Validate validates the registrations in the TACOAPI
+func (o *TACOAPI) Validate() error {
 	var unregistered []string
 
 	if o.JSONConsumer == nil {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
-	if o.XMLConsumer == nil {
-		unregistered = append(unregistered, "XMLConsumer")
-	}
-
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.XMLProducer == nil {
-		unregistered = append(unregistered, "XMLProducer")
+	if o.DepositNewFileHandler == nil {
+		unregistered = append(unregistered, "DepositNewFileHandler")
 	}
 
-	if o.WorkAddWorkHandler == nil {
-		unregistered = append(unregistered, "work.AddWorkHandler")
+	if o.DepositNewResourceHandler == nil {
+		unregistered = append(unregistered, "DepositNewResourceHandler")
 	}
 
-	if o.WorkFindWorkByIDHandler == nil {
-		unregistered = append(unregistered, "work.FindWorkByIDHandler")
+	if o.RetrieveResourceHandler == nil {
+		unregistered = append(unregistered, "RetrieveResourceHandler")
 	}
 
-	if o.WorkUpdateWorkHandler == nil {
-		unregistered = append(unregistered, "work.UpdateWorkHandler")
+	if o.UpdateResourceHandler == nil {
+		unregistered = append(unregistered, "UpdateResourceHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -178,26 +171,26 @@ func (o *StanfordDigitalRepositoryAPI) Validate() error {
 }
 
 // ServeErrorFor gets a error handler for a given operation id
-func (o *StanfordDigitalRepositoryAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
+func (o *TACOAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
 	return o.ServeError
 }
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
-func (o *StanfordDigitalRepositoryAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
+func (o *TACOAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
 	return nil
 
 }
 
 // Authorizer returns the registered authorizer
-func (o *StanfordDigitalRepositoryAPI) Authorizer() runtime.Authorizer {
+func (o *TACOAPI) Authorizer() runtime.Authorizer {
 
 	return nil
 
 }
 
 // ConsumersFor gets the consumers for the specified media types
-func (o *StanfordDigitalRepositoryAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
+func (o *TACOAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 
 	result := make(map[string]runtime.Consumer)
 	for _, mt := range mediaTypes {
@@ -206,9 +199,6 @@ func (o *StanfordDigitalRepositoryAPI) ConsumersFor(mediaTypes []string) map[str
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
 
-		case "application/xml":
-			result["application/xml"] = o.XMLConsumer
-
 		}
 	}
 	return result
@@ -216,7 +206,7 @@ func (o *StanfordDigitalRepositoryAPI) ConsumersFor(mediaTypes []string) map[str
 }
 
 // ProducersFor gets the producers for the specified media types
-func (o *StanfordDigitalRepositoryAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
+func (o *TACOAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 
 	result := make(map[string]runtime.Producer)
 	for _, mt := range mediaTypes {
@@ -225,9 +215,6 @@ func (o *StanfordDigitalRepositoryAPI) ProducersFor(mediaTypes []string) map[str
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 
-		case "application/xml":
-			result["application/xml"] = o.XMLProducer
-
 		}
 	}
 	return result
@@ -235,7 +222,7 @@ func (o *StanfordDigitalRepositoryAPI) ProducersFor(mediaTypes []string) map[str
 }
 
 // HandlerFor gets a http.Handler for the provided operation method and path
-func (o *StanfordDigitalRepositoryAPI) HandlerFor(method, path string) (http.Handler, bool) {
+func (o *TACOAPI) HandlerFor(method, path string) (http.Handler, bool) {
 	if o.handlers == nil {
 		return nil, false
 	}
@@ -250,8 +237,8 @@ func (o *StanfordDigitalRepositoryAPI) HandlerFor(method, path string) (http.Han
 	return h, ok
 }
 
-// Context returns the middleware context for the stanford digital repository API
-func (o *StanfordDigitalRepositoryAPI) Context() *middleware.Context {
+// Context returns the middleware context for the t a c o API
+func (o *TACOAPI) Context() *middleware.Context {
 	if o.context == nil {
 		o.context = middleware.NewRoutableContext(o.spec, o, nil)
 	}
@@ -259,7 +246,7 @@ func (o *StanfordDigitalRepositoryAPI) Context() *middleware.Context {
 	return o.context
 }
 
-func (o *StanfordDigitalRepositoryAPI) initHandlerCache() {
+func (o *TACOAPI) initHandlerCache() {
 	o.Context() // don't care about the result, just that the initialization happened
 
 	if o.handlers == nil {
@@ -269,23 +256,28 @@ func (o *StanfordDigitalRepositoryAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/resource"] = work.NewAddWork(o.context, o.WorkAddWorkHandler)
+	o.handlers["POST"]["/file"] = NewDepositNewFile(o.context, o.DepositNewFileHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/resource"] = NewDepositNewResource(o.context, o.DepositNewResourceHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/resource/{id}"] = work.NewFindWorkByID(o.context, o.WorkFindWorkByIDHandler)
+	o.handlers["GET"]["/resource/{ID}"] = NewRetrieveResource(o.context, o.RetrieveResourceHandler)
 
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
+	if o.handlers["PATCH"] == nil {
+		o.handlers["PATCH"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/resource"] = work.NewUpdateWork(o.context, o.WorkUpdateWorkHandler)
+	o.handlers["PATCH"]["/resource/{ID}"] = NewUpdateResource(o.context, o.UpdateResourceHandler)
 
 }
 
 // Serve creates a http handler to serve the API over HTTP
 // can be used directly in http.ListenAndServe(":8000", api.Serve(nil))
-func (o *StanfordDigitalRepositoryAPI) Serve(builder middleware.Builder) http.Handler {
+func (o *TACOAPI) Serve(builder middleware.Builder) http.Handler {
 	o.Init()
 
 	if o.Middleware != nil {
@@ -295,7 +287,7 @@ func (o *StanfordDigitalRepositoryAPI) Serve(builder middleware.Builder) http.Ha
 }
 
 // Init allows you to just initialize the handler cache, you can then recompose the middelware as you see fit
-func (o *StanfordDigitalRepositoryAPI) Init() {
+func (o *TACOAPI) Init() {
 	if len(o.handlers) == 0 {
 		o.initHandlerCache()
 	}

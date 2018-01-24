@@ -12,18 +12,17 @@ import (
 	graceful "github.com/tylerb/graceful"
 
 	"github.com/sul-dlss-labs/taco/restapi/operations"
-	"github.com/sul-dlss-labs/taco/restapi/operations/work"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
 //go:generate swagger generate server --target .. --name  --spec ../swagger.yml
 
-func configureFlags(api *operations.StanfordDigitalRepositoryAPI) {
+func configureFlags(api *operations.TACOAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.StanfordDigitalRepositoryAPI) http.Handler {
+func configureAPI(api *operations.TACOAPI) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 
@@ -35,20 +34,19 @@ func configureAPI(api *operations.StanfordDigitalRepositoryAPI) http.Handler {
 
 	api.JSONConsumer = runtime.JSONConsumer()
 
-	api.XMLConsumer = runtime.XMLConsumer()
-
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.XMLProducer = runtime.XMLProducer()
-
-	api.WorkAddWorkHandler = work.AddWorkHandlerFunc(func(params work.AddWorkParams) middleware.Responder {
-		return middleware.NotImplemented("operation work.AddWork has not yet been implemented")
+	api.DepositNewFileHandler = operations.DepositNewFileHandlerFunc(func(params operations.DepositNewFileParams) middleware.Responder {
+		return middleware.NotImplemented("operation .DepositNewFile has not yet been implemented")
 	})
-	api.WorkFindWorkByIDHandler = work.FindWorkByIDHandlerFunc(func(params work.FindWorkByIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation work.FindWorkByID has not yet been implemented")
+	api.DepositNewResourceHandler = operations.DepositNewResourceHandlerFunc(func(params operations.DepositNewResourceParams) middleware.Responder {
+		return middleware.NotImplemented("operation .DepositNewResource has not yet been implemented")
 	})
-	api.WorkUpdateWorkHandler = work.UpdateWorkHandlerFunc(func(params work.UpdateWorkParams) middleware.Responder {
-		return middleware.NotImplemented("operation work.UpdateWork has not yet been implemented")
+	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams) middleware.Responder {
+		return middleware.NotImplemented("operation .RetrieveResource has not yet been implemented")
+	})
+	api.UpdateResourceHandler = operations.UpdateResourceHandlerFunc(func(params operations.UpdateResourceParams) middleware.Responder {
+		return middleware.NotImplemented("operation .UpdateResource has not yet been implemented")
 	})
 
 	api.ServerShutdown = func() {}

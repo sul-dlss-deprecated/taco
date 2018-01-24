@@ -19,140 +19,190 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "The SDR management interface",
-    "title": "Stanford Digital Repository",
+    "description": "TACO, the Stanford Digital Repository (SDR) Management Layer interface",
+    "title": "TACO",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "3.0.0"
+    "version": "0.0.1"
   },
   "host": "sdr.dlss.stanford.edu",
   "basePath": "/v1",
   "paths": {
-    "/resource": {
-      "put": {
-        "consumes": [
-          "application/json",
-          "application/xml"
-        ],
-        "produces": [
-          "application/xml",
-          "application/json"
-        ],
-        "tags": [
-          "work"
-        ],
-        "summary": "Update an existing work",
-        "operationId": "updateWork",
-        "parameters": [
-          {
-            "description": "Pet object that needs to be added to the store",
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Work"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Invalid ID supplied"
-          },
-          "404": {
-            "description": "Work not found"
-          },
-          "405": {
-            "description": "Validation exception"
-          }
-        }
-      },
+    "/file": {
       "post": {
-        "consumes": [
-          "application/json"
-        ],
+        "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for File management).",
         "produces": [
           "application/json"
         ],
-        "tags": [
-          "work"
-        ],
-        "summary": "Add a new work",
-        "operationId": "addWork",
+        "summary": "Deposit a new File (binary) into SDR.",
+        "operationId": "depositNewFile",
         "parameters": [
           {
-            "description": "Work object that needs to be added",
+            "description": "File / Binary.",
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Work"
+              "$ref": "#/definitions/File"
             }
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "405": {
             "description": "Invalid input"
           }
         }
       }
     },
-    "/resource/{id}": {
-      "get": {
-        "description": "Returns a single work",
+    "/resource": {
+      "post": {
+        "description": "Deposits a new resource (Collection, Digital Repository Object, Fileset, or subclass of those) into SDR. Will return the SDR identifier for the resource.",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
-        "tags": [
-          "work"
-        ],
-        "summary": "Find work by ID",
-        "operationId": "findWorkById",
+        "summary": "Deposit a new resource into SDR.",
+        "operationId": "depositNewResource",
         "parameters": [
           {
-            "type": "string",
-            "description": "ID of pet to return",
-            "name": "id",
-            "in": "path",
-            "required": true
+            "description": "JSON-LD Representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.",
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "OK"
+          },
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/resource/{ID}": {
+      "get": {
+        "description": "Retrieves the metadata (as JSON-LD and SDR MAP) for an existing, deposited resource (Collection, Digital Repository Object, Fileset, File metadata object [not binary] or subclass of those) in SDR. The resource is identified by the DRUID or SDR identifier assigned.",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Retrieve the metadata for a deposited / existing resource within SDR.",
+        "operationId": "retrieveResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "SDR Identifier for the Resource.",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "JSON-LD Representation of the resource metadata for the SDR identifier provided. Metadata is JSON-LD following the SDR MAP.",
+            "name": "body",
+            "in": "body",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/Work"
+              "$ref": "#/definitions/Resource"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      },
+      "patch": {
+        "description": "Updates an existing, deposited resource (Collection, Digital Repository Object, Fileset, File metadata object [not binary] or subclass of those) into SDR. Only include the required fields then the fields you wish to have changed. Will return the SDR identifier for the updated resource.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Update an existing / deposited resource in SDR.",
+        "operationId": "updateResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "SDR Identifier for the Resource.",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "JSON-LD Representation of the resource metadata you want to change for that specified resouce (identified via its identifier or DRUID). Needs to fit the SDR 3.0 MAP requirements.",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "400": {
             "description": "Invalid ID supplied"
           },
           "404": {
-            "description": "Pet not found"
+            "description": "Resource not found"
+          },
+          "405": {
+            "description": "Validation exception"
           }
         }
       }
     }
   },
   "definitions": {
-    "Work": {
+    "File": {
       "type": "object",
       "required": [
-        "title"
+        "UUID",
+        "filename"
+      ],
+      "properties": {
+        "UUID": {
+          "type": "string",
+          "example": "a03eea52-77a0-4e55-9026-b022d61c89fc"
+        },
+        "filename": {
+          "type": "string",
+          "example": "mybook.pdf"
+        }
+      }
+    },
+    "Resource": {
+      "type": "object",
+      "required": [
+        "title",
+        "sourceId"
       ],
       "properties": {
         "id": {
           "type": "string",
           "example": "oo000oo0001"
         },
-        "status": {
-          "description": "lifecycle status",
+        "sourceId": {
           "type": "string",
-          "enum": [
-            "registered",
-            "published"
-          ]
+          "example": "bib12345678"
         },
         "title": {
           "type": "string",
@@ -160,12 +210,6 @@ func init() {
         }
       }
     }
-  },
-  "tags": [
-    {
-      "description": "A sdr managed object",
-      "name": "work"
-    }
-  ]
+  }
 }`))
 }

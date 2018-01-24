@@ -23,13 +23,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	api := operations.NewStanfordDigitalRepositoryAPI(swaggerSpec)
+	api := operations.NewTACOAPI(swaggerSpec)
 	server := restapi.NewServer(api)
 	defer server.Shutdown()
 
 	parser := flags.NewParser(server, flags.Default)
-	parser.ShortDescription = "Stanford Digital Repository"
-	parser.LongDescription = "The SDR management interface"
+	parser.ShortDescription = "TACO"
+	parser.LongDescription = "TACO, the Stanford Digital Repository (SDR) Management Layer interface"
 
 	server.ConfigureFlags()
 	for _, optsGroup := range api.CommandLineOptionsGroups {
