@@ -1,105 +1,134 @@
 swagger: '2.0'
 info:
-  description: The SDR management interface
-  version: 3.0.0
-  title: Stanford Digital Repository
+  description: "TACO, the Stanford Digital Repository (SDR) Management Layer interface"
+  version: "0.0.1"
+  title: "TACO"
   license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: sdr.dlss.stanford.edu
-basePath: /v1
-tags:
-  - name: work
-    description: A sdr managed object
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "sdr.dlss.stanford.edu"
+basePath: "/v1"
 schemes:
-  - https
+  - "http"
 paths:
   /resource:
     post:
-      tags:
-        - work
-      summary: Add a new work
-      description: ''
-      operationId: addWork
+      summary: Deposit a new resource into SDR.
+      description: "Deposits a new resource (Collection, Digital Repository Object, Fileset, or subclass of those) into SDR. Will return the SDR identifier for the resource."
+      operationId: depositNewResource
       consumes:
         - application/json
       produces:
         - application/json
       parameters:
         - in: body
-          name: body
-          description: Work object that needs to be added
+          name: payload
+          description: "JSON-LD Representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements."
           required: true
           schema:
-            $ref: '#/definitions/Work'
-      responses:
-        '405':
-          description: Invalid input
-    put:
-      tags:
-        - work
-      summary: Update an existing work
-      description: ''
-      operationId: updateWork
-      consumes:
-        - application/json
-        - application/xml
-      produces:
-        - application/xml
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Pet object that needs to be added to the store
-          required: true
-          schema:
-            $ref: '#/definitions/Work'
-      responses:
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Work not found
-        '405':
-          description: Validation exception
-  '/resource/{id}':
-    get:
-      tags:
-        - work
-      summary: Find work by ID
-      description: Returns a single work
-      operationId: findWorkById
-      produces:
-        - application/json
-      parameters:
-        - name: id
-          in: path
-          description: ID of pet to return
-          required: true
-          type: string
+            $ref: '#/definitions/Resource'
       responses:
         '200':
-          description: successful operation
+          description: OK
+        '405':
+          description: Invalid input
+  /resource/{ID}:
+    get:
+      summary: "Retrieve the metadata for a deposited / existing resource within SDR."
+      description: "Retrieves the metadata (as JSON-LD and SDR MAP) for an existing, deposited resource (Collection, Digital Repository Object, Fileset, File metadata object [not binary] or subclass of those) in SDR. The resource is identified by the DRUID or SDR identifier assigned."
+      operationId: retrieveResource
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: 'ID'
+          type: string
+          required: true
+          description: "SDR Identifier for the Resource."
+        - in: body
+          name: body
+          description: "JSON-LD Representation of the resource metadata for the SDR identifier provided. Metadata is JSON-LD following the SDR MAP."
+          required: true
           schema:
-            $ref: '#/definitions/Work'
-        '400':
-          description: Invalid ID supplied
+            $ref: '#/definitions/Resource'
+      responses:
+        '200':
+          description: OK
         '404':
-          description: Pet not found
+          description: Resource not found
+    patch:
+      summary: "Update an existing / deposited resource in SDR."
+      description: "Updates an existing, deposited resource (Collection, Digital Repository Object, Fileset, File metadata object [not binary] or subclass of those) into SDR. Only include the required fields then the fields you wish to have changed. Will return the SDR identifier for the updated resource."
+      operationId: updateResource
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: 'ID'
+          type: string
+          required: true
+          description: "SDR Identifier for the Resource."
+        - in: body
+          name: body
+          description: "JSON-LD Representation of the resource metadata you want to change for that specified resouce (identified via its identifier or DRUID). Needs to fit the SDR 3.0 MAP requirements."
+          required: true
+          schema:
+            $ref: '#/definitions/Resource'
+      responses:
+        '200':
+          description: "OK"
+        '400':
+          description: "Invalid ID supplied"
+        '404':
+          description: "Resource not found"
+        '405':
+          description: "Validation exception"
+  /file:
+    post:
+      summary: "Deposit a new File (binary) into SDR."
+      description: "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for File management)."
+      operationId: depositNewFile
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: 'body'
+          description: "File / Binary."
+          required: true
+          schema:
+            $ref: '#/definitions/File'
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
 definitions:
-  Work:
+  Resource:
     type: object
     required:
       - title
+      - sourceId
     properties:
       id:
         type: string
-        example: oo000oo0001
+        example: 'oo000oo0001'
       title:
         type: string
-        example: My work
-      status:
+        example: 'My work'
+      sourceId:
         type: string
-        description: lifecycle status
-        enum:
-          - registered
-          - published
+        example: 'bib12345678'
+  File:
+    type: object
+    required:
+      - UUID
+      - filename
+    properties:
+      filename:
+        type: string
+        example: 'mybook.pdf'
+      UUID:
+        type: string
+        example: 'a03eea52-77a0-4e55-9026-b022d61c89fc'
