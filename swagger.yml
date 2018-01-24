@@ -2,14 +2,14 @@ swagger: '2.0'
 info:
   description: "TACO, the Stanford Digital Repository (SDR) Management Layer interface"
   version: "0.0.1"
-  title: "TACO"
+  title: "taco"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "sdr.dlss.stanford.edu"
 basePath: "/v1"
 schemes:
-  - "http"
+  - http
 paths:
   /resource:
     post:
@@ -45,15 +45,11 @@ paths:
           type: string
           required: true
           description: "SDR Identifier for the Resource."
-        - in: body
-          name: body
-          description: "JSON-LD Representation of the resource metadata for the SDR identifier provided. Metadata is JSON-LD following the SDR MAP."
-          required: true
-          schema:
-            $ref: '#/definitions/Resource'
       responses:
         '200':
           description: OK
+          schema:
+            $ref: '#/definitions/Resource'
         '404':
           description: Resource not found
     patch:

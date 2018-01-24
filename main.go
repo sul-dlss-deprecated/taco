@@ -2,22 +2,39 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"os"
+	"log"
 
-	"github.com/sul-dlss-labs/taco/config"
-	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/server"
+	"github.com/go-openapi/loads"
+	"github.com/sul-dlss-labs/taco/generated/restapi"
+	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/handlers"
 )
 
+var portFlag = flag.Int("port", 3000, "Port to run this service on")
+
 func main() {
-	enviroment := flag.String("e", "development", "")
-	flag.Usage = func() {
-		fmt.Println("Usage: server -e {mode}")
-		os.Exit(1)
+	// load embedded swagger file
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	// create new service API
+	api := operations.NewTacoAPI(swaggerSpec)
+	api.RetrieveResourceHandler = handlers.NewRetrieveResource()
+
+	server := restapi.NewServer(api)
+	defer server.Shutdown()
+
+	// parse flags
 	flag.Parse()
-	config.Init(*enviroment)
-	db.Init()
-	server.Init()
+	// set the port this service will be run on
+	server.Port = *portFlag
+
+	// TODO: Set Handle
+
+	// serve API
+	if err := server.Serve(); err != nil {
+		log.Fatalln(err)
+	}
 }
