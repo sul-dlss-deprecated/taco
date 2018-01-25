@@ -10,19 +10,22 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
 
 1. Install go (grab binary from here or use `brew install go` on Mac OSX).
 2. Setup your Go workspace (where your Go code, binaries, etc. are kept together. TO DO: add info on Go workspace FYI.):
-    ```bash
-    $ mkdir -p ~/go
-    $ export GOPATH=~/go
-    $ export PATH=~/go/bin:$PATH
-    $ cd ~/go
-    ```
-    Your Go code repositories will reside within `~/go/src/...` in the `$GOPATH`. Name these paths to avoid library clash, for example TACO Go code could be in `~/go/src/github.com/sul-dlss-labs/taco`. This should be where your Github repository resides too.
+      ```bash
+      $ mkdir -p ~/go
+      $ export GOPATH=~/go
+      $ export PATH=~/go/bin:$PATH
+      $ cd ~/go
+      ```
+      Your Go code repositories will reside within `~/go/src/...` in the `$GOPATH`. Name these paths to avoid library clash, for example TACO Go code could be in `~/go/src/github.com/sul-dlss-labs/taco`. This should be where your Github repository resides too.
 3. In order to download the project code to `~/go/src/github.com/sul-dlss-labs/taco`, from any directory, run:
 ```bash
 go get github.com/sul-dlss-labs/taco
 ```
-4. Handle dependencies with the Go Dep package: install Go Dep via `brew install dep` then `brew upgrade dep`.
-5. Add and install your dependencies for your Go TACO repository by running `dep init`.
+4. Handle dependencies with the Go Dep package:
+    * Install Go Dep via `brew install dep` then `brew upgrade dep`.
+    * If your project's `Gopkg.toml` has not yet been populated (i.e. there should be libraries not commented out), you need to add an inferred list of your dependencies by running `dep init`.
+    * If your project has that, make sure your dependencies are synced via running `dep ensure`.
+    * If you need to add a new dependency, run `dep ensure -add github.com/pkg/errors`. This should add the dependency and put the new dependency in your `Gopkg.*` files.
 
 ## Running the Go Code locally without a build
 

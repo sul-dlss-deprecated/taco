@@ -12,7 +12,10 @@
 *.out
 
 # TACO Specific
+
+# dep stuff
 vendor
+_vendor*
 
 # For the local build
 taco
