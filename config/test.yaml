@@ -1,4 +1,4 @@
 db:
-  region: "us-east"
+  region: "localstack"
   endpoint: "localhost:4569"
   disable_ssl: true
