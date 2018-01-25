@@ -8,7 +8,6 @@ import (
 )
 
 // NewRetrieveResource will query DynamoDB with ID for Resource JSON
-// Currently, just returns fake object for any ID.
 func NewRetrieveResource(rt *taco.Runtime) operations.RetrieveResourceHandler {
 	return &resourceEntry{repository: rt.Repository()}
 }

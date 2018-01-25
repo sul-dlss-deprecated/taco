@@ -16,7 +16,7 @@ import (
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../generated --name  --spec ../swagger.yml --exclude-main
+//go:generate swagger generate server --target ../generated --name  --spec ../swagger.json --exclude-main
 
 func configureFlags(api *operations.TacoAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }

@@ -50,6 +50,33 @@ func TestRetrieveNotFound(t *testing.T) {
 	r.GET("/v1/resource/100").
 		Run(setupFakeRuntime(mockRepo(nil)),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, 404, r.Code)
+				assert.Equal(t, http.StatusNotFound, r.Code)
+			})
+}
+
+func TestCreateResourceHappyPath(t *testing.T) {
+	r := gofight.New()
+	r.POST("/v1/resource").
+		SetJSON(gofight.D{
+			"id":       "oo000oo0001",
+			"sourceId": "bib12345678",
+			"title":    "My work",
+		}).
+		Run(setupFakeRuntime(mockRepo(nil)),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusOK, r.Code)
+			})
+}
+
+func TestCreateResourceMissingSourceId(t *testing.T) {
+	r := gofight.New()
+	r.POST("/v1/resource").
+		SetJSON(gofight.D{
+			"id":    "oo000oo0001",
+			"title": "My work",
+		}).
+		Run(setupFakeRuntime(mockRepo(nil)),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
 }

@@ -9,16 +9,23 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	models "github.com/sul-dlss-labs/taco/generated/models"
 )
 
 // DepositNewResourceOKCode is the HTTP code returned for type DepositNewResourceOK
 const DepositNewResourceOKCode int = 200
 
-/*DepositNewResourceOK OK
+/*DepositNewResourceOK Success response
 
 swagger:response depositNewResourceOK
 */
 type DepositNewResourceOK struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.DepositNewResourceOKBody `json:"body,omitempty"`
 }
 
 // NewDepositNewResourceOK creates DepositNewResourceOK with default headers values
@@ -26,12 +33,27 @@ func NewDepositNewResourceOK() *DepositNewResourceOK {
 	return &DepositNewResourceOK{}
 }
 
+// WithPayload adds the payload to the deposit new resource o k response
+func (o *DepositNewResourceOK) WithPayload(payload *models.DepositNewResourceOKBody) *DepositNewResourceOK {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the deposit new resource o k response
+func (o *DepositNewResourceOK) SetPayload(payload *models.DepositNewResourceOKBody) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *DepositNewResourceOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(200)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // DepositNewResourceMethodNotAllowedCode is the HTTP code returned for type DepositNewResourceMethodNotAllowed
