@@ -20,8 +20,55 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+
 [[constraint]]
-  name = "github.com/spf13/viper"
+  name = "github.com/appleboy/gofight"
+  version = "2.0.0"
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
+  version = "1.12.67"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/errors"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/loads"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/runtime"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/spec"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/strfmt"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/swag"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/go-openapi/validate"
+
+[[constraint]]
+  name = "github.com/jessevdk/go-flags"
+  version = "1.3.0"
+
+[[constraint]]
+  name = "github.com/spf13/viper"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/stretchr/testify"
+  version = "1.2.0"
+
+[[constraint]]
+  name = "github.com/tylerb/graceful"
+  version = "1.2.15"
