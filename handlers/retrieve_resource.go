@@ -2,25 +2,29 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/go-openapi/swag"
-	"github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/persistence"
 )
 
-// Retrieve Resource will query DynamoDB with ID for Resource JSON
+// NewRetrieveResource will query DynamoDB with ID for Resource JSON
 // Currently, just returns fake object for any ID.
-func NewRetrieveResource() operations.RetrieveResourceHandler {
-	return &resourceEntry{}
+func NewRetrieveResource(rt *taco.Runtime) operations.RetrieveResourceHandler {
+	return &resourceEntry{repository: rt.Repository()}
 }
 
 // resourceEntry handles a request for finding & returning an entry
 type resourceEntry struct {
+	repository persistence.Repository
 }
 
 // Handle the delete entry request
 func (d *resourceEntry) Handle(params operations.RetrieveResourceParams) middleware.Responder {
-	id := swag.StringValue(&params.ID)
-	test := new(models.Resource)
-	test.ID = id
-	return operations.NewRetrieveResourceOK().WithPayload(test)
+	resource, err := d.repository.GetByID(params.ID)
+	if err == nil {
+		return operations.NewRetrieveResourceOK().WithPayload(resource)
+	} else if err.Error() == "not found" {
+		return operations.NewRetrieveResourceNotFound()
+	}
+	panic(err)
 }

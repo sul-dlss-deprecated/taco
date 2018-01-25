@@ -1,27 +1,30 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 
 	"github.com/spf13/viper"
 )
 
-var config *viper.Viper
-
 // Init is an exported method that takes the environment starts the viper
 // (external lib) and returns the configuration struct.
-func Init(env string) {
-	var err error
-	v := viper.New()
-	v.SetConfigType("yaml")
-	v.SetConfigName(env)
-	v.AddConfigPath("config/")
-	err = v.ReadInConfig()
-	if err != nil {
-		log.Fatalf("Error: unable to parse configuration file %s.yaml", env)
+func Init(cfgFile string) {
+	if cfgFile != "" { // enable ability to specify config file via flag
+		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.SetConfigName(".taco") // name of config file (without extension)
+		viper.AddConfigPath("$HOME") // adding home directory as first search path
 	}
-	config = v
+	viper.AutomaticEnv() // read in environment variables that match
+	// If a config file is found, read it in.
+	err := viper.ReadInConfig()
+	if err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	} else {
+		log.Printf("Error no config file: %s", err)
+	}
 }
 
 func relativePath(basedir string, path *string) {
@@ -29,8 +32,4 @@ func relativePath(basedir string, path *string) {
 	if p != "" && p[0] != '/' {
 		*path = filepath.Join(basedir, p)
 	}
-}
-
-func GetConfig() *viper.Viper {
-	return config
 }

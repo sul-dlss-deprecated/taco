@@ -44,8 +44,9 @@ $ docker run -p 8080:8080 taco
 
 ### Build for the local OS
 ```shell
-$ go get -t
-$ go build
+% cd cmd/tacod
+% go get -t
+% go build -o tacod main.go
 ```
 
 ## Testing
@@ -75,7 +76,7 @@ $ awslocal dynamodb put-item --table-name resources --item '{"id": {"S":"99"}, "
 ```
 
 ```shell
-$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./taco -e development
+% TACO_ENV=production AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
 ```
 
 Now visit: http://localhost:8080/v1/resource/99

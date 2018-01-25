@@ -18,7 +18,7 @@ vendor
 _vendor*
 
 # For the local build
-taco
+cmd/tacod/tacod
 
 # For the docker build
 main
