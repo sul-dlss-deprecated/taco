@@ -3,12 +3,15 @@ jobs:
   build_and_test:
     docker:
       - image: circleci/golang:1.8
-    working_directory: /go/src/github.com/sul-dlss-labs/taco
+    # working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - checkout
       - run:
+          name: Install dependency manager
+          command: curl -L -s https://github.com/golang/dep/releases/download/v0.3.2/dep-linux-amd64 -o /go/bin/dep && chmod +x /go/bin/dep
+      - run:
           name: Install Dependencies
-          command: go get -t
+          command: dep ensure -v -vendor-only
       - run:
           name: Run Tests
           command: go test -v ./...
@@ -16,7 +19,7 @@ jobs:
   register_image:
     docker:
       - image: circleci/golang:1.8
-    working_directory: /go/src/github.com/sul-dlss-labs/taco
+    # working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - setup_remote_docker:
           version: 17.09.0-ce
