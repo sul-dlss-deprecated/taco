@@ -53,6 +53,7 @@ func createServer(rt *taco.Runtime) *restapi.Server {
 func buildAPI(rt *taco.Runtime) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RetrieveResourceHandler = handlers.NewRetrieveResource(rt)
+	api.DepositNewResourceHandler = handlers.NewDepositResource(rt)
 	return api
 }
 

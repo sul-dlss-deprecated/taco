@@ -15,7 +15,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/sul-dlss-labs/taco/generated/models"
+	models "github.com/sul-dlss-labs/taco/generated/models"
 )
 
 // NewUpdateResourceParams creates a new UpdateResourceParams object
