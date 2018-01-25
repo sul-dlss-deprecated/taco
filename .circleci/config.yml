@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install dependency manager
-          commend: go get -u github.com/golang/dep
+          command: go get -u github.com/golang/dep
       - run:
           name: Install Dependencies
           command: dep ensure
