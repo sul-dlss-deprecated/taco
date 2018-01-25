@@ -19,7 +19,7 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
       Your Go code repositories will reside within `~/go/src/...` in the `$GOPATH`. Name these paths to avoid library clash, for example TACO Go code could be in `~/go/src/github.com/sul-dlss-labs/taco`. This should be where your Github repository resides too.
 3. In order to download the project code to `~/go/src/github.com/sul-dlss-labs/taco`, from any directory, run:
 ```bash
-go get github.com/sul-dlss-labs/taco
+$ go get github.com/sul-dlss-labs/taco
 ```
 4. Handle dependencies with the Go Dep package:
     * Install Go Dep via `brew install dep` then `brew upgrade dep`.
@@ -31,33 +31,39 @@ go get github.com/sul-dlss-labs/taco
 
 
 ```shell
-run main.go
+$ go run main.go
 ```
 
 ## Building to TACO Binary
 
 ### Building for Docker
 ```shell
-docker build -t taco  .
-docker run -p 8080:8080 taco
+$ docker build -t taco  .
+$ docker run -p 8080:8080 taco
 ```
 
 ### Build for the local OS
 ```shell
-% go get -t
-% go build
+$ go get -t
+$ go build
+```
+
+## Testing
+
+```shell
+$ go test -v ./...
 ```
 
 ## Running the TACO Binary
 
 First start up DynamoDB:
 ```shell
-SERVICES=dynamodb localstack start
+$ SERVICES=dynamodb localstack start
 ```
 
 Then create the table:
 ```shell
-awslocal dynamodb create-table --table-name resources \
+$ awslocal dynamodb create-table --table-name resources \
   --attribute-definitions "AttributeName=id,AttributeType=S" \
   --key-schema "AttributeName=id,KeyType=HASH" \
   --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
@@ -65,20 +71,14 @@ awslocal dynamodb create-table --table-name resources \
 
 And add a stub record:
 ```
-awslocal dynamodb put-item --table-name resources --item '{"id": {"S":"99"}, "title":{"S":"Ta-da!"}}'
+$ awslocal dynamodb put-item --table-name resources --item '{"id": {"S":"99"}, "title":{"S":"Ta-da!"}}'
 ```
 
 ```shell
-% AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./taco -e development
+$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./taco -e development
 ```
 
 Now visit: http://localhost:8080/v1/resource/99
-
-## Testing
-
-```shell
-% go test -v ./...
-```
 
 ## API Code Structure
 
@@ -89,13 +89,13 @@ We use `go-swagger` to generate the API code within `generated/`, and we connect
 The API code is generated from `swagger.yml` using `go-swagger` library. TBD: best way to handle regeneration (i.e. currently you're recommended to delete the generated code before re-running):
 
 ```shell
-swagger generate server -t generated --exclude-main
+$ swagger generate server -t generated --exclude-main
 ```
 
 ### To run the API code
 
 ```shell
-go run main.go
+$ go run main.go
 ```
 
 ### Non-generated code
@@ -112,7 +112,7 @@ The API code generation does **not** touch the following, which we are writing l
 To see the SWAGGER generated documentation, run the following:
 
 ```shell
-swagger serve swagger.yml
+$ swagger serve swagger.yml
 ```
 
 This should prompt you to your web browser for the HTML generated docs. TBD: how we can have this consistently running on our servers de facto at a URL for the documentation.
