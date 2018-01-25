@@ -1,12 +1,11 @@
-FROM golang:alpine AS base
+FROM golang:alpine
 WORKDIR /go/src/github.com/sul-dlss-labs/taco/
 COPY . .
-RUN apk add --no-cache --virtual .build-deps git && \
+RUN apk update && \
+    apk add --no-cache --virtual .build-deps git && \
     go get -u github.com/golang/dep/cmd/dep && \
     dep ensure && \
     apk del .build-deps
-RUN CGO_ENABLED=0 go build .
+RUN go install .
 
-FROM scratch
-COPY --from=base /go/src/github.com/sul-dlss-labs/taco/taco .
-CMD ["/taco"]
+CMD ["taco"]

@@ -10,7 +10,7 @@ import (
 	"github.com/sul-dlss-labs/taco/handlers"
 )
 
-var portFlag = flag.Int("port", 3000, "Port to run this service on")
+var portFlag = flag.Int("port", 8080, "Port to run this service on")
 
 func main() {
 	server := createServer()
