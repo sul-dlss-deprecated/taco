@@ -11,7 +11,7 @@ jobs:
           command: go get -u github.com/golang/dep/cmd/dep
       - run:
           name: Install Dependencies
-          command: dep ensure
+          command: dep ensure -vendor-only
       - run:
           name: Run Tests
           command: go test -v ./...
