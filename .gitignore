@@ -22,3 +22,7 @@ taco
 
 # For the docker build
 main
+
+# For Swagger Tools
+.swagger-codegen
+.swagger-codegen-ignore
