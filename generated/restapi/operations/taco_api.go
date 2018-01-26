@@ -18,6 +18,7 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/sul-dlss-labs/taco/authorization"
 )
 
 // NewTacoAPI creates a new Taco instance
@@ -39,24 +40,32 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		DeleteResourceHandler: DeleteResourceHandlerFunc(func(params DeleteResourceParams) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteResource has not yet been implemented")
 		}),
-		DepositFileHandler: DepositFileHandlerFunc(func(params DepositFileParams) middleware.Responder {
+		DepositFileHandler: DepositFileHandlerFunc(func(params DepositFileParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation DepositFile has not yet been implemented")
 		}),
-		DepositResourceHandler: DepositResourceHandlerFunc(func(params DepositResourceParams) middleware.Responder {
+		DepositResourceHandler: DepositResourceHandlerFunc(func(params DepositResourceParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation DepositResource has not yet been implemented")
 		}),
-		GetProcessStatusHandler: GetProcessStatusHandlerFunc(func(params GetProcessStatusParams) middleware.Responder {
+		GetProcessStatusHandler: GetProcessStatusHandlerFunc(func(params GetProcessStatusParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation GetProcessStatus has not yet been implemented")
 		}),
 		HealthCheckHandler: HealthCheckHandlerFunc(func(params HealthCheckParams) middleware.Responder {
 			return middleware.NotImplemented("operation HealthCheck has not yet been implemented")
 		}),
-		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams) middleware.Responder {
+		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation RetrieveResource has not yet been implemented")
 		}),
 		UpdateResourceHandler: UpdateResourceHandlerFunc(func(params UpdateResourceParams) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateResource has not yet been implemented")
 		}),
+
+		// Applies when the "On-Behalf-Of" header is set
+		RemoteUserAuth: func(token string) (*authorization.Agent, error) {
+			return nil, errors.NotImplemented("api key auth (RemoteUser) On-Behalf-Of from header param [On-Behalf-Of] has not yet been implemented")
+		},
+
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -87,6 +96,13 @@ type TacoAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
+
+	// RemoteUserAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key On-Behalf-Of provided in the header
+	RemoteUserAuth func(string) (*authorization.Agent, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
 
 	// DeleteResourceHandler sets the operation handler for the delete resource operation
 	DeleteResourceHandler DeleteResourceHandler
@@ -169,6 +185,10 @@ func (o *TacoAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.RemoteUserAuth == nil {
+		unregistered = append(unregistered, "OnBehalfOfAuth")
+	}
+
 	if o.DeleteResourceHandler == nil {
 		unregistered = append(unregistered, "DeleteResourceHandler")
 	}
@@ -212,14 +232,26 @@ func (o *TacoAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *h
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *TacoAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name, scheme := range schemes {
+		switch name {
+
+		case "RemoteUser":
+
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
+				return o.RemoteUserAuth(token)
+			})
+
+		}
+	}
+	return result
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *TacoAPI) Authorizer() runtime.Authorizer {
 
-	return nil
+	return o.APIAuthorizer
 
 }
 

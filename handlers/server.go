@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/go-openapi/loads"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
@@ -16,6 +17,9 @@ import (
 // BuildAPI create new service API
 func BuildAPI(database db.Database, stream streaming.Stream, storage storage.Storage, identifierService identifier.Service) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
+	api.RemoteUserAuth = func(identifier string) (*authorization.Agent, error) {
+		return &authorization.Agent{Identifier: identifier}, nil
+	}
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
 	api.DepositResourceHandler = NewDepositResource(database, stream, depositValidator(database), identifierService)
 	api.UpdateResourceHandler = NewUpdateResource(database, stream, updateValidator(database))

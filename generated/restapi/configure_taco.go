@@ -11,12 +11,13 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 	graceful "github.com/tylerb/graceful"
 
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../generated --name  --spec ../swagger.json --exclude-main
+//go:generate swagger generate server --target ../generated --name  --spec ../swagger.json --principal authorization.Agent --exclude-main
 
 func configureFlags(api *operations.TacoAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -38,22 +39,33 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Applies when the "On-Behalf-Of" header is set
+	api.RemoteUserAuth = func(token string) (*authorization.Agent, error) {
+		return nil, errors.NotImplemented("api key auth (RemoteUser) On-Behalf-Of from header param [On-Behalf-Of] has not yet been implemented")
+	}
+
+	// Set your custom authorizer if needed. Default one is security.Authorized()
+	// Expected interface runtime.Authorizer
+	//
+	// Example:
+	// api.APIAuthorizer = security.Authorized()
+
 	api.DeleteResourceHandler = operations.DeleteResourceHandlerFunc(func(params operations.DeleteResourceParams) middleware.Responder {
 		return middleware.NotImplemented("operation .DeleteResource has not yet been implemented")
 	})
-	api.DepositFileHandler = operations.DepositFileHandlerFunc(func(params operations.DepositFileParams) middleware.Responder {
+	api.DepositFileHandler = operations.DepositFileHandlerFunc(func(params operations.DepositFileParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .DepositFile has not yet been implemented")
 	})
-	api.DepositResourceHandler = operations.DepositResourceHandlerFunc(func(params operations.DepositResourceParams) middleware.Responder {
+	api.DepositResourceHandler = operations.DepositResourceHandlerFunc(func(params operations.DepositResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .DepositResource has not yet been implemented")
 	})
-	api.GetProcessStatusHandler = operations.GetProcessStatusHandlerFunc(func(params operations.GetProcessStatusParams) middleware.Responder {
+	api.GetProcessStatusHandler = operations.GetProcessStatusHandlerFunc(func(params operations.GetProcessStatusParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .GetProcessStatus has not yet been implemented")
 	})
 	api.HealthCheckHandler = operations.HealthCheckHandlerFunc(func(params operations.HealthCheckParams) middleware.Responder {
 		return middleware.NotImplemented("operation .HealthCheck has not yet been implemented")
 	})
-	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams) middleware.Responder {
+	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .RetrieveResource has not yet been implemented")
 	})
 	api.UpdateResourceHandler = operations.UpdateResourceHandlerFunc(func(params operations.UpdateResourceParams) middleware.Responder {

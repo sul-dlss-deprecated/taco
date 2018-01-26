@@ -12,11 +12,21 @@
   "host": "sdr.dlss.stanford.edu",
   "basePath": "/v1",
   "schemes": ["http"],
+  "securityDefinitions" : {
+    "RemoteUser" : {
+     "type": "apiKey",
+     "in" : "header",
+     "name" : "On-Behalf-Of"
+    }
+  },
   "paths": {
     "/resource": {
       "post": {
         "summary": "Deposit New TACO Resource.",
         "description": "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "depositResource",
         "consumes": ["application/json", "application/json+ld"],
         "produces": ["application/json"],
@@ -58,6 +68,9 @@
       "get": {
         "summary": "Retrieve TACO Resource Metadata.",
         "description": "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "retrieveResource",
         "produces": ["application/json"],
         "parameters": [{
@@ -168,6 +181,9 @@
       "post": {
         "summary": "Deposit New File (binary).",
         "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "depositFile",
         "consumes": ["multipart/form-data"],
         "produces": ["application/json"],
@@ -201,6 +217,9 @@
       "get": {
         "summary": "Resource Processing Status.",
         "description": "Get the processing status and history for a resource.",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "getProcessStatus",
         "produces": ["application/json"],
         "parameters": [{

@@ -9,19 +9,20 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 )
 
 // GetProcessStatusHandlerFunc turns a function with the right signature into a get process status handler
-type GetProcessStatusHandlerFunc func(GetProcessStatusParams) middleware.Responder
+type GetProcessStatusHandlerFunc func(GetProcessStatusParams, *authorization.Agent) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetProcessStatusHandlerFunc) Handle(params GetProcessStatusParams) middleware.Responder {
-	return fn(params)
+func (fn GetProcessStatusHandlerFunc) Handle(params GetProcessStatusParams, principal *authorization.Agent) middleware.Responder {
+	return fn(params, principal)
 }
 
 // GetProcessStatusHandler interface for that can handle valid get process status params
 type GetProcessStatusHandler interface {
-	Handle(GetProcessStatusParams) middleware.Responder
+	Handle(GetProcessStatusParams, *authorization.Agent) middleware.Responder
 }
 
 // NewGetProcessStatus creates a new http.Handler for the get process status operation
@@ -48,12 +49,25 @@ func (o *GetProcessStatus) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewGetProcessStatusParams()
 
+	uprinc, aCtx, err := o.Context.Authorize(r, route)
+	if err != nil {
+		o.Context.Respond(rw, r, route.Produces, route, err)
+		return
+	}
+	if aCtx != nil {
+		r = aCtx
+	}
+	var principal *authorization.Agent
+	if uprinc != nil {
+		principal = uprinc.(*authorization.Agent) // this is really a authorization.Agent, I promise
+	}
+
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := o.Handler.Handle(Params, principal) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

@@ -29,6 +29,9 @@ func TestCreateResourceHappyPath(t *testing.T) {
 	stream := NewMockStream("")
 
 	r.POST("/v1/resource").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
 		SetJSON(postData()).
 		Run(handler(repo, stream, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -42,11 +45,42 @@ func TestCreateResourceHappyPath(t *testing.T) {
 			})
 }
 
-func TestCreateResourceMissingSourceId(t *testing.T) {
+func TestCreateResourceNoApiKey(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetJSON(gofight.D{
+			"id":       "oo000oo0001",
+			"sourceId": "bib12345678",
+			"title":    "My work",
+		}).
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnauthorized, r.Code)
+			})
+}
+
+func TestCreateResourceNoPermissions(t *testing.T) {
+	r := gofight.New()
+	r.POST("/v1/resource").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
+		}).
+		SetJSON(postData()).
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnauthorized, r.Code)
+			})
+}
+
+func TestCreateResourceMissingSourceId(t *testing.T) {
+	r := gofight.New()
+	r.POST("/v1/resource").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
+		SetJSON(gofight.D{
 			"id":    "oo000oo0001",
+			"@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
 			"title": "My work",
 		}).
 		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
@@ -58,6 +92,9 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 func TestCreateInvalidResource(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
 		SetJSON(gofight.D{
 			"id":       "oo000oo0001",
 			"@context": "http://example.com", // This is not a valid context
@@ -79,6 +116,9 @@ func TestCreateResourceFailure(t *testing.T) {
 	assert.Panics(t,
 		func() {
 			r.POST("/v1/resource").
+				SetHeader(gofight.H{
+					"On-Behalf-Of": "lmcrae@stanford.edu",
+				}).
 				SetJSON(postData()).
 				Run(handler(NewMockErrorDatabase(), NewMockStream(""), nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})

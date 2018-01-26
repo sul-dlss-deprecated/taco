@@ -78,7 +78,9 @@ $ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
 
 Then you can interact with it using `curl`:
 ```shell
-$ curl -H "Content-Type: application/json" -d@examples/request.json http://localhost:8080/v1/resource
+$ curl -H "Content-Type: application/json" \
+ -H "On-Behalf-Of: lmcrae@stanford.edu" \
+ -d@examples/request.json http://localhost:8080/v1/resource
 ```
 
 it will return a response like:
@@ -89,18 +91,22 @@ it will return a response like:
 Then you can use the returned identifier to retrieve the original:
 
 ```shell
-$ curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+$ curl -H "Content-Type: application/json" \
+ -H "On-Behalf-Of: lmcrae@stanford.edu" \
+ http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 You can then update the resource with a **PATCH** request:
 ```shell
-$ curl -X PATCH -H "Content-Type: application/json" -d@examples/update_request.json http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+$ curl -X PATCH -H "Content-Type: application/json" \ -d@examples/update_request.json \
+-H "On-Behalf-Of: lmcrae@stanford.edu" \ http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 Create an uploaded file by doing:
 
 ```shell
-$ curl -F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
+$ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
+-F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
 ```
 
 ## Testing
@@ -138,7 +144,7 @@ There appears to be no best way to handle specification-based re-generation of t
 ```shell
 $ git rm -rf generated/
 $ mkdir generated
-$ swagger generate server -t generated --exclude-main
+$ swagger generate server -t generated --exclude-main --principal authorization.Agent
 ```
 
 ### To generate the validator ```

@@ -51,7 +51,7 @@ func TestCreateResource(t *testing.T) {
 	}
 
 	setupTest().Post("/v1/resource").
-		SetHeader("Foo", "Bar").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		JSON(postData).
 		Expect(t).
 		Status(201).
@@ -61,6 +61,7 @@ func TestCreateResource(t *testing.T) {
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").
@@ -83,7 +84,7 @@ func TestUpdateResource(t *testing.T) {
 	}
 
 	setupTest().Post("/v1/resource").
-		SetHeader("Foo", "Bar").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		JSON(postData).
 		Expect(t).
 		Status(201).
@@ -104,6 +105,7 @@ func TestUpdateResource(t *testing.T) {
 	}
 
 	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		SetHeader("Content-Type", "application/json").
 		JSON(patchData).
 		Expect(t).
@@ -114,6 +116,7 @@ func TestUpdateResource(t *testing.T) {
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").
@@ -129,7 +132,7 @@ func TestCreateFile(t *testing.T) {
 	file := multipart.FormFile{Name: "upload", Reader: strings.NewReader("data")}
 	files := []multipart.FormFile{file}
 	setupTest().Post("/v1/file").
-		SetHeader("Foo", "Bar").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Files(files).
 		Expect(t).
 		Status(201).
@@ -139,6 +142,7 @@ func TestCreateFile(t *testing.T) {
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").

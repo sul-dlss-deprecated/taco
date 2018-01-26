@@ -25,6 +25,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 
 	r.POST(filePath).
 		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
@@ -43,6 +44,7 @@ func TestCreateFileWrongContentType(t *testing.T) {
 	r := gofight.New()
 	r.POST(filePath).
 		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
 			"Content-Type": "application/xml",
 		}).
 		SetBody(``).
@@ -66,6 +68,33 @@ func TestCreateFileWrongContentType(t *testing.T) {
 // 			})
 // }
 
+func TestCreateFileNoApiKey(t *testing.T) {
+	r := gofight.New()
+	r.POST(filePath).
+		SetHeader(gofight.H{
+			"Content-Type": contentType,
+		}).
+		SetBody(body).
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnauthorized, r.Code)
+			})
+}
+
+func TestCreateFileNoPermissions(t *testing.T) {
+	r := gofight.New()
+	r.POST(filePath).
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae
+			"Content-Type": contentType,
+		}).
+		SetBody(body).
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnauthorized, r.Code)
+			})
+}
+
 func TestCreateFileFailure(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(nil)
@@ -74,6 +103,7 @@ func TestCreateFileFailure(t *testing.T) {
 		func() {
 			r.POST(filePath).
 				SetHeader(gofight.H{
+					"On-Behalf-Of": "lmcrae@stanford.edu",
 					"Content-Type": contentType,
 				}).
 				SetBody(body).
@@ -90,6 +120,7 @@ func TestCreateFileResourceFailure(t *testing.T) {
 
 			r.POST(filePath).
 				SetHeader(gofight.H{
+					"On-Behalf-Of": "lmcrae@stanford.edu",
 					"Content-Type": contentType,
 				}).
 				SetBody(body).

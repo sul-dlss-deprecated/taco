@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
@@ -17,13 +20,19 @@ type retrieveResource struct {
 }
 
 // Handle the retrieve resource request
-func (d *retrieveResource) Handle(params operations.RetrieveResourceParams) middleware.Responder {
+func (d *retrieveResource) Handle(params operations.RetrieveResourceParams, agent *authorization.Agent) middleware.Responder {
 	resource, err := d.database.Read(params.ID)
 	if err != nil {
 		if err.Error() == "not found" {
 			return operations.NewRetrieveResourceNotFound()
 		}
 		panic(err)
+	}
+
+	authService := authorization.NewService(agent)
+	if !authService.CanRetrieveResource(resource) {
+		log.Printf("Agent %s is not permitted to retrieve this resource %s", agent, params.ID)
+		return operations.NewDepositResourceUnauthorized()
 	}
 
 	return operations.NewRetrieveResourceOK().WithPayload(resource.JSON)
