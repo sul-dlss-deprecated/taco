@@ -10,7 +10,7 @@ import (
 
 // Init is an exported method that takes the environment starts the viper
 // (external lib) and returns the configuration struct.
-func Init(cfgFile string) {
+func Init(cfgFile string) *viper.Viper {
 	if cfgFile != "" { // enable ability to specify config file via flag
 		viper.SetConfigFile(cfgFile)
 	} else {
@@ -25,6 +25,7 @@ func Init(cfgFile string) {
 	} else {
 		log.Printf("Error no config file: %s", err)
 	}
+	return viper.GetViper()
 }
 
 func relativePath(basedir string, path *string) {
