@@ -17,6 +17,9 @@ func TestDeleteResourceHappyPath(t *testing.T) {
 		WithType(datautils.ObjectTypes[0])
 	repo := NewMockDatabase(resource)
 	r.DELETE("/v1/resource/oo000oo0001").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNoContent, r.Code)
@@ -53,7 +56,31 @@ func TestDeleteResourceFailure(t *testing.T) {
 	assert.Panics(t,
 		func() {
 			r.DELETE("/v1/resource/oo000oo0001").
+				SetHeader(gofight.H{
+					"On-Behalf-Of": "lmcrae@stanford.edu",
+				}).
 				Run(handler(repo, nil, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
+}
+
+func TestDeleteResourceNoApiKey(t *testing.T) {
+	r := gofight.New()
+	r.DELETE("/v1/resource/oo000oo0001").
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnauthorized, r.Code)
+			})
+}
+
+func TestDeleteResourceNoPermissions(t *testing.T) {
+	r := gofight.New()
+	r.DELETE("/v1/resource/oo000oo0001").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
+		}).
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnauthorized, r.Code)
+			})
 }

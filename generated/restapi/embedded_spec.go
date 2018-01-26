@@ -254,6 +254,11 @@ func init() {
         ],
         "summary": "Delete a TACO Resource.",
         "operationId": "deleteResource",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "type": "string",

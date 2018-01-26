@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -14,13 +15,18 @@ import (
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(database db.Database, validator validators.ResourceValidator) operations.UpdateResourceHandler {
-	return &updateResourceEntry{database: database, validator: validator}
+func NewUpdateResource(database db.Database, validator validators.ResourceValidator, authService authorization.Service) operations.UpdateResourceHandler {
+	return &updateResourceEntry{
+		database:    database,
+		validator:   validator,
+		authService: authService,
+	}
 }
 
 type updateResourceEntry struct {
-	database  db.Database
-	validator validators.ResourceValidator
+	database    db.Database
+	validator   validators.ResourceValidator
+	authService authorization.Service
 }
 
 // Handle the update resource request

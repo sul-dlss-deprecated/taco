@@ -14,17 +14,17 @@ import (
 )
 
 // BuildAPI create new service API
-func BuildAPI(database db.Database, storage storage.Storage, identifierService identifier.Service) *operations.TacoAPI {
+func BuildAPI(database db.Database, storage storage.Storage, identifierService identifier.Service, authService authorization.Service) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RemoteUserAuth = func(identifier string) (*authorization.Agent, error) {
 		return &authorization.Agent{Identifier: identifier}, nil
 	}
-	api.RetrieveResourceHandler = NewRetrieveResource(database)
-	api.DeleteResourceHandler = NewDeleteResource(database, storage)
-	api.RetrieveFileHandler = NewRetrieveFile(database, storage)
-	api.DepositResourceHandler = NewDepositResource(database, depositResourceValidator(database), identifierService)
-	api.UpdateResourceHandler = NewUpdateResource(database, updateResourceValidator(database))
-	api.DepositFileHandler = NewDepositFile(database, storage, depositFileValidator(database), identifierService)
+	api.RetrieveResourceHandler = NewRetrieveResource(database, authService)
+	api.DeleteResourceHandler = NewDeleteResource(database, storage, authService)
+	api.RetrieveFileHandler = NewRetrieveFile(database, storage, authService)
+	api.DepositResourceHandler = NewDepositResource(database, depositResourceValidator(database), identifierService, authService)
+	api.UpdateResourceHandler = NewUpdateResource(database, updateResourceValidator(database), authService)
+	api.DepositFileHandler = NewDepositFile(database, storage, depositFileValidator(database), identifierService, authService)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api
 }

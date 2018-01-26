@@ -157,6 +157,9 @@
       "delete": {
         "summary": "Delete a TACO Resource.",
         "description": "Deletes a TACO resource (Collection, Digital Repository Object, File resource (metadata) and File binary, or subclass of those).",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "deleteResource",
         "produces": ["application/json"],
         "parameters": [{
