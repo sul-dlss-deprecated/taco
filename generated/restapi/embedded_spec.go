@@ -32,6 +32,11 @@ func init() {
   "paths": {
     "/file": {
       "post": {
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
         "consumes": [
           "multipart/form-data"
@@ -92,6 +97,11 @@ func init() {
     },
     "/resource": {
       "post": {
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "description": "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
         "consumes": [
           "application/json",
@@ -140,6 +150,11 @@ func init() {
     },
     "/resource/{ID}": {
       "get": {
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "description": "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
         "produces": [
           "application/json"
@@ -266,6 +281,11 @@ func init() {
     },
     "/status/{ID}": {
       "get": {
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "description": "Get the processing status and history for a resource.",
         "produces": [
           "application/json"
@@ -366,6 +386,13 @@ func init() {
     },
     "ResourceResponse": {
       "type": "object"
+    }
+  },
+  "securityDefinitions": {
+    "RemoteUser": {
+      "type": "apiKey",
+      "name": "On-Behalf-Of",
+      "in": "header"
     }
   }
 }`))

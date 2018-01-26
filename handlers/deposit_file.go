@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
@@ -28,7 +29,13 @@ type depositFileEntry struct {
 }
 
 // Handle the deposit file request
-func (d *depositFileEntry) Handle(params operations.DepositFileParams) middleware.Responder {
+func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *authorization.Agent) middleware.Responder {
+	authService := authorization.NewService(agent)
+	if !authService.CanCreateResourceOfType(datautils.FileType) {
+		log.Printf("Agent %s is not permitted to create a resource of type %s", agent, datautils.FileType)
+		return operations.NewDepositResourceUnauthorized()
+	}
+
 	validator := validators.NewDepositFileValidator(d.database)
 	if err := validator.ValidateResource(params.Upload.Header); err != nil {
 		return operations.NewDepositFileInternalServerError() // TODO: need a better error
