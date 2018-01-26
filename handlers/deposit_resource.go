@@ -22,6 +22,6 @@ func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams
 	// TODO: This should be a DRUID
 	resourceID, _ := uuid.NewRandom()
 
-	response := &models.DepositNewResourceOKBody{RequestID: requestID.String(), State: "deposited", ID: resourceID.String()}
+	response := &models.Resource{RequestID: requestID.String(), ID: resourceID.String()}
 	return operations.NewDepositNewResourceOK().WithPayload(response)
 }
