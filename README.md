@@ -75,7 +75,7 @@ If you are running locally, we are stubbing out AWS services using the library `
 
 First start up DynamoDB locally via localstack:
 ```shell
-$ SERVICES=dynamodb localstack start
+$ SERVICES=dynamodb,kinesis localstack start
 ```
 
 Then create the table:

@@ -11,8 +11,7 @@ import (
 var db *dynamodb.DynamoDB
 
 // NewConnection creates a new connection to Dynamo using our config
-func NewConnection() *dynamodb.DynamoDB {
-	config := config.NewConfig()
+func NewConnection(config *config.Config) *dynamodb.DynamoDB {
 	return dynamodb.New(session.New(&aws.Config{
 		Region:      aws.String(config.AWSRegion),
 		Credentials: credentials.NewEnvCredentials(),

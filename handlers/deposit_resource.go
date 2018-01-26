@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -22,13 +23,14 @@ type depositResourceEntry struct {
 
 // Handle the delete entry request
 func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams) middleware.Responder {
-
-	resourceID := mintID()
+	resourceID, _ := d.mintIdentifier()
 
 	if err := d.persistResource(resourceID, params); err != nil {
 		// TODO: handle this with an error response
 		panic(err)
 	}
+
+	d.addToStream(&resourceID)
 
 	response := &models.ResourceResponse{ID: resourceID}
 	return operations.NewDepositNewResourceCreated().WithPayload(response)
@@ -52,8 +54,22 @@ func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, 
 	return resource
 }
 
-func mintID() string {
-	// TODO: This should be a DRUID
-	resourceID, _ := uuid.NewRandom()
-	return resourceID.String()
+// TODO: This should be a call to a DRUID service
+func (d *depositResourceEntry) mintIdentifier() (string, error) {
+	resourceID, err := uuid.NewRandom()
+	if err != nil {
+		return "", err
+	}
+	return resourceID.String(), nil
+}
+
+func (d *depositResourceEntry) addToStream(id *string) error {
+	message, err := json.Marshal(id)
+	if err != nil {
+		return err
+	}
+	if err := d.rt.Stream().SendMessage(string(message)); err != nil {
+		return err
+	}
+	return nil
 }

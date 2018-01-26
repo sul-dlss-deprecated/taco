@@ -54,10 +54,11 @@
     "private/protocol/xml/xmlutil",
     "service/dynamodb",
     "service/dynamodb/dynamodbattribute",
+    "service/kinesis",
     "service/sts"
   ]
-  revision = "decd990ddc5dcdf2f73309cbcab90d06b996ca28"
-  version = "v1.12.67"
+  revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
+  version = "v1.12.70"
 
 [[projects]]
   branch = "master"
@@ -87,7 +88,7 @@
   branch = "master"
   name = "github.com/go-openapi/analysis"
   packages = ["."]
-  revision = "0db1e4cf47d6eb0fc6b25135868c3483cc6b066e"
+  revision = "f59a71f0ece6f9dfb438be7f45148f006cbad88e"
 
 [[projects]]
   branch = "master"
@@ -126,13 +127,13 @@
     "middleware/untyped",
     "security"
   ]
-  revision = "be1313bd8283bc82b48033942f0f3730eaef2d90"
+  revision = "09fac855d8504674b22594470227bd94e5005025"
 
 [[projects]]
   branch = "master"
   name = "github.com/go-openapi/spec"
   packages = ["."]
-  revision = "fa03337d7da5735229ee8f5e9d5d0b996014b7f8"
+  revision = "f3499b5df53897321d6f5e9c22cf19309d41d3bc"
 
 [[projects]]
   branch = "master"
@@ -150,7 +151,7 @@
   branch = "master"
   name = "github.com/go-openapi/validate"
   packages = ["."]
-  revision = "9b5947525af6a4843d2b9576e5943b9931ad535d"
+  revision = "9129a28e541438d6c5b03799f3e1d5287ea3fe5a"
 
 [[projects]]
   name = "github.com/google/uuid"
@@ -194,8 +195,8 @@
 [[projects]]
   name = "github.com/stretchr/testify"
   packages = ["assert"]
-  revision = "b91bfb9ebec76498946beb6af7c0230c7cc7ba6c"
-  version = "v1.2.0"
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
 
 [[projects]]
   name = "github.com/tylerb/graceful"
@@ -229,7 +230,7 @@
     "idna",
     "publicsuffix"
   ]
-  revision = "0ed95abb35c445290478a5348a7b38bb154135fd"
+  revision = "309822c5b9b9f80db67f016069a12628d94fad34"
 
 [[projects]]
   branch = "master"
@@ -300,6 +301,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "53dc09a05f7163a09dc1ff1740252076ed02bb0e6998b4386182ecce37144648"
+  inputs-digest = "1c674db7f87265fd2cfb52b7dc99593b5232d9847b5da0b90ba64663dcdd5f05"
   solver-name = "gps-cdcl"
   solver-version = 1
