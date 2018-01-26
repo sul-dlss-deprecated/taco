@@ -3,6 +3,12 @@ jobs:
   build_and_test:
     docker:
       - image: circleci/golang:latest
+      - image: localstack/localstack
+        environment:
+          DEBUG: 1
+          SERVICES: dynamodb
+          DATA_DIR: /tmp/localstack/data
+          working_directory: ~/workflows
     working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - checkout
@@ -12,8 +18,19 @@ jobs:
             go get -u github.com/golang/dep/cmd/dep
             dep ensure
       - run:
-          name: Run Tests
-          command: go test -v ./...
+          name: Run Unit Tests
+          command: go test -v ./... -short
+      - run:
+          name: Start server
+          command: go run cmd/tacod/main.go --port 3000
+          background: true
+      - run:
+          name: wait for server
+          command: sleep 5
+      - run:
+          name: Integration test
+          command: go test test/integration_test.go --port 3000
+
 
   register_image:
     docker:

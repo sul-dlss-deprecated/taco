@@ -266,10 +266,29 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/xeipuuv/gojsonpointer"
+  packages = ["."]
+  revision = "4e3ac2762d5f479393488629ee9370b50873b3a6"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/xeipuuv/gojsonreference"
+  packages = ["."]
+  revision = "bd5ef7bd5415a7ac448318e64f11a24cd21e594b"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/xeipuuv/gojsonschema"
+  packages = ["."]
+  revision = "70e59348c29403c606624cd201e79769d6657db8"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = [
     "context",
-    "idna"
+    "idna",
+    "publicsuffix"
   ]
   revision = "0ed95abb35c445290478a5348a7b38bb154135fd"
 
@@ -302,6 +321,35 @@
   revision = "e19ae1496984b1c655b8044a65c0300a3c878dd3"
 
 [[projects]]
+  name = "gopkg.in/h2non/baloo.v3"
+  packages = [
+    ".",
+    "assert"
+  ]
+  revision = "bcac7e061d45d1443121ab1868b8907c0d233f38"
+  version = "v3.0.0"
+
+[[projects]]
+  name = "gopkg.in/h2non/gentleman.v2"
+  packages = [
+    ".",
+    "context",
+    "middleware",
+    "mux",
+    "plugin",
+    "plugins/body",
+    "plugins/bodytype",
+    "plugins/cookies",
+    "plugins/headers",
+    "plugins/multipart",
+    "plugins/query",
+    "plugins/url",
+    "utils"
+  ]
+  revision = "e0f81be2f4064ea7aa7470e9daddd2dc8e8152c7"
+  version = "v2.0.3"
+
+[[projects]]
   branch = "v2"
   name = "gopkg.in/mgo.v2"
   packages = [
@@ -319,6 +367,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ca11bc42050e645cc1e4677e3742996ff0746613103814e95c6d78c113f5dae7"
+  inputs-digest = "01a208d37da5fccdcac4c00e6984aacdd81e31650c55d2b40e3cbd8260f9e07a"
   solver-name = "gps-cdcl"
   solver-version = 1
