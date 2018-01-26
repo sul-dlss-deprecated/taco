@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/go-openapi/loads"
-	"github.com/spf13/viper"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
@@ -24,9 +23,8 @@ func main() {
 	}
 
 	configFile := fmt.Sprintf("../../config/%s.yaml", mode)
-	config.Init(configFile)
 
-	rt, err := taco.NewRuntime(viper.GetViper())
+	rt, err := taco.NewRuntime(config.Init(configFile))
 	if err != nil {
 		log.Fatalln(err)
 	}

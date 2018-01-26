@@ -10,26 +10,27 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/config"
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/streaming"
 )
 
-func mockRepo(record *models.Resource) persistence.Repository {
+func mockRepo(record *persistence.Resource) persistence.Repository {
 	return &fakeRepository{record: record}
 }
 
 type fakeRepository struct {
-	record *models.Resource
+	record *persistence.Resource
 }
 
-func (f fakeRepository) GetByID(id string) (*models.Resource, error) {
+func (f fakeRepository) GetByID(id string) (*persistence.Resource, error) {
 
 	if f.record != nil {
 		return f.record, nil
 	}
 	return nil, errors.New("not found")
 }
+
+func (f fakeRepository) SaveItem(resource *persistence.Resource) {}
 
 func mockStream() streaming.Stream {
 	return &fakeStream{}
@@ -38,7 +39,9 @@ func mockStream() streaming.Stream {
 type fakeStream struct {
 }
 
-func (d fakeStream) SendMessage(message string) {}
+func (d fakeStream) SendMessage(message string)                      {}
+func (d fakeStream) GetIterator(shardID *string) *string             { return nil }
+func (d fakeStream) GetRecords(iterator *string) ([]string, *string) { return nil, nil }
 
 func setupFakeRuntime(repo persistence.Repository) http.Handler {
 	config.Init("../../config/test.yaml")
@@ -49,7 +52,7 @@ func setupFakeRuntime(repo persistence.Repository) http.Handler {
 func TestRetrieveHappyPath(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/resource/99").
-		Run(setupFakeRuntime(mockRepo(new(models.Resource))),
+		Run(setupFakeRuntime(mockRepo(new(persistence.Resource))),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 			})

@@ -12,6 +12,8 @@ import (
 // Stream the interface for streaming pipeline
 type Stream interface {
 	SendMessage(string)
+	GetIterator(shardID *string) *string
+	GetRecords(iterator *string) ([]string, *string)
 	// Do we want to expose these methods?
 	// createStream()
 	// waitUntilStreamExists()
@@ -20,6 +22,39 @@ type Stream interface {
 type kinesisStream struct {
 	streamName *string
 	connection *kinesis.Kinesis
+}
+
+func (d kinesisStream) GetRecords(iterator *string) ([]string, *string) {
+
+	// get records use shard iterator for making request
+	messages, err := d.connection.GetRecords(&kinesis.GetRecordsInput{
+		ShardIterator: iterator,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	records := make([]string, len(messages.Records))
+	for i, message := range messages.Records {
+		records[i] = string(message.Data)
+	}
+	return records, messages.NextShardIterator
+}
+
+func (d kinesisStream) GetIterator(shardID *string) *string {
+	// retrieve iterator
+	iteratorOutput, err := d.connection.GetShardIterator(&kinesis.GetShardIteratorInput{
+		// Shard Id is provided when making put record(s) request.
+		ShardId:           shardID,
+		ShardIteratorType: aws.String("TRIM_HORIZON"),
+		// ShardIteratorType: aws.String("AT_SEQUENCE_NUMBER"),
+		// ShardIteratorType: aws.String("LATEST"),
+		StreamName: d.streamName,
+	})
+	if err != nil {
+		panic(err)
+	}
+	return iteratorOutput.ShardIterator
 }
 
 // NewKinesisStream create a new kinesis stream
