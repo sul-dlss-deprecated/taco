@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "TACO, the Stanford Digital Repository (SDR) Management Layer interface",
-    "version" : "0.0.1",
+    "version" : "0.0.2",
     "title" : "taco",
     "license" : {
       "name" : "Apache 2.0",
