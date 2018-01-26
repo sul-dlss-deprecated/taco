@@ -13,7 +13,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
-	models "github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
 // NewDepositNewResourceParams creates a new DepositNewResourceParams object

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	models "github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
 // DepositNewResourceOKCode is the HTTP code returned for type DepositNewResourceOK

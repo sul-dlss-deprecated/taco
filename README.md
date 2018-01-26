@@ -93,6 +93,17 @@ The API code is generated from `swagger.yml` using `go-swagger` library. TBD: be
 $ swagger generate server -t generated --exclude-main
 ```
 
+#### ACHTUNG!
+We've seen problems with the swagger at the HEAD of github. So we've used this workaround:
+
+```shell
+cd $GOPATH/src/github.com/go-swagger/go-swagger/cmd/swagger
+git checkout 5ade92aa47f4b45e197e97b05f36e761fab9bbf0
+go install
+```
+
+Do this prior to generating code.
+
 ### To run the API code
 
 ```shell
