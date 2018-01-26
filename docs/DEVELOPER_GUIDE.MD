@@ -1,6 +1,6 @@
 # TACO Developer Guide
 
-## Adding Envirment Variables for Configuration
+## Adding Environment Variables for Configuration
 
 ```shell
 export YOUR_VAR='whatever'
@@ -11,35 +11,29 @@ export YOUR_VAR='whatever'
 1. Add to the config struct definition
 ```go
 type Config struct {
-    AWS_Region	string
-		DB_Endpoint string
-		Disable_SSL bool
-    Your_Var    string
+  AWSRegion          string
+	DynamodbEndpoint   string
+	DynamodbDisableSSL bool
+	KinesisEndpoint    string
+	KinesisDisableSSL  bool
+	ResourceTableName  string
+	DepositStreamName  string
+  YourVar            string
 }
 ```
 
-2. Load the config and default
-```go
-func your_var() string {
-	var yourvar string
-	yourvar = os.Getenv("YOUR_VAR")
-	if endpoint == "" {
-		yourvar = "Some Default Value"
-		log.Printf("YOUR_VAR: Using default [Some Default Value].")
-	}
-	log.Printf("YOUR_VAR: Found setting [%s]", yourvar)
-	return yourvar
-}
-```
-
-3. Load var into config struct
+2. Load var into config struct
 ```go
 func NewConfig() *Config {
-	return &Config{
-		AWS_Region: aws_region(),
-		DB_Endpoint: db_endpoint(),
-		Disable_SSL: disable_ssl(),
-    Your_Var: your_var(),
+  return &Config{
+		AWSRegion:          getString("AWS_REGION", "localstack"),
+		DynamodbEndpoint:   getString("DYNAMO_DB_ENDPOINT", "localhost:4569"),
+		DynamodbDisableSSL: getBool("DYNAMODB_DISABLE_SSL", true),
+		ResourceTableName:  getString("RESOURCE_TABLE_NAME", "resources"),
+		KinesisEndpoint:    getString("KINESIS_ENDPOINT", "localhost:4568"),
+		KinesisDisableSSL:  getBool("KINESIS_DISABLE_SSL", true),
+		DepositStreamName:  getString("DEPOSIT_STREAM_NAME", "deposit"),
+    YourVar:            getString("YOUR_VAR", "Some Default Value"),
 	}
 }
 ```

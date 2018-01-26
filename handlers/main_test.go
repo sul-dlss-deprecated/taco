@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"github.com/sul-dlss-labs/taco"
+	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/streaming"
 )
 
 func mockRepo(record *persistence.Resource) persistence.Repository {
@@ -30,8 +32,17 @@ func (f *fakeRepository) SaveItem(resource *persistence.Resource) error {
 	return nil
 }
 
+func mockStream() streaming.Stream {
+	return &fakeStream{}
+}
+
+type fakeStream struct {
+}
+
+func (d fakeStream) SendMessage(message string) error { return nil }
+
 func setupFakeRuntime(repo persistence.Repository) http.Handler {
-	rt, _ := taco.NewRuntimeForRepository(repo)
+	rt, _ := taco.NewRuntimeWithServices(config.NewConfig(), repo, mockStream())
 	return BuildAPI(rt).Serve(nil)
 }
 

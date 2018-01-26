@@ -10,6 +10,8 @@ type Config struct {
 	AWSRegion          string
 	DynamodbEndpoint   string
 	DynamodbDisableSSL bool
+	KinesisEndpoint    string
+	KinesisDisableSSL  bool
 	ResourceTableName  string
 	DepositStreamName  string
 }
@@ -22,6 +24,8 @@ func NewConfig() *Config {
 		DynamodbEndpoint:   getString("DYNAMO_DB_ENDPOINT", "localhost:4569"),
 		DynamodbDisableSSL: getBool("DYNAMODB_DISABLE_SSL", true),
 		ResourceTableName:  getString("RESOURCE_TABLE_NAME", "resources"),
+		KinesisEndpoint:    getString("KINESIS_ENDPOINT", "localhost:4568"),
+		KinesisDisableSSL:  getBool("KINESIS_DISABLE_SSL", true),
 		DepositStreamName:  getString("DEPOSIT_STREAM_NAME", "deposit"),
 	}
 }
