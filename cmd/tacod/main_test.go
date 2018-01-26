@@ -12,6 +12,7 @@ import (
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/streaming"
 )
 
 func mockRepo(record *models.Resource) persistence.Repository {
@@ -30,9 +31,18 @@ func (f fakeRepository) GetByID(id string) (*models.Resource, error) {
 	return nil, errors.New("not found")
 }
 
+func mockStream() streaming.Stream {
+	return &fakeStream{}
+}
+
+type fakeStream struct {
+}
+
+func (d fakeStream) SendMessage(message string) {}
+
 func setupFakeRuntime(repo persistence.Repository) http.Handler {
 	config.Init("../../config/test.yaml")
-	rt, _ := taco.NewRuntimeForRepository(viper.GetViper(), repo)
+	rt, _ := taco.NewRuntimeWithServices(viper.GetViper(), repo, mockStream())
 	return buildAPI(rt).Serve(nil)
 }
 

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/google/uuid"
 	"github.com/sul-dlss-labs/taco"
@@ -10,10 +12,12 @@ import (
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
 func NewDepositResource(rt *taco.Runtime) operations.DepositNewResourceHandler {
-	return &depositResourceEntry{}
+	return &depositResourceEntry{rt: rt}
 }
 
-type depositResourceEntry struct{}
+type depositResourceEntry struct {
+	rt *taco.Runtime
+}
 
 // Handle the delete entry request
 func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams) middleware.Responder {
@@ -21,7 +25,11 @@ func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams
 
 	// TODO: This should be a DRUID
 	resourceID, _ := uuid.NewRandom()
+	state := "deposited"
+	response := &models.DepositNewResourceOKBody{RequestID: requestID.String(), State: state, ID: resourceID.String()}
+	// TODO: We probably want a different struct for the kafka message. It must have the original parameters
+	message, _ := json.Marshal(response)
+	d.rt.Stream().SendMessage(string(message))
 
-	response := &models.DepositNewResourceOKBody{RequestID: requestID.String(), State: "deposited", ID: resourceID.String()}
 	return operations.NewDepositNewResourceOK().WithPayload(response)
 }

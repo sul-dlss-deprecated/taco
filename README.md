@@ -59,7 +59,7 @@ $ go test -v ./...
 
 First start up DynamoDB:
 ```shell
-$ SERVICES=dynamodb localstack start
+$ SERVICES=dynamodb,kinesis localstack start
 ```
 
 Then create the table:
@@ -109,6 +109,11 @@ Do this prior to generating code.
 ```shell
 $ go run main.go
 ```
+
+Then you can interact with it using `curl`:
+```shell
+ curl -X POST -H "Content-Type: application/json" -d '{"title":"value1", "sourceId":"value2"}' http://localhost:8080/v1/resource
+ ```
 
 ### Non-generated code
 

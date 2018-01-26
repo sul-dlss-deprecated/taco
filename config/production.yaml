@@ -2,3 +2,8 @@ db:
   region: "us-east-2"
   endpoint: "https://dynamodb.us-east-2.amazonaws.com"
   disable_ssl: false
+kinesis:
+  region: "localstack"
+  stream: "deposit"
+  endpoint: "localhost:4568"
+  disable_ssl: true

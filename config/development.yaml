@@ -2,3 +2,8 @@ db:
   region: "localstack"
   endpoint: "localhost:4569"
   disable_ssl: true
+kinesis:
+  region: "localstack"
+  stream: "deposit"
+  endpoint: "localhost:4568"
+  disable_ssl: true
