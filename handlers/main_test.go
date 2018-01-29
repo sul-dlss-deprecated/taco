@@ -4,9 +4,10 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-openapi/runtime"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
 )
 
@@ -41,8 +42,49 @@ type fakeStream struct {
 
 func (d fakeStream) SendMessage(message string) error { return nil }
 
-func setupFakeRuntime(repo persistence.Repository) http.Handler {
-	rt, _ := taco.NewRuntimeWithServices(config.NewConfig(), repo, mockStream())
+func mockStorage() storage.Storage {
+	return &fakeStorage{CreatedFiles: []runtime.File{}}
+}
+
+type fakeStorage struct {
+	CreatedFiles []runtime.File
+}
+
+func (f *fakeStorage) UploadFile(id string, file runtime.File) (*string, error) {
+	f.CreatedFiles = append(f.CreatedFiles, file)
+	path := "s3FileLocation"
+	return &path, nil
+}
+
+func setupFakeRuntime() *TestEnv {
+	return &TestEnv{}
+}
+
+type TestEnv struct {
+	storage storage.Storage
+	repo    persistence.Repository
+}
+
+func (d *TestEnv) WithRepository(repo persistence.Repository) *TestEnv {
+	d.repo = repo
+	return d
+}
+
+func (d *TestEnv) WithStorage(storage storage.Storage) *TestEnv {
+	d.storage = storage
+	return d
+}
+
+func (d *TestEnv) Handler() http.Handler {
+	if d.repo == nil {
+		d.repo = mockRepo(nil)
+	}
+
+	if d.storage == nil {
+		d.storage = &fakeStorage{}
+	}
+
+	rt, _ := taco.NewRuntimeWithServices(nil, d.repo, d.storage, mockStream())
 	return BuildAPI(rt).Serve(nil)
 }
 
@@ -58,4 +100,14 @@ func (f *fakeErroringRepository) GetByID(id string) (*persistence.Resource, erro
 
 func (f *fakeErroringRepository) SaveItem(resource *persistence.Resource) error {
 	return errors.New("broken")
+}
+
+func mockErrorStorage() storage.Storage {
+	return &fakeErroringStorage{}
+}
+
+type fakeErroringStorage struct{}
+
+func (f *fakeErroringStorage) UploadFile(id string, file runtime.File) (*string, error) {
+	return nil, errors.New("broken")
 }

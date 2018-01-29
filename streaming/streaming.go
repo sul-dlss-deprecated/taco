@@ -20,7 +20,7 @@ type kinesisStream struct {
 }
 
 // NewKinesisStream create a new kinesis stream
-func NewKinesisStream(config *config.Config) (Stream, error) {
+func NewKinesisStream(config *config.Config) Stream {
 	s := session.New(&aws.Config{Region: aws.String(config.AWSRegion),
 		Endpoint:   aws.String(config.KinesisEndpoint),
 		DisableSSL: aws.Bool(config.KinesisDisableSSL)})
@@ -29,7 +29,7 @@ func NewKinesisStream(config *config.Config) (Stream, error) {
 
 	streamName := aws.String(config.DepositStreamName)
 
-	return &kinesisStream{streamName: streamName, connection: kc}, nil
+	return &kinesisStream{streamName: streamName, connection: kc}
 }
 
 func (d kinesisStream) SendMessage(message string) error {

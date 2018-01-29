@@ -11,8 +11,9 @@ import (
 
 func TestRetrieveHappyPath(t *testing.T) {
 	r := gofight.New()
+	repo := mockRepo(new(persistence.Resource))
 	r.GET("/v1/resource/99").
-		Run(setupFakeRuntime(mockRepo(new(persistence.Resource))),
+		Run(setupFakeRuntime().WithRepository(repo).Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 			})
@@ -21,7 +22,7 @@ func TestRetrieveHappyPath(t *testing.T) {
 func TestRetrieveNotFound(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/resource/100").
-		Run(setupFakeRuntime(mockRepo(nil)),
+		Run(setupFakeRuntime().Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})

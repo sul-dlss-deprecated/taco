@@ -22,7 +22,7 @@ func TestCreateResourceHappyPath(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(setupFakeRuntime(repo),
+		Run(setupFakeRuntime().WithRepository(repo).Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(repo.(*fakeRepository).CreatedResources))
@@ -37,7 +37,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			"id":    "oo000oo0001",
 			"title": "My work",
 		}).
-		Run(setupFakeRuntime(mockRepo(nil)),
+		Run(setupFakeRuntime().Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})

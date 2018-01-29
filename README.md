@@ -73,9 +73,9 @@ $ go test test/integration_test.go --port 8080
 ## Running the TACO Binary
 If you are running locally, we are stubbing out AWS services using the library `localstack`. See more information on installing `localstack` here: https://github.com/localstack/localstack#installing.
 
-First start up DynamoDB locally via localstack:
+First start up DynamoDB, Kinesis and S3 locally via localstack:
 ```shell
-$ SERVICES=dynamodb,kinesis localstack start
+$ SERVICES=dynamodb,kinesis,s3 localstack start
 ```
 
 Then create the table:
@@ -84,6 +84,16 @@ $ awslocal dynamodb create-table --table-name resources \
   --attribute-definitions "AttributeName=id,AttributeType=S" \
   --key-schema "AttributeName=id,KeyType=HASH" \
   --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
+```
+
+Next create the S3 bucket:
+```shell
+$ awslocal s3api create-bucket --bucket taco-deposited-files
+```
+
+Then create the Kinesis stream:
+```shell
+$ awslocal kinesis create-stream --stream-name deposit --shard-count 3
 ```
 
 Now start the API server (passing in API keys; these can be fake and are only required for localstack):
@@ -105,6 +115,12 @@ Then you can use the returned identifier to retrieve the original:
 
 ```shell
 $ curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+```
+
+Create an uploaded file by doing:
+
+```shell
+$ curl -F upFile=@localfilename http://localhost:8080/v1/file
 ```
 
 ## API Code Structure
