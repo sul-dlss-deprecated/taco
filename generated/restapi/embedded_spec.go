@@ -25,7 +25,7 @@ func init() {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "version": "0.0.1"
+    "version": "0.0.2"
   },
   "host": "sdr.dlss.stanford.edu",
   "basePath": "/v1",
@@ -85,21 +85,7 @@ func init() {
           "200": {
             "description": "Success response",
             "schema": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "example": "oo000oo0001"
-                },
-                "request_id": {
-                  "type": "string",
-                  "example": "0a72c00a-1332-4730-b19c-9131c3bcb57f"
-                },
-                "state": {
-                  "type": "string",
-                  "example": "in progress"
-                }
-              }
+              "$ref": "#/definitions/Resource"
             }
           },
           "405": {
@@ -214,6 +200,10 @@ func init() {
         "id": {
           "type": "string",
           "example": "oo000oo0001"
+        },
+        "request_id": {
+          "type": "string",
+          "example": "0a72c00a-1332-4730-b19c-9131c3bcb57f"
         },
         "sourceId": {
           "type": "string",

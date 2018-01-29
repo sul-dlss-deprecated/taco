@@ -20,6 +20,9 @@ type Resource struct {
 	// id
 	ID string `json:"id,omitempty"`
 
+	// request id
+	RequestID string `json:"request_id,omitempty"`
+
 	// source Id
 	// Required: true
 	SourceID *string `json:"sourceId"`

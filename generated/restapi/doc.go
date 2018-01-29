@@ -9,7 +9,7 @@ TACO, the Stanford Digital Repository (SDR) Management Layer interface
       http
     Host: sdr.dlss.stanford.edu
     BasePath: /v1
-    Version: 0.0.1
+    Version: 0.0.2
     License: Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 
     Consumes:

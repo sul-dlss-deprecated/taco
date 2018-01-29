@@ -25,7 +25,7 @@ type DepositNewResourceOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.DepositNewResourceOKBody `json:"body,omitempty"`
+	Payload *models.Resource `json:"body,omitempty"`
 }
 
 // NewDepositNewResourceOK creates DepositNewResourceOK with default headers values
@@ -34,13 +34,13 @@ func NewDepositNewResourceOK() *DepositNewResourceOK {
 }
 
 // WithPayload adds the payload to the deposit new resource o k response
-func (o *DepositNewResourceOK) WithPayload(payload *models.DepositNewResourceOKBody) *DepositNewResourceOK {
+func (o *DepositNewResourceOK) WithPayload(payload *models.Resource) *DepositNewResourceOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the deposit new resource o k response
-func (o *DepositNewResourceOK) SetPayload(payload *models.DepositNewResourceOKBody) {
+func (o *DepositNewResourceOK) SetPayload(payload *models.Resource) {
 	o.Payload = payload
 }
 
