@@ -2,3 +2,5 @@ db:
   region: "us-east-2"
   endpoint: "https://dynamodb.us-east-2.amazonaws.com"
   disable_ssl: false
+resource_repository:
+  table_name: "resources"
