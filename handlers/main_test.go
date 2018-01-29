@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"errors"
@@ -31,9 +31,9 @@ func (f fakeRepository) GetByID(id string) (*models.Resource, error) {
 }
 
 func setupFakeRuntime(repo persistence.Repository) http.Handler {
-	config.Init("../../config/test.yaml")
+	config.Init("../config/test.yaml")
 	rt, _ := taco.NewRuntimeForRepository(viper.GetViper(), repo)
-	return buildAPI(rt).Serve(nil)
+	return BuildAPI(rt).Serve(nil)
 }
 
 func TestRetrieveHappyPath(t *testing.T) {

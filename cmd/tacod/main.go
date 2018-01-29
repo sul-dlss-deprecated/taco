@@ -6,12 +6,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/go-openapi/loads"
 	"github.com/spf13/viper"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
-	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/handlers"
 )
 
@@ -39,7 +37,7 @@ func main() {
 }
 
 func createServer(rt *taco.Runtime) *restapi.Server {
-	server := restapi.NewServer(buildAPI(rt))
+	server := restapi.NewServer(handlers.BuildAPI(rt))
 	defer server.Shutdown()
 
 	// parse flags
@@ -47,21 +45,4 @@ func createServer(rt *taco.Runtime) *restapi.Server {
 	// set the port this service will be run on
 	server.Port = *portFlag
 	return server
-}
-
-// create new service API
-func buildAPI(rt *taco.Runtime) *operations.TacoAPI {
-	api := operations.NewTacoAPI(swaggerSpec())
-	api.RetrieveResourceHandler = handlers.NewRetrieveResource(rt)
-	api.DepositNewResourceHandler = handlers.NewDepositResource(rt)
-	return api
-}
-
-func swaggerSpec() *loads.Document {
-	// load embedded swagger file
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return swaggerSpec
 }
