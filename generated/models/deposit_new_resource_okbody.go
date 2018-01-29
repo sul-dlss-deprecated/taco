@@ -18,12 +18,6 @@ type DepositNewResourceOKBody struct {
 
 	// id
 	ID string `json:"id,omitempty"`
-
-	// request id
-	RequestID string `json:"request_id,omitempty"`
-
-	// state
-	State string `json:"state,omitempty"`
 }
 
 // Validate validates this deposit new resource o k body

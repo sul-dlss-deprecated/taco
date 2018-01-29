@@ -17,11 +17,9 @@ type depositResourceEntry struct{}
 
 // Handle the delete entry request
 func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams) middleware.Responder {
-	requestID, _ := uuid.NewRandom()
-
 	// TODO: This should be a DRUID
 	resourceID, _ := uuid.NewRandom()
 
-	response := &models.DepositNewResourceOKBody{RequestID: requestID.String(), State: "deposited", ID: resourceID.String()}
+	response := &models.DepositNewResourceOKBody{ID: resourceID.String()}
 	return operations.NewDepositNewResourceOK().WithPayload(response)
 }

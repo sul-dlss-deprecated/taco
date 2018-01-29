@@ -9,7 +9,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
-// create new service API
+// BuildAPI create new service API
 func BuildAPI(rt *taco.Runtime) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RetrieveResourceHandler = NewRetrieveResource(rt)
