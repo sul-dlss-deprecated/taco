@@ -51,10 +51,14 @@
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
+    "private/protocol/restxml",
     "private/protocol/xml/xmlutil",
     "service/dynamodb",
     "service/dynamodb/dynamodbattribute",
     "service/kinesis",
+    "service/s3",
+    "service/s3/s3iface",
+    "service/s3/s3manager",
     "service/sts"
   ]
   revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
@@ -151,7 +155,7 @@
   branch = "master"
   name = "github.com/go-openapi/validate"
   packages = ["."]
-  revision = "9129a28e541438d6c5b03799f3e1d5287ea3fe5a"
+  revision = "2a09d726370ca256a065c34ba0def99564d620dc"
 
 [[projects]]
   name = "github.com/google/uuid"
@@ -230,7 +234,7 @@
     "idna",
     "publicsuffix"
   ]
-  revision = "309822c5b9b9f80db67f016069a12628d94fad34"
+  revision = "2fb46b16b8dda405028c50f7c7f0f9dd1fa6bfb1"
 
 [[projects]]
   branch = "master"
@@ -301,6 +305,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1c674db7f87265fd2cfb52b7dc99593b5232d9847b5da0b90ba64663dcdd5f05"
+  inputs-digest = "bc209a8965deb42b08b8d31870657523bc9909fd3ba1de12f0592983b59a604f"
   solver-name = "gps-cdcl"
   solver-version = 1

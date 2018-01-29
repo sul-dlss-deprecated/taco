@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/buger/jsonparser"
 	baloo "gopkg.in/h2non/baloo.v3"
+	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
 var port string
@@ -38,7 +40,7 @@ const createSchema = `{
 
 var id string
 
-func TestBalooSimple(t *testing.T) {
+func TestCreateResource(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
@@ -60,7 +62,31 @@ func TestBalooSimple(t *testing.T) {
 		Status(201).
 		Type("json").
 		JSONSchema(createSchema).
-		AssertFunc(assert).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		Expect(t).
+		Status(200).
+		Type("json").
+		Done()
+}
+
+func TestCreateFile(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	file := multipart.FormFile{Name: "upFile", Reader: strings.NewReader("data")}
+	files := []multipart.FormFile{file}
+	setupTest().Post("/v1/file").
+		SetHeader("Foo", "Bar").
+		Files(files).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(createSchema).
+		AssertFunc(assertResourceResponse).
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
@@ -87,7 +113,7 @@ func TestHealthCheck(t *testing.T) {
 // If the assertion fails it should return an error.
 // This has the side effect of setting the top level id variable
 // which we use for making a subsequent request.
-func assert(res *http.Response, req *http.Request) error {
+func assertResourceResponse(res *http.Response, req *http.Request) error {
 	// TODO: this parsing would be unnecessary if we had a Location header
 	//       Then we could just do res.Location()
 	buf := new(bytes.Buffer)

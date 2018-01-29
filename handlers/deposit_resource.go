@@ -2,13 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/google/uuid"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
@@ -23,14 +23,19 @@ type depositResourceEntry struct {
 
 // Handle the delete entry request
 func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams) middleware.Responder {
-	resourceID, _ := d.mintIdentifier()
-
+	resourceID, err := identifier.NewService().Mint()
+	if err != nil {
+		panic(err)
+	}
 	if err := d.persistResource(resourceID, params); err != nil {
 		// TODO: handle this with an error response
 		panic(err)
 	}
 
-	d.addToStream(&resourceID)
+	if err := d.addToStream(&resourceID); err != nil {
+		// TODO: handle this with an error response
+		panic(err)
+	}
 
 	response := &models.ResourceResponse{ID: resourceID}
 	return operations.NewDepositNewResourceCreated().WithPayload(response)
@@ -38,7 +43,6 @@ func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams
 
 func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositNewResourceParams) error {
 	resource := d.persistableResourceFromParams(resourceID, params)
-	fmt.Println("Saving")
 	return d.rt.Repository().SaveItem(resource)
 }
 
@@ -54,19 +58,13 @@ func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, 
 	return resource
 }
 
-// TODO: This should be a call to a DRUID service
-func (d *depositResourceEntry) mintIdentifier() (string, error) {
-	resourceID, err := uuid.NewRandom()
-	if err != nil {
-		return "", err
-	}
-	return resourceID.String(), nil
-}
-
 func (d *depositResourceEntry) addToStream(id *string) error {
 	message, err := json.Marshal(id)
 	if err != nil {
 		return err
+	}
+	if d.rt.Stream() == nil {
+		log.Printf("Stream is nil")
 	}
 	if err := d.rt.Stream().SendMessage(string(message)); err != nil {
 		return err

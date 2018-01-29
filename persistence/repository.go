@@ -10,12 +10,11 @@ import (
 	"github.com/sul-dlss-labs/taco/config"
 )
 
-// NewRepository -- Creates a new repository
-func NewRepository(config *config.Config, db *dynamodb.DynamoDB) (*DynamoRepository, error) {
+// NewDynamoRepository -- Creates a new repository
+func NewDynamoRepository(config *config.Config, db *dynamodb.DynamoDB) *DynamoRepository {
 	tableName := aws.String(config.ResourceTableName)
 	return &DynamoRepository{db: db,
-			tableName: tableName},
-		nil
+		tableName: tableName}
 }
 
 // Repository the interface for the metadata repository
@@ -48,6 +47,7 @@ func (h DynamoRepository) SaveItem(resource *Resource) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("Saved %s to dynamodb", resource.ID)
 	return nil
 }
 

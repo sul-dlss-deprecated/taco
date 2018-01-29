@@ -14,6 +14,9 @@ type Config struct {
 	KinesisDisableSSL  bool
 	ResourceTableName  string
 	DepositStreamName  string
+	S3Endpoint         string
+	S3BucketName       string
+	S3DisableSSL       bool
 }
 
 // NewConfig creates a new configuration with values from environment variables
@@ -27,6 +30,9 @@ func NewConfig() *Config {
 		KinesisEndpoint:    getString("KINESIS_ENDPOINT", "localhost:4568"),
 		KinesisDisableSSL:  getBool("KINESIS_DISABLE_SSL", true),
 		DepositStreamName:  getString("DEPOSIT_STREAM_NAME", "deposit"),
+		S3Endpoint:         getString("S3_ENDPOINT", "localhost:4572"),
+		S3BucketName:       getString("S3_BUCKET_NAME", "taco-deposited-files"),
+		S3DisableSSL:       getBool("S3_DISABLE_SSL", true),
 	}
 }
 
