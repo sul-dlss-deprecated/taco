@@ -29,9 +29,9 @@ $ go get github.com/sul-dlss-labs/taco
 
 ## Running the Go Code locally without a build
 
-
 ```shell
-$ go run main.go
+$ cd cmd/tacod
+$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
 ```
 
 ## Building to TACO Binary
@@ -70,16 +70,26 @@ $ awslocal dynamodb create-table --table-name resources \
   --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
 ```
 
-And add a stub record:
+Now start the API server:
+```shell
+% AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
 ```
-$ awslocal dynamodb put-item --table-name resources --item '{"id": {"S":"99"}, "title":{"S":"Ta-da!"}}'
+
+Then you can interact with it using `curl`:
+```shell
+curl -X POST -H "Content-Type: application/json" -d '{"title":"value1", "sourceId":"value2"}' http://localhost:8080/v1/resource
 ```
+
+it will return a response like:
+```json
+{"id":"fe1f66a9-5285-4b28-8240-0482c8fff6c7"}
+```
+
+Then you can use the returned identifier to retrieve the original:
 
 ```shell
-% TACO_ENV=production AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
+curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
-
-Now visit: http://localhost:8080/v1/resource/99
 
 ## API Code Structure
 
@@ -103,12 +113,6 @@ go install
 ```
 
 Do this prior to generating code.
-
-### To run the API code
-
-```shell
-$ go run main.go
-```
 
 ### Non-generated code
 
