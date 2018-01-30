@@ -44,6 +44,12 @@
             "description": "TACO resource created & processing started.",
             "schema": {
               "$ref": "#/definitions/ResourceResponse"
+            },
+            "headers": {
+              "Location": {
+                "description": "The location of the created resource",
+                "type": "string"
+              }
             }
           },
           "401": {
@@ -204,6 +210,12 @@
             "description": "TACO binary ingested, File management metadata created, & File processing started.",
             "schema": {
               "$ref": "#/definitions/ResourceResponse"
+            },
+            "headers": {
+              "Location": {
+                "description": "The location of the created resource",
+                "type": "string"
+              }
             }
           },
           "401": {
