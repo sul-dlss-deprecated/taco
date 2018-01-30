@@ -15,7 +15,7 @@ func NewConfig() *Config {
 	return &Config{
 		AWS_Region: aws_region(),
 		DB_Endpoint: db_endpoint(),
-		Disable_SSL: disable_ssl(), // os.Getenv("DISABLE_SSL"),
+		Disable_SSL: disable_ssl(),
 	}
 }
 
