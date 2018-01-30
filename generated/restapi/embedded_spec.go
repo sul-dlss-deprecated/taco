@@ -96,6 +96,12 @@ func init() {
           },
           "405": {
             "description": "Invalid input"
+          },
+          "default": {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
@@ -220,6 +226,23 @@ func init() {
         "id": "oo000oo0001",
         "sourceId": "bib12345678",
         "title": "My work"
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64",
+          "example": 500
+        },
+        "message": {
+          "type": "string",
+          "example": "There was a problem connecting to the database"
+        }
       }
     }
   }
