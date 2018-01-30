@@ -38,7 +38,7 @@ const resourceSchema = `{
   "required": ["id"]
 }`
 
-var id string
+var location string
 
 // ID variables to verify updates
 var externalIdentifier string
@@ -69,20 +69,20 @@ func TestCreateAndDestroyResource(t *testing.T) {
 		AssertFunc(assertResourceResponse).
 		Done()
 
-	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Get(location).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").
 		Done()
 
-	setupTest().Delete(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Delete(location).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(204).
 		Done()
 
-	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Get(location).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(404).
@@ -126,7 +126,7 @@ func TestUpdateResource(t *testing.T) {
 		panic(err)
 	}
 
-	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Get(location).
 		AddQuery("version", "1").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
@@ -140,7 +140,7 @@ func TestUpdateResource(t *testing.T) {
 	patchData["externalIdentifier"] = externalIdentifier
 	patchData["tacoIdentifier"] = tacoIdentifier
 
-	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Patch(location).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		SetHeader("Content-Type", "application/json").
 		JSON(patchData).
@@ -148,12 +148,11 @@ func TestUpdateResource(t *testing.T) {
 		Status(200).
 		Type("json").
 		JSONSchema(resourceSchema).
-		AssertFunc(assertResourceResponse).
 		Done()
 
 	time.Sleep(5 * time.Millisecond)
 
-	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Get(location).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
@@ -187,7 +186,7 @@ func TestRetrieveVersions(t *testing.T) {
 		AssertFunc(assertResourceResponse).
 		Done()
 
-	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Get(location).
 		AddQuery("version", "1").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
@@ -213,7 +212,7 @@ func TestCreateFile(t *testing.T) {
 		AssertFunc(assertResourceResponse).
 		Done()
 
-	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+	setupTest().Get(location).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
@@ -236,15 +235,14 @@ func TestHealthCheck(t *testing.T) {
 
 // assert implements an assertion function with custom validation logic.
 // If the assertion fails it should return an error.
-// This has the side effect of setting the top level id variable
+// This has the side effect of setting the top level location variable
 // which we use for making a subsequent request.
 func assertResourceResponse(res *http.Response, req *http.Request) error {
-	// TODO: this parsing would be unnecessary if we had a Location header
-	//       Then we could just do res.Location()
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(res.Body)
-	jsonID, _ := jsonparser.GetString(buf.Bytes(), "id")
-	id = jsonID
+	uri, err := res.Location()
+	if err != nil {
+		return err
+	}
+	location = uri.String()
 	return nil
 }
 

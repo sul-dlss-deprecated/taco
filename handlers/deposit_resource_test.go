@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
 
 	"github.com/appleboy/gofight"
+	"github.com/buger/jsonparser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,7 +41,11 @@ func TestCreateResourceHappyPath(t *testing.T) {
 				resource := repo.(*MockDatabase).CreatedResources[0]
 				assert.Equal(t, 1, resource.Version())
 
-				// assert.Equal(t, "bib12345678", repo.(*MockDatabase).CreatedResources[0].(map[string]interface{})["sourceid"])
+				// Location header is the retrieve resource route
+				data := []byte(r.Body.String())
+				id, _ := jsonparser.GetString(data, "id")
+				expectedURL := fmt.Sprintf("/v1/resource/%s", id)
+				assert.Equal(t, expectedURL, r.HeaderMap.Get("Location"))
 			})
 }
 

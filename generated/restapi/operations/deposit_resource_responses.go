@@ -21,6 +21,10 @@ const DepositResourceCreatedCode int = 201
 swagger:response depositResourceCreated
 */
 type DepositResourceCreated struct {
+	/*The location of the created resource
+	  Required: true
+	*/
+	Location string `json:"Location"`
 
 	/*
 	  In: Body
@@ -31,6 +35,17 @@ type DepositResourceCreated struct {
 // NewDepositResourceCreated creates DepositResourceCreated with default headers values
 func NewDepositResourceCreated() *DepositResourceCreated {
 	return &DepositResourceCreated{}
+}
+
+// WithLocation adds the location to the deposit resource created response
+func (o *DepositResourceCreated) WithLocation(location string) *DepositResourceCreated {
+	o.Location = location
+	return o
+}
+
+// SetLocation sets the location to the deposit resource created response
+func (o *DepositResourceCreated) SetLocation(location string) {
+	o.Location = location
 }
 
 // WithPayload adds the payload to the deposit resource created response
@@ -46,6 +61,13 @@ func (o *DepositResourceCreated) SetPayload(payload models.ResourceResponse) {
 
 // WriteResponse to the client
 func (o *DepositResourceCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	// response header Location
+
+	location := o.Location
+	if location != "" {
+		rw.Header().Set("Location", location)
+	}
 
 	rw.WriteHeader(201)
 	payload := o.Payload

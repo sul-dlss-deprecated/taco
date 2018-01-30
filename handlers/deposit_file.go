@@ -64,9 +64,13 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 	if err := d.database.Insert(resource); err != nil {
 		panic(err)
 	}
-	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
+
+	url := &operations.RetrieveResourceURL{ID: externalID}
 	response := datautils.JSONObject{"id": externalID}
-	return operations.NewDepositResourceCreated().WithPayload(response)
+
+	return operations.NewDepositResourceCreated().
+		WithLocation(url.String()).
+		WithPayload(response)
 }
 
 func (d *depositFileEntry) paramsToFile(params operations.DepositFileParams) *datautils.File {
