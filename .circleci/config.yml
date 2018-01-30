@@ -2,7 +2,7 @@ version: 2
 jobs:
   build_and_test:
     docker:
-      - image: circleci/golang:1.8
+      - image: circleci/golang:latest
     working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - checkout
@@ -17,7 +17,7 @@ jobs:
 
   register_image:
     docker:
-      - image: circleci/golang:1.8
+      - image: circleci/golang:latest
     working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - setup_remote_docker:
@@ -32,7 +32,7 @@ jobs:
 
   # deploy_to_dev:
   #   docker:
-  #     - image: circleci/golang:1.8
+  #     - image: circleci/golang:latest
   #   working_directory: /go/src/github.com/sul-dlss-labs/taco
   #   steps:
   #     - run:
