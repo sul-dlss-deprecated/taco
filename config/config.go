@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -18,6 +19,8 @@ func Init(cfgFile string) {
 		viper.AddConfigPath("$HOME") // adding home directory as first search path
 	}
 	viper.AutomaticEnv() // read in environment variables that match
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "__"))
+	viper.SetEnvPrefix("TACO")
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	if err == nil {
