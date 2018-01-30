@@ -7,14 +7,14 @@ import (
 
 type Config struct {
     AWS_Region	string
-		DB_Endpoint string
+		Dynamo_Db string
 		Disable_SSL bool
 }
 
 func NewConfig() *Config {
 	return &Config{
 		AWS_Region: aws_region(),
-		DB_Endpoint: db_endpoint(),
+		Dynamo_Db: dynamo_db(),
 		Disable_SSL: disable_ssl(),
 	}
 }
@@ -30,15 +30,15 @@ func aws_region() string {
 	return region
 }
 
-func db_endpoint() string {
-	var endpoint string
-	endpoint = os.Getenv("DB_ENDPOINT")
-	if endpoint == "" {
-		endpoint = "localhost:4569"
+func dynamo_db() string {
+	var db string
+	db = os.Getenv("DYNAMO_DB")
+	if db == "" {
+		db = "localhost:4569"
 		log.Printf("DB_ENDPOINT: Using default [localhost:4569].")
 	}
-	log.Printf("DB_ENDPOINT: Found setting [%s]", endpoint)
-	return endpoint
+	log.Printf("DB_ENDPOINT: Found setting [%s]", db)
+	return db
 }
 
 func disable_ssl() bool {
