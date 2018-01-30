@@ -38,14 +38,6 @@
                 "id" : {
                   "type" : "string",
                   "example" : "oo000oo0001"
-                },
-                "state" : {
-                  "type" : "string",
-                  "example" : "in progress"
-                },
-                "request_id" : {
-                  "type" : "string",
-                  "example" : "0a72c00a-1332-4730-b19c-9131c3bcb57f"
                 }
               }
             }
