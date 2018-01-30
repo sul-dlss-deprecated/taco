@@ -12,16 +12,16 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// DepositNewResourceOKBody deposit new resource o k body
-// swagger:model depositNewResourceOKBody
-type DepositNewResourceOKBody struct {
+// DepositNewResourceCreatedBody deposit new resource created body
+// swagger:model depositNewResourceCreatedBody
+type DepositNewResourceCreatedBody struct {
 
 	// id
 	ID string `json:"id,omitempty"`
 }
 
-// Validate validates this deposit new resource o k body
-func (m *DepositNewResourceOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this deposit new resource created body
+func (m *DepositNewResourceCreatedBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -31,7 +31,7 @@ func (m *DepositNewResourceOKBody) Validate(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *DepositNewResourceOKBody) MarshalBinary() ([]byte, error) {
+func (m *DepositNewResourceCreatedBody) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -39,8 +39,8 @@ func (m *DepositNewResourceOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *DepositNewResourceOKBody) UnmarshalBinary(b []byte) error {
-	var res DepositNewResourceOKBody
+func (m *DepositNewResourceCreatedBody) UnmarshalBinary(b []byte) error {
+	var res DepositNewResourceCreatedBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
