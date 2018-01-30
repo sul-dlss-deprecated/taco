@@ -1,35 +1,54 @@
 package config
 
 import (
-	"fmt"
+	"os"
 	"log"
-	"path/filepath"
-
-	"github.com/spf13/viper"
 )
 
-// Init is an exported method that takes the environment starts the viper
-// (external lib) and returns the configuration struct.
-func Init(cfgFile string) {
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
-	} else {
-		viper.SetConfigName(".taco") // name of config file (without extension)
-		viper.AddConfigPath("$HOME") // adding home directory as first search path
-	}
-	viper.AutomaticEnv() // read in environment variables that match
-	// If a config file is found, read it in.
-	err := viper.ReadInConfig()
-	if err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	} else {
-		log.Printf("Error no config file: %s", err)
+type Config struct {
+    AWS_Region	string
+		DB_Endpoint string
+		Disable_SSL bool
+}
+
+func NewConfig() *Config {
+	return &Config{
+		AWS_Region: aws_region(),
+		DB_Endpoint: db_endpoint(),
+		Disable_SSL: disable_ssl(), // os.Getenv("DISABLE_SSL"),
 	}
 }
 
-func relativePath(basedir string, path *string) {
-	p := *path
-	if p != "" && p[0] != '/' {
-		*path = filepath.Join(basedir, p)
+func aws_region() string {
+	var region string
+	region = os.Getenv("AWS_REGION")
+	if region == "" {
+		region = "localstack"
+		log.Printf("AWS_REGION: Using default [localstack].")
+	}
+	log.Printf("AWS_REGION: Found setting [%s]", region)
+	return region
+}
+
+func db_endpoint() string {
+	var endpoint string
+	endpoint = os.Getenv("DB_ENDPOINT")
+	if endpoint == "" {
+		endpoint = "localhost:4569"
+		log.Printf("DB_ENDPOINT: Using default [localhost:4569].")
+	}
+	log.Printf("DB_ENDPOINT: Found setting [%s]", endpoint)
+	return endpoint
+}
+
+func disable_ssl() bool {
+	var disablessl string
+  disablessl = os.Getenv("DISABLE_SSL")
+	if (disablessl == "FALSE" || disablessl == "false") {
+		log.Printf("DISABLE_SSL: Found setting [false].")
+		return false
+	} else {
+		log.Printf("DISABLE_SSL: Using default [true].")
+		return true
 	}
 }
