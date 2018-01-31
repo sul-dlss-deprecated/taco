@@ -1,6 +1,0 @@
-db:
-  region: "localstack"
-  endpoint: "localhost:4569"
-  disable_ssl: true
-resource_repository:
-  table_name: "resources"
