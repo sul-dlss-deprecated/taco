@@ -255,6 +255,7 @@
     "Resource": {
       "type": "object",
       "required": ["@context", "@type", "access", "label", "preserve", "publish"],
+      "additionalProperties" : {},
       "properties": {
         "@context": {
           "type": "string",

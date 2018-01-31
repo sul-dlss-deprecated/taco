@@ -6,5 +6,6 @@
 		"label":    "My SDR3 resource",
 		"preserve": true,
 		"publish":  true,
-		"sourceId": "bib12345678"
+		"sourceId": "bib12345678",
+		"schemalessField": "This gets stored"
 }
