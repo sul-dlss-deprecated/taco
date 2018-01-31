@@ -175,6 +175,22 @@
           "type" : "string",
           "description": "What groups should be able to access the resource in Access environments"
         },
+        "contains" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "uri"
+          },
+          "description": "The child resource(s) of this resource."
+        },
+        "contained-by" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "format" : "uri"
+          },
+          "description": "The parent resource(s) of this resource."
+        },
         "id" : {
           "type" : "string",
           "description": "The TACO identifier for the resource. Usually DRUID-derived.",
@@ -224,21 +240,79 @@
     },
     "File" : {
       "type" : "object",
-      "required" : [ "UUID", "filename" ],
+      "required" : [ "@context", "@type", "label", "preserve", "access", "download", "publish", "shelve" ],
       "properties" : {
-        "filename" : {
+        "@context" : {
           "type" : "string",
-          "example" : "mybook.pdf"
+          "format": "uri",
+          "description" : "URI for the JSON-LD context definitions",
+          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
+        },
+        "@type" : {
+          "type" : "string",
+          "format": "uri",
+          "description": "URI for the resource type of File",
+          "example" : "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
+        },
+        "access" : {
+          "type" : "string",
+          "description": "What groups should be able to access (view) the File in Access environments"
+        },
+        "contained-by" : {
+          "type" : "string",
+          "format" : "uri",
+          "description": "The parent resource of this resource."
+        },
+        "deriv_create" : {
+          "type" : "boolean",
+          "description" : "Should derivatives be created for the File"
+        },
+        "download" : {
+          "type" : "string",
+          "description": "What groups should be able to download the File in Access environments"
+        },
+        "id" : {
+          "type" : "string",
+          "description": "The TACO identifier for the resource. Parent DRUID-derived.",
+          "example" : "oo000oo0001"
+        },
+        "label" : {
+          "type" : "string",
+          "description": "The filename for the file.",
+          "example" : "my-thesis.pdf"
+        },
+        "preserve" : {
+          "type" : "boolean",
+          "description": "Should the File be released to Preservation environments"
+        },
+        "publish" : {
+          "type" : "boolean",
+          "description": "Should the File's metadata be released to Access environments"
+        },
+        "shelve" : {
+          "type" : "boolean",
+          "description": "Should the File's binary be shelved for release to Access environments"
         },
         "UUID" : {
           "type" : "string",
+          "format": "uuid",
+          "description" : "UUID for the file and internal TACO File identifier",
           "example" : "a03eea52-77a0-4e55-9026-b022d61c89fc"
         }
       },
       "example" : {
-        "filename" : "mybook.pdf",
+        "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+        "@type": "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld",
+        "access": "world",
+        "deriv_create" : true,
+        "download" : "stanford",
+        "id" : "oo000oo0001#mybook.pdf",
+        "label" : "mybook.pdf",
+        "preserve" : true,
+        "publish" : true,
+        "shelve" : true,
         "UUID" : "a03eea52-77a0-4e55-9026-b022d61c89fc"
-      }
+        }
     }
   }
 }
