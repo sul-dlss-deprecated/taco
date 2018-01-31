@@ -7,7 +7,7 @@ import (
 
 type Config struct {
 	AWS_Region          string
-	Dynamo_Db           string
+	Dynamo_Db_Endpoint  string
 	Dynamo_Disable_SSL  bool
 	Resource_Table_Name string
 }
@@ -15,7 +15,7 @@ type Config struct {
 func NewConfig() *Config {
 	return &Config{
 		AWS_Region:          aws_region(),
-		Dynamo_Db:           dynamo_db(),
+		Dynamo_Db_Endpoint:  dynamo_db_endpoint(),
 		Dynamo_Disable_SSL:  dynamo_disable_ssl(),
 		Resource_Table_Name: resource_table_name(),
 	}
@@ -32,14 +32,14 @@ func aws_region() string {
 	return region
 }
 
-func dynamo_db() string {
+func dynamo_db_endpoint() string {
 	var db string
-	db = os.Getenv("DYNAMO_DB")
+	db = os.Getenv("DYNAMO_DB_ENDPOINT")
 	if db == "" {
 		db = "localhost:4569"
-		log.Printf("DYNAMO_DB: Using default [localhost:4569].")
+		log.Printf("DYNAMO_DB_ENDPOINT: Using default [localhost:4569].")
 	}
-	log.Printf("DYNAMO_DB: Found setting [%s]", db)
+	log.Printf("DYNAMO_DB_ENDPOINT: Found setting [%s]", db)
 	return db
 }
 
