@@ -30,8 +30,8 @@ func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams
 		panic(err)
 	}
 
-	response := &models.DepositNewResourceOKBody{ID: resourceID}
-	return operations.NewDepositNewResourceOK().WithPayload(response)
+	response := &models.ResourceResponse{ID: resourceID}
+	return operations.NewDepositNewResourceCreated().WithPayload(response)
 }
 
 func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositNewResourceParams) error {
@@ -42,9 +42,13 @@ func (d *depositResourceEntry) persistResource(resourceID string, params operati
 
 func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositNewResourceParams) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
-	// TODO: Expand this mapping:
-	resource.Title = *params.Payload.Title
-	resource.SourceID = *params.Payload.SourceID
+	resource.Access = *params.Payload.Access
+	resource.AtContext = *params.Payload.AtContext
+	resource.AtType = *params.Payload.AtType
+	resource.Label = *params.Payload.Label
+	resource.Preserve = *params.Payload.Preserve
+	resource.Publish = *params.Payload.Publish
+	// resource.SourceID = *params.Payload.SourceID
 	return resource
 }
 
