@@ -47,7 +47,7 @@ func TestBalooSimple(t *testing.T) {
 			"publish":  true,
 			"sourceId": "bib12345678"}).
 		Expect(t).
-		Status(200).
+		Status(201).
 		Type("json").
 		JSONSchema(schema).
 		Done()
