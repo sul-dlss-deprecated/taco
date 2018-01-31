@@ -6,29 +6,29 @@ import (
 )
 
 type Config struct {
-	AWS_Dynamo_Region string
-	Dynamo_Db         string
-	Disable_SSL       bool
-	Table_Name        string
+	AWS_Region          string
+	Dynamo_Db           string
+	Dynamo_Disable_SSL  bool
+	Resource_Table_Name string
 }
 
 func NewConfig() *Config {
 	return &Config{
-		AWS_Dynamo_Region: aws_dynamo_region(),
-		Dynamo_Db:         dynamo_db(),
-		Disable_SSL:       disable_ssl(),
-		Table_Name:        table_name(),
+		AWS_Region:          aws_region(),
+		Dynamo_Db:           dynamo_db(),
+		Dynamo_Disable_SSL:  dynamo_disable_ssl(),
+		Resource_Table_Name: resource_table_name(),
 	}
 }
 
-func aws_dynamo_region() string {
+func aws_region() string {
 	var region string
-	region = os.Getenv("AWS_DYNAMO_REGION")
+	region = os.Getenv("AWS_REGION")
 	if region == "" {
 		region = "localstack"
-		log.Printf("AWS_DYNAMO_REGION: Using default [localstack].")
+		log.Printf("AWS_REGION: Using default [localstack].")
 	}
-	log.Printf("AWS_DYNAMO_REGION: Found setting [%s]", region)
+	log.Printf("AWS_REGION: Found setting [%s]", region)
 	return region
 }
 
@@ -37,30 +37,30 @@ func dynamo_db() string {
 	db = os.Getenv("DYNAMO_DB")
 	if db == "" {
 		db = "localhost:4569"
-		log.Printf("DB_ENDPOINT: Using default [localhost:4569].")
+		log.Printf("DYNAMO_DB: Using default [localhost:4569].")
 	}
-	log.Printf("DB_ENDPOINT: Found setting [%s]", db)
+	log.Printf("DYNAMO_DB: Found setting [%s]", db)
 	return db
 }
 
-func disable_ssl() bool {
+func dynamo_disable_ssl() bool {
 	var disablessl string
-	disablessl = os.Getenv("DISABLE_SSL")
+	disablessl = os.Getenv("DYNAMODB_DISABLE_SSL")
 	if disablessl == "FALSE" || disablessl == "false" {
-		log.Printf("DISABLE_SSL: Found setting [false].")
+		log.Printf("DYNAMODB_DISABLE_SSL: Found setting [false].")
 		return false
 	} else {
-		log.Printf("DISABLE_SSL: Using default [true].")
+		log.Printf("DYNAMODB_DISABLE_SSL: Using default [true].")
 		return true
 	}
 }
 
-func table_name() string {
+func resource_table_name() string {
 	var tablename string
-	tablename = os.Getenv("TABLE_NAME")
+	tablename = os.Getenv("RESOURCE_TABLE_NAME")
 	if tablename == "" {
 		tablename = "resources"
-		log.Printf("TABLE_NAME: Using default [resources].")
+		log.Printf("RESOURCE_TABLE_NAME: Using default [resources].")
 	}
 	return tablename
 }
