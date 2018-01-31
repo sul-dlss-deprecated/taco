@@ -23,9 +23,8 @@ $ go get github.com/sul-dlss-labs/taco
 ```
 4. Handle dependencies with the Go Dep package:
     * Install Go Dep via `brew install dep` then `brew upgrade dep`.
-    * If your project's `Gopkg.toml` has not yet been populated (i.e. there should be libraries not commented out), you need to add an inferred list of your dependencies by running `dep init`.
-    * If your project has that, make sure your dependencies are synced via running `dep ensure`.
-    * If you need to add a new dependency, run `dep ensure -add github.com/pkg/errors`. This should add the dependency and put the new dependency in your `Gopkg.*` files.
+    * Make sure your dependencies are synced via running `dep ensure`.
+    * When you add a new dependency add an include in the code and then run `dep ensure`. This will add the dependency to your `Gopkg.lock` file.
 
 5. Localstack and Environment Variables
     * Local development depends on [localstack](https://github.com/localstack/localstack) to mock the AWS environment.
@@ -49,7 +48,7 @@ $ docker run -p 8080:8080 taco
 ### Build for the local OS
 ```shell
 % cd cmd/tacod
-% go get -t
+% dep ensure -vendor-only
 % go build -o tacod main.go
 ```
 
