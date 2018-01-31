@@ -38,6 +38,8 @@ $ cd cmd/tacod
 $ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
 ```
 
+Note: we explain the AWS keys usage below.
+
 ## Building to TACO Binary
 
 ### Building for Docker
@@ -75,14 +77,14 @@ $ awslocal dynamodb create-table --table-name resources \
   --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
 ```
 
-Now start the API server:
+Now start the API server (passing in API keys; these can be fake and are only required for localstack):
 ```shell
-% AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
+$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
 ```
 
 Then you can interact with it using `curl`:
 ```shell
-curl -X POST -H "Content-Type: application/json" -d '{"title":"value1", "sourceId":"value2"}' http://localhost:8080/v1/resource
+$ curl -X POST -H "Content-Type: application/json" -d '{"title":"value1", "sourceId":"value2"}' http://localhost:8080/v1/resource
 ```
 
 it will return a response like:
@@ -93,7 +95,7 @@ it will return a response like:
 Then you can use the returned identifier to retrieve the original:
 
 ```shell
-curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+$ curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 ## API Code Structure
@@ -109,9 +111,9 @@ Our handlers and the generated API code is connected within `main.go`, which is 
 The API code is generated from `swagger.yml` using `go-swagger` library. As this is not used in the existing codebase anywhere currently, you'll need to install the `go-swagger` library before running these commands (commands for those using Mac OSX):
 
 ```shell
-brew tap go-swagger/go-swagger
-brew install go-swagger
-brew upgrade go-swagger
+$ brew tap go-swagger/go-swagger
+$ brew install go-swagger
+$ brew upgrade go-swagger
 ```
 
 This should give you the `swagger` binary command in your $GOPATH and allow you to manage versions better (TBD write this up). The version of your go-swagger binary is **0.13.0** (run `swagger version` to check this).
