@@ -37,7 +37,15 @@ func TestBalooSimple(t *testing.T) {
 	}
 	setupTest().Post("/v1/resource").
 		SetHeader("Foo", "Bar").
-		JSON(map[string]string{"title": "value1", "sourceId": "value2"}).
+		JSON(map[string]string{
+			"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+			"access":   "world",
+			"id":       "oo000oo0001",
+			"label":    "My SDR3 resource",
+			"preserve": "true",
+			"publish":  "true",
+			"sourceId": "bib12345678"}).
 		Expect(t).
 		Status(200).
 		Type("json").
