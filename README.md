@@ -57,8 +57,15 @@ $ ./tacod
 ```
 
 ## Testing
+The unit tests have no external dependencies and can be run like so:
 ```shell
-$ go test -v ./...
+$ go test -v ./... -short
+```
+
+The integration test depends on the taco binary running, localstack running (see below) and the DynamoDB table having been created. Once these conditions are met you can run the integration tests using:
+
+```shell
+$ go test test/integration_test.go --port 8080
 ```
 
 ## Running the TACO Binary
