@@ -1,370 +1,294 @@
 {
-  "swagger" : "2.0",
-  "info" : {
-    "description" : "TACO, the Stanford Digital Repository (SDR) Management Layer API",
-    "version" : "0.1.0",
-    "title" : "taco",
-    "license" : {
-      "name" : "Apache 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+  "swagger": "2.0",
+  "info": {
+    "description": "TACO, the Stanford Digital Repository (SDR) Management Layer API",
+    "version": "0.1.0",
+    "title": "taco",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host" : "sdr.dlss.stanford.edu",
-  "basePath" : "/v1",
-  "schemes" : [ "http" ],
-  "paths" : {
-    "/resource" : {
-      "post" : {
-        "summary" : "Deposit New TACO Resource.",
-        "description" : "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
-        "operationId" : "depositNewResource",
-        "consumes" : [ "application/json", "application/json+ld" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "payload",
-          "description" : "JSON-LD representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/Resource"
+  "host": "sdr.dlss.stanford.edu",
+  "basePath": "/v1",
+  "schemes": ["http"],
+  "paths": {
+    "/resource": {
+      "post": {
+        "summary": "Deposit New TACO Resource.",
+        "description": "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
+        "operationId": "depositNewResource",
+        "consumes": ["application/json", "application/json+ld"],
+        "produces": ["application/json"],
+        "parameters": [ {
+          "in": "body",
+          "name": "payload",
+          "description": "JSON-LD representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Resource"
           }
         } ],
-        "responses" : {
-          "201" : {
-            "description" : "TACO resource created & processing started.",
-            "schema" : {
+        "responses": {
+          "201": {
+            "description": "TACO resource created & processing started.",
+            "schema": {
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "401" : {
-            "description" : "You are not authorized to create a resource in TACO."
+          "401": {
+            "description": "You are not authorized to create a resource in TACO."
           },
-          "415" : {
-            "description" : "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
+          "415": {
+            "description": "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
           },
-          "422" : {
-            "description" : "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO."
+          "422": {
+            "description": "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO."
           },
-          "500" : {
-            "description" : "This resource could be created at this time by TACO."
+          "500": {
+            "description": "This resource could be created at this time by TACO."
           }
         }
       }
     },
-    "/resource/{ID}" : {
-      "get" : {
-        "summary" : "Retrieve TACO Resource Metadata.",
-        "description" : "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
-        "operationId" : "retrieveResource",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "ID",
-          "in" : "path",
-          "description" : "TACO Resource Identifier.",
-          "required" : true,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "schema" : {
-              "$ref" : "#/definitions/Resource"
+    "/resource/{ID}": {
+      "get": {
+        "summary": "Retrieve TACO Resource Metadata.",
+        "description": "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
+        "operationId": "retrieveResource",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "ID",
+          "in": "path",
+          "description": "TACO Resource Identifier.",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "Resource metadata retrieved.",
+            "schema": {
+              "$ref": "#/definitions/Resource"
             }
           },
-          "401" : {
-            "description" : "You are not authorized to view this resource in TACO."
+          "401": {
+            "description": "You are not authorized to view this resource in TACO."
           },
-          "404" : {
-            "description" : "Resource not found. Please check your provided identifier."
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
           },
-          "500" : {
-            "description" : "The resource could not be retrieved by TACO at this time."
+          "500": {
+            "description": "The resource could not be retrieved by TACO at this time."
           }
         }
       },
-      "patch" : {
-        "summary" : "Update TACO Resource.",
-        "description" : "Updates the metadata for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). Only include the required fields and the fields you wish to have changed. Will return the TACO resource identifier.",
-        "operationId" : "updateResource",
-        "consumes" : [ "application/json", "application/json+ld" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "ID",
-          "in" : "path",
-          "description" : "SDR Identifier for the Resource.",
-          "required" : true,
-          "type" : "string"
+      "patch": {
+        "summary": "Update TACO Resource.",
+        "description": "Updates the metadata for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). Only include the required fields and the fields you wish to have changed. Will return the TACO resource identifier.",
+        "operationId": "updateResource",
+        "consumes": ["application/json", "application/json+ld"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "ID",
+          "in": "path",
+          "description": "SDR Identifier for the Resource.",
+          "required": true,
+          "type": "string"
         }, {
-          "in" : "body",
-          "name" : "body",
-          "description" : "JSON-LD Representation of the resource metadata required fields and only the fields you wish to update (identified via its TACO identifier). Needs to fit the SDR 3.0 MAP requirements.",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/Resource"
+          "in": "body",
+          "name": "body",
+          "description": "JSON-LD Representation of the resource metadata required fields and only the fields you wish to update (identified via its TACO identifier). Needs to fit the SDR 3.0 MAP requirements.",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Resource"
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "TACO resource metadata updated & processing started.",
-            "schema" : {
+        }],
+        "responses": {
+          "200": {
+            "description": "TACO resource metadata updated & processing started.",
+            "schema": {
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "400" : {
-            "description" : "Invalid ID supplied"
+          "400": {
+            "description": "Invalid ID supplied"
           },
-          "401" : {
-            "description" : "You are not authorized to update a resource in TACO."
+          "401": {
+            "description": "You are not authorized to update a resource in TACO."
           },
-          "415" : {
-            "description" : "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
+          "415": {
+            "description": "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
           },
-          "422" : {
-            "description" : "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO."
+          "422": {
+            "description": "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO."
           },
-          "500" : {
-            "description" : "This resource could be updated at this time by TACO."
+          "500": {
+            "description": "This resource could be updated at this time by TACO."
           }
         }
       }
     },
-    "/file" : {
-      "post" : {
-        "summary" : "Deposit New File (binary).",
-        "description" : "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for File management).",
-        "operationId" : "depositNewFile",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "body",
-          "description" : "Binary to be added to an Object in TACO.",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/File"
-          }
-        } ],
-        "responses" : {
-          "201" : {
-            "description" : "TACO File binary and metadata created & processing started.",
-            "schema" : {
+    "/file": {
+      "post": {
+        "summary": "Deposit New File (binary).",
+        "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
+        "operationId": "depositNewFile",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "formData",
+          "name": "upFile",
+          "type": "file",
+          "description": "Binary to be added to an Object in TACO.",
+          "required": true
+        }],
+        "responses": {
+          "201": {
+            "description": "TACO binary ingested, File management metadata created, & File processing started.",
+            "schema": {
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "401" : {
-            "description" : "You are not authorized to create a File in TACO."
+          "401": {
+            "description": "You are not authorized to ingest a File into TACO."
           },
-          "415" : {
-            "description" : "Unsupported file type provided."
+          "415": {
+            "description": "Unsupported file type provided."
           },
-          "500" : {
-            "description" : "This File could be created at this time by TACO."
+          "500": {
+            "description": "This file could be ingested at this time by TACO."
           }
         }
       }
     },
-    "/status/{ID}" : {
-      "get" : {
-        "summary" : "Resource Processing Status.",
-        "description" : "Get the processing status and history for a resource.",
-        "operationId" : "getProcessStatus",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "ID",
-          "in" : "path",
-          "description" : "SDR Identifier for the Resource.",
-          "required" : true,
-          "type" : "string"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Processing status for the TACO resource.",
-            "schema" : {
+    "/status/{ID}": {
+      "get": {
+        "summary": "Resource Processing Status.",
+        "description": "Get the processing status and history for a resource.",
+        "operationId": "getProcessStatus",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "ID",
+          "in": "path",
+          "description": "SDR Identifier for the Resource.",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "Processing status for the TACO resource.",
+            "schema": {
               "$ref": "#/definitions/ProcessResponse"
             }
           },
-          "401" : {
-            "description" : "You are not authorized to view this resource's processing status in TACO."
+          "401": {
+            "description": "You are not authorized to view this resource's processing status in TACO."
           },
-          "404" : {
-            "description" : "Check your identifier - resource not found."
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
           },
-          "500" : {
-            "description" : "This resource's processing status could be retrieved at this time by TACO."
+          "500": {
+            "description": "This resource's processing status could be retrieved at this time by TACO."
           }
+        }
       }
     }
   },
-  "definitions" : {
-    "Resource" : {
-      "type" : "object",
-      "required" : [ "@context", "@type", "access", "label", "preserve", "publish" ],
-      "properties" : {
-        "@context" : {
-          "type" : "string",
+  "definitions": {
+    "Resource": {
+      "type": "object",
+      "required": ["@context", "@type", "access", "label", "preserve", "publish"],
+      "properties": {
+        "@context": {
+          "type": "string",
           "format": "uri",
-          "description" : "URI for the JSON-LD context definitions",
+          "description": "URI for the JSON-LD context definitions",
           "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
         },
-        "@type" : {
-          "type" : "string",
+        "@type": {
+          "type": "string",
           "format": "uri",
           "description": "URI for the resource type",
-          "example" : "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
+          "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
         },
-        "access" : {
-          "type" : "string",
-          "description": "What groups should be able to access the resource in Access environments"
+        "access": {
+          "type": "string",
+          "description": "What groups should be able to access (view) the resource in Access environments"
         },
-        "contains" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string",
-            "format" : "uri"
+        "contains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
           },
           "description": "The child resource(s) of this resource."
         },
-        "contained-by" : {
-          "type" : "array",
-          "items" : {
-            "type" : "string",
-            "format" : "uri"
+        "contained-by": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
           },
           "description": "The parent resource(s) of this resource."
         },
-        "id" : {
-          "type" : "string",
+        "id": {
+          "type": "string",
           "description": "The TACO identifier for the resource. Usually DRUID-derived.",
-          "example" : "oo000oo0001"
+          "example": "oo000oo0001"
         },
-        "label" : {
-          "type" : "string",
+        "label": {
+          "type": "string",
           "description": "The label or processing title for the resource.",
-          "example" : "Label for this resource"
+          "example": "Label for this resource"
         },
-        "preserve" : {
-          "type" : "boolean",
+        "preserve": {
+          "type": "boolean",
           "description": "Should the resource be released to Preservation environments"
         },
-        "publish" : {
-          "type" : "boolean",
+        "publish": {
+          "type": "boolean",
           "description": "Should the resource's metadata be released to Access environments"
         },
-        "sourceId" : {
-          "type" : "string",
+        "sourceId": {
+          "type": "string",
           "description": "The source identifier (bib id, archival id) for the resource that was digitized or derived from to create the TACO resource.",
-          "example" : "bib12345678"
+          "example": "bib12345678"
         }
       },
-      "example" : {
+      "example": {
         "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
         "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
         "access": "world",
-        "id" : "oo000oo0001",
-        "label" : "My SDR3 resource",
-        "preserve" : true,
-        "publish" : true,
-        "sourceId" : "bib12345678"
+        "id": "oo000oo0001",
+        "label": "My SDR3 resource",
+        "preserve": true,
+        "publish": true,
+        "sourceId": "bib12345678"
       }
     },
     "ResourceResponse": {
-      "type" : "object",
-      "properties" : {
-        "id" : {
-          "type" : "string",
-          "example" : "oo000oo0001"
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "oo000oo0001"
         }
       },
-      "example" : {
-        "id" : "oo000oo0001"
+      "example": {
+        "id": "oo000oo0001"
       }
     },
     "ProcessResponse": {
-      "type" : "object",
-      "properties" : {
-        "id" : {
-          "type" : "string",
-          "example" : "oo000oo0001"
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "oo000oo0001"
         }
       },
-      "example" : {
-        "id" : "oo000oo0001"
+      "example": {
+        "id": "oo000oo0001"
       }
-    },
-    "File" : {
-      "type" : "object",
-      "required" : [ "@context", "@type", "label", "preserve", "access", "download", "publish", "shelve" ],
-      "properties" : {
-        "@context" : {
-          "type" : "string",
-          "format": "uri",
-          "description" : "URI for the JSON-LD context definitions",
-          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
-        },
-        "@type" : {
-          "type" : "string",
-          "format": "uri",
-          "description": "URI for the resource type of File",
-          "example" : "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
-        },
-        "access" : {
-          "type" : "string",
-          "description": "What groups should be able to access (view) the File in Access environments"
-        },
-        "contained-by" : {
-          "type" : "string",
-          "format" : "uri",
-          "description": "The parent resource of this resource."
-        },
-        "deriv_create" : {
-          "type" : "boolean",
-          "description" : "Should derivatives be created for the File"
-        },
-        "download" : {
-          "type" : "string",
-          "description": "What groups should be able to download the File in Access environments"
-        },
-        "id" : {
-          "type" : "string",
-          "description": "The TACO identifier for the resource. Parent DRUID-derived.",
-          "example" : "oo000oo0001"
-        },
-        "label" : {
-          "type" : "string",
-          "description": "The filename for the file.",
-          "example" : "my-thesis.pdf"
-        },
-        "preserve" : {
-          "type" : "boolean",
-          "description": "Should the File be released to Preservation environments"
-        },
-        "publish" : {
-          "type" : "boolean",
-          "description": "Should the File's metadata be released to Access environments"
-        },
-        "shelve" : {
-          "type" : "boolean",
-          "description": "Should the File's binary be shelved for release to Access environments"
-        },
-        "UUID" : {
-          "type" : "string",
-          "format": "uuid",
-          "description" : "UUID for the file and internal TACO File identifier",
-          "example" : "a03eea52-77a0-4e55-9026-b022d61c89fc"
-        }
-      },
-      "example" : {
-        "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-        "@type": "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld",
-        "access": "world",
-        "deriv_create" : true,
-        "download" : "stanford",
-        "id" : "oo000oo0001#mybook.pdf",
-        "label" : "mybook.pdf",
-        "preserve" : true,
-        "publish" : true,
-        "shelve" : true,
-        "UUID" : "a03eea52-77a0-4e55-9026-b022d61c89fc"
-        }
     }
   }
 }
