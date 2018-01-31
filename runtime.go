@@ -30,8 +30,3 @@ type Runtime struct {
 func (r *Runtime) Repository() persistence.Repository {
 	return r.repository
 }
-
-// Config returns the viper config for this application
-// func (r *Runtime) Config() *viper.Viper {
-//	return r.config
-// }
