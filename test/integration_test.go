@@ -2,8 +2,10 @@ package test
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"testing"
 
@@ -41,15 +43,15 @@ func TestBalooSimple(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	postData := map[string]interface{}{
-		"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-		"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-		"access":   "world",
-		"id":       "oo000oo0001",
-		"label":    "My SDR3 resource",
-		"preserve": true,
-		"publish":  true,
-		"sourceId": "bib12345678"}
+	byt, err := ioutil.ReadFile("../examples/request.json")
+	if err != nil {
+		panic(err)
+	}
+	var postData map[string]interface{}
+
+	if err := json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
 
 	setupTest().Post("/v1/resource").
 		SetHeader("Foo", "Bar").
