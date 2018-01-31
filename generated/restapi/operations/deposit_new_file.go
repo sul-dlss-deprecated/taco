@@ -31,9 +31,9 @@ func NewDepositNewFile(ctx *middleware.Context, handler DepositNewFileHandler) *
 
 /*DepositNewFile swagger:route POST /file depositNewFile
 
-Deposit a new File (binary) into SDR.
+Deposit New File (binary).
 
-Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for File management).
+Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).
 
 */
 type DepositNewFile struct {

@@ -6,14 +6,12 @@ package operations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"io"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-
-	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
 // NewDepositNewFileParams creates a new DepositNewFileParams object
@@ -32,11 +30,11 @@ type DepositNewFileParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*File / Binary.
+	/*Binary to be added to an Object in TACO.
 	  Required: true
-	  In: body
+	  In: formData
 	*/
-	Body *models.File
+	UpFile runtime.File
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -45,32 +43,30 @@ func (o *DepositNewFileParams) BindRequest(r *http.Request, route *middleware.Ma
 	var res []error
 	o.HTTPRequest = r
 
-	if runtime.HasBody(r) {
-		defer r.Body.Close()
-		var body models.File
-		if err := route.Consumer.Consume(r.Body, &body); err != nil {
-			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
-			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
-			}
-
-		} else {
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
-
-			if len(res) == 0 {
-				o.Body = &body
-			}
+	if err := r.ParseMultipartForm(32 << 20); err != nil {
+		if err != http.ErrNotMultipart {
+			return err
+		} else if err := r.ParseForm(); err != nil {
+			return err
 		}
+	}
 
+	upFile, upFileHeader, err := r.FormFile("upFile")
+	if err != nil {
+		res = append(res, errors.New(400, "reading file %q failed: %v", "upFile", err))
+	} else if err := o.bindUpFile(upFile, upFileHeader); err != nil {
+		res = append(res, err)
 	} else {
-		res = append(res, errors.Required("body", "body"))
+		o.UpFile = runtime.File{Data: upFile, Header: upFileHeader}
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (o *DepositNewFileParams) bindUpFile(file multipart.File, header *multipart.FileHeader) error {
+
 	return nil
 }

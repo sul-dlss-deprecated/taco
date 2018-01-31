@@ -31,9 +31,9 @@ func NewDepositNewResource(ctx *middleware.Context, handler DepositNewResourceHa
 
 /*DepositNewResource swagger:route POST /resource depositNewResource
 
-Deposit a new resource into SDR.
+Deposit New TACO Resource.
 
-Deposits a new resource (Collection, Digital Repository Object, Fileset, or subclass of those) into SDR. Will return the SDR identifier for the resource.
+Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.
 
 */
 type DepositNewResource struct {

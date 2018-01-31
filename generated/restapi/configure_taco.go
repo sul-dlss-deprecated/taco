@@ -16,7 +16,7 @@ import (
 
 // This file is safe to edit. Once it exists it will not be overwritten
 
-//go:generate swagger generate server --target ../generated --name  --spec ../swagger.json --exclude-main
+//go:generate swagger generate server --target ../generated --name taco --spec ../swagger.json --exclude-main
 
 func configureFlags(api *operations.TacoAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -34,6 +34,8 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 
 	api.JSONConsumer = runtime.JSONConsumer()
 
+	api.MultipartformConsumer = runtime.DiscardConsumer
+
 	api.JSONProducer = runtime.JSONProducer()
 
 	api.DepositNewFileHandler = operations.DepositNewFileHandlerFunc(func(params operations.DepositNewFileParams) middleware.Responder {
@@ -41,6 +43,9 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 	})
 	api.DepositNewResourceHandler = operations.DepositNewResourceHandlerFunc(func(params operations.DepositNewResourceParams) middleware.Responder {
 		return middleware.NotImplemented("operation .DepositNewResource has not yet been implemented")
+	})
+	api.GetProcessStatusHandler = operations.GetProcessStatusHandlerFunc(func(params operations.GetProcessStatusParams) middleware.Responder {
+		return middleware.NotImplemented("operation .GetProcessStatus has not yet been implemented")
 	})
 	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams) middleware.Responder {
 		return middleware.NotImplemented("operation .RetrieveResource has not yet been implemented")

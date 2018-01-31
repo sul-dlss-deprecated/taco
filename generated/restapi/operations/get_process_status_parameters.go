@@ -14,23 +14,23 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewRetrieveResourceParams creates a new RetrieveResourceParams object
+// NewGetProcessStatusParams creates a new GetProcessStatusParams object
 // with the default values initialized.
-func NewRetrieveResourceParams() RetrieveResourceParams {
+func NewGetProcessStatusParams() GetProcessStatusParams {
 	var ()
-	return RetrieveResourceParams{}
+	return GetProcessStatusParams{}
 }
 
-// RetrieveResourceParams contains all the bound params for the retrieve resource operation
+// GetProcessStatusParams contains all the bound params for the get process status operation
 // typically these are obtained from a http.Request
 //
-// swagger:parameters retrieveResource
-type RetrieveResourceParams struct {
+// swagger:parameters getProcessStatus
+type GetProcessStatusParams struct {
 
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*TACO Resource Identifier.
+	/*SDR Identifier for the Resource.
 	  Required: true
 	  In: path
 	*/
@@ -39,7 +39,7 @@ type RetrieveResourceParams struct {
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
 // for simple values it will use straight method calls
-func (o *RetrieveResourceParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
+func (o *GetProcessStatusParams) BindRequest(r *http.Request, route *middleware.MatchedRoute) error {
 	var res []error
 	o.HTTPRequest = r
 
@@ -54,7 +54,7 @@ func (o *RetrieveResourceParams) BindRequest(r *http.Request, route *middleware.
 	return nil
 }
 
-func (o *RetrieveResourceParams) bindID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+func (o *GetProcessStatusParams) bindID(rawData []string, hasKey bool, formats strfmt.Registry) error {
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]

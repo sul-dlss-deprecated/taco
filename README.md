@@ -127,7 +127,8 @@ If instead of brew, you decide to install go-swagger from source (i.e. `go get -
 There appears to be no best way to handle specification-based re-generation of the `generated/` API code, so the following steps are recommended:
 
 ```shell
-$ rm -rf generated/
+$ git rm -rf generated/
+$ mkdir generated
 $ swagger generate server -t generated --exclude-main
 ```
 

@@ -17,28 +17,83 @@ import (
 // swagger:model Resource
 type Resource struct {
 
-	// id
+	// URI for the JSON-LD context definitions
+	// Required: true
+	AtContext *strfmt.URI `json:"@context"`
+
+	// URI for the resource type
+	// Required: true
+	AtType *strfmt.URI `json:"@type"`
+
+	// What groups should be able to access (view) the resource in Access environments
+	// Required: true
+	Access *string `json:"access"`
+
+	// The parent resource(s) of this resource.
+	ContainedBy []strfmt.URI `json:"contained-by"`
+
+	// The child resource(s) of this resource.
+	Contains []strfmt.URI `json:"contains"`
+
+	// The TACO identifier for the resource. Usually DRUID-derived.
 	ID string `json:"id,omitempty"`
 
-	// source Id
+	// The label or processing title for the resource.
 	// Required: true
-	SourceID *string `json:"sourceId"`
+	Label *string `json:"label"`
 
-	// title
+	// Should the resource be released to Preservation environments
 	// Required: true
-	Title *string `json:"title"`
+	Preserve *bool `json:"preserve"`
+
+	// Should the resource's metadata be released to Access environments
+	// Required: true
+	Publish *bool `json:"publish"`
+
+	// The source identifier (bib id, archival id) for the resource that was digitized or derived from to create the TACO resource.
+	SourceID string `json:"sourceId,omitempty"`
 }
 
 // Validate validates this resource
 func (m *Resource) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateSourceID(formats); err != nil {
+	if err := m.validateAtContext(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
 
-	if err := m.validateTitle(formats); err != nil {
+	if err := m.validateAtType(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateAccess(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateContainedBy(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateContains(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateLabel(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validatePreserve(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validatePublish(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -49,18 +104,80 @@ func (m *Resource) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Resource) validateSourceID(formats strfmt.Registry) error {
+func (m *Resource) validateAtContext(formats strfmt.Registry) error {
 
-	if err := validate.Required("sourceId", "body", m.SourceID); err != nil {
+	if err := validate.Required("@context", "body", m.AtContext); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("@context", "body", "uri", m.AtContext.String(), formats); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Resource) validateTitle(formats strfmt.Registry) error {
+func (m *Resource) validateAtType(formats strfmt.Registry) error {
 
-	if err := validate.Required("title", "body", m.Title); err != nil {
+	if err := validate.Required("@type", "body", m.AtType); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("@type", "body", "uri", m.AtType.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Resource) validateAccess(formats strfmt.Registry) error {
+
+	if err := validate.Required("access", "body", m.Access); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Resource) validateContainedBy(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ContainedBy) { // not required
+		return nil
+	}
+
+	return nil
+}
+
+func (m *Resource) validateContains(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Contains) { // not required
+		return nil
+	}
+
+	return nil
+}
+
+func (m *Resource) validateLabel(formats strfmt.Registry) error {
+
+	if err := validate.Required("label", "body", m.Label); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Resource) validatePreserve(formats strfmt.Registry) error {
+
+	if err := validate.Required("preserve", "body", m.Preserve); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Resource) validatePublish(formats strfmt.Registry) error {
+
+	if err := validate.Required("publish", "body", m.Publish); err != nil {
 		return err
 	}
 

@@ -31,9 +31,9 @@ func NewUpdateResource(ctx *middleware.Context, handler UpdateResourceHandler) *
 
 /*UpdateResource swagger:route PATCH /resource/{ID} updateResource
 
-Update an existing / deposited resource in SDR.
+Update TACO Resource.
 
-Updates an existing, deposited resource (Collection, Digital Repository Object, Fileset, File metadata object [not binary] or subclass of those) into SDR. Only include the required fields then the fields you wish to have changed. Will return the SDR identifier for the updated resource.
+Updates the metadata for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). Only include the required fields and the fields you wish to have changed. Will return the TACO resource identifier.
 
 */
 type UpdateResource struct {

@@ -16,7 +16,7 @@ import (
 // RetrieveResourceOKCode is the HTTP code returned for type RetrieveResourceOK
 const RetrieveResourceOKCode int = 200
 
-/*RetrieveResourceOK OK
+/*RetrieveResourceOK Resource metadata retrieved.
 
 swagger:response retrieveResourceOK
 */
@@ -56,10 +56,33 @@ func (o *RetrieveResourceOK) WriteResponse(rw http.ResponseWriter, producer runt
 	}
 }
 
+// RetrieveResourceUnauthorizedCode is the HTTP code returned for type RetrieveResourceUnauthorized
+const RetrieveResourceUnauthorizedCode int = 401
+
+/*RetrieveResourceUnauthorized You are not authorized to view this resource in TACO.
+
+swagger:response retrieveResourceUnauthorized
+*/
+type RetrieveResourceUnauthorized struct {
+}
+
+// NewRetrieveResourceUnauthorized creates RetrieveResourceUnauthorized with default headers values
+func NewRetrieveResourceUnauthorized() *RetrieveResourceUnauthorized {
+	return &RetrieveResourceUnauthorized{}
+}
+
+// WriteResponse to the client
+func (o *RetrieveResourceUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(401)
+}
+
 // RetrieveResourceNotFoundCode is the HTTP code returned for type RetrieveResourceNotFound
 const RetrieveResourceNotFoundCode int = 404
 
-/*RetrieveResourceNotFound Resource not found
+/*RetrieveResourceNotFound Resource not found. Please check your provided TACO identifier.
 
 swagger:response retrieveResourceNotFound
 */
@@ -77,4 +100,27 @@ func (o *RetrieveResourceNotFound) WriteResponse(rw http.ResponseWriter, produce
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
 	rw.WriteHeader(404)
+}
+
+// RetrieveResourceInternalServerErrorCode is the HTTP code returned for type RetrieveResourceInternalServerError
+const RetrieveResourceInternalServerErrorCode int = 500
+
+/*RetrieveResourceInternalServerError The resource could not be retrieved by TACO at this time.
+
+swagger:response retrieveResourceInternalServerError
+*/
+type RetrieveResourceInternalServerError struct {
+}
+
+// NewRetrieveResourceInternalServerError creates RetrieveResourceInternalServerError with default headers values
+func NewRetrieveResourceInternalServerError() *RetrieveResourceInternalServerError {
+	return &RetrieveResourceInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *RetrieveResourceInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(500)
 }
