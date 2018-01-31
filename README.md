@@ -49,7 +49,7 @@ $ docker run -p 8080:8080 taco
 ### Build for the local OS
 ```shell
 % cd cmd/tacod
-% go get -t
+% dep ensure -vendor-only
 % go build -o tacod main.go
 ```
 
