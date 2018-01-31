@@ -9,7 +9,7 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
 ## Go Local Development Setup
 
 1. Install go (grab binary from here or use `brew install go` on Mac OSX).
-2. Setup your Go workspace (where your Go code, binaries, etc. are kept together. TO DO: add info on Go workspace FYI.):
+2. Setup your Go workspace (where your Go code, binaries, etc. are kept together. See some helpful documentation here on the Go concept of workspaces: https://github.com/alco/gostart#1-go-tool-is-only-compatible-with-code-that-resides-in-a-workspace.):
       ```bash
       $ mkdir -p ~/go
       $ export GOPATH=~/go
@@ -17,20 +17,20 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
       $ cd ~/go
       ```
       Your Go code repositories will reside within `~/go/src/...` in the `$GOPATH`. Name these paths to avoid library clash, for example TACO Go code could be in `~/go/src/github.com/sul-dlss-labs/taco`. This should be where your Github repository resides too.
-3. In order to download the project code to `~/go/src/github.com/sul-dlss-labs/taco`, from any directory, run:
-```bash
-$ go get github.com/sul-dlss-labs/taco
-```
-4. Handle dependencies with the Go Dep package:
-    * Install Go Dep via `brew install dep` then `brew upgrade dep`.
-    * If your project's `Gopkg.toml` has not yet been populated (i.e. there should be libraries not commented out), you need to add an inferred list of your dependencies by running `dep init`.
-    * If your project has that, make sure your dependencies are synced via running `dep ensure`.
+3. In order to download the project code to `~/go/src/github.com/sul-dlss-labs/taco`, from any directory in your ``$GOPATH`, run:
+    ```bash
+    $ go get github.com/sul-dlss-labs/taco
+    ```
+4. Handle Go project dependencies with the Go `dep` package:
+    * Install Go Dep via `brew install dep` then `brew upgrade dep` (if on Mac OSX).
+    * If your project's `Gopkg.toml` and `Gopkg.lock` have not yet been populated, you need to add an inferred list of your dependencies by running `dep init`.
+    * If your project has those file populated, then make sure your dependencies are synced via running `dep ensure`.
     * If you need to add a new dependency, run `dep ensure -add github.com/pkg/errors`. This should add the dependency and put the new dependency in your `Gopkg.*` files.
 
 5. Localstack and Environment Variables
     * Local development depends on [localstack](https://github.com/localstack/localstack) to mock the AWS environment.
     * Environment Variables for development default to [localstack](https://github.com/localstack/localstack), if these are run on non-standard ports, review the environment variables in [config](config/config.go)
-     
+
 ## Running the Go Code locally without a build
 
 ```shell
@@ -47,21 +47,22 @@ $ docker run -p 8080:8080 taco
 ```
 
 ### Build for the local OS
+This will create a binary in your path that you can then run the application with.
+
 ```shell
-% cd cmd/tacod
-% go get -t
-% go build -o tacod main.go
+$ go build -o tacod cmd/tacod/main.go
+$ ./tacod
 ```
 
 ## Testing
-
 ```shell
 $ go test -v ./...
 ```
 
 ## Running the TACO Binary
+If you are running locally, we are stubbing out AWS services using the library `localstack`. See more information on installing `localstack` here: https://github.com/localstack/localstack#installing.
 
-First start up DynamoDB:
+First start up DynamoDB locally via localstack:
 ```shell
 $ SERVICES=dynamodb localstack start
 ```
@@ -97,42 +98,49 @@ curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe1f
 
 ## API Code Structure
 
-We use `go-swagger` to generate the API code within `generated/`, and we connect that API code to our own handlers defined with `handlers/`. The handlers are where we add our own logic for processing requests. Our handlers and the generated API code is connected within `main.go`, which is the file to start the API.
+We use `go-swagger` to generate the API code within the `generated/` directory.
+
+We connect the specification-generated API code to our own handlers defined with `handlers/`. Handlers are where we add our own logic for processing requests.
+
+Our handlers and the generated API code is connected within `main.go`, which is the file to start the API.
+
+### Install Go-Swagger
+
+The API code is generated from `swagger.yml` using `go-swagger` library. As this is not used in the existing codebase anywhere currently, you'll need to install the `go-swagger` library before running these commands (commands for those using Mac OSX):
+
+```shell
+brew tap go-swagger/go-swagger
+brew install go-swagger
+brew upgrade go-swagger
+```
+
+This should give you the `swagger` binary command in your $GOPATH and allow you to manage versions better (TBD write this up). The version of your go-swagger binary is **0.13.0** (run `swagger version` to check this).
+
+### Nota Bene on go-swagger install from source
+
+If instead of brew, you decide to install go-swagger from source (i.e. `go get -u github.com/go-swagger/go-swagger/cmd/swagger`), you will be running the library at its Github `dev` branch. You will need to change into that library (`cd $GOPATH/src/github.com/go-swagger/go-swagger`) and checkout from Github the latest release (`git checkout tags/0.13.0`). Then you will need to run `go install github.com/go-swagger/go-swagger/cmd/swagger` to generate the go-swagger binary in your `$GOPATH/bin`.
 
 ### To generate the API code
 
-The API code is generated from `swagger.yml` using `go-swagger` library. TBD: best way to handle regeneration (i.e. currently you're recommended to delete the generated code before re-running):
+There appears to be no best way to handle specification-based re-generation of the `generated/` API code, so the following steps are recommended:
 
 ```shell
+$ rm -rf generated/
 $ swagger generate server -t generated --exclude-main
 ```
 
-#### ACHTUNG!
-We've seen problems with the swagger at the HEAD of github. So we've used this workaround:
-
-```shell
-cd $GOPATH/src/github.com/go-swagger/go-swagger/cmd/swagger
-git checkout 5ade92aa47f4b45e197e97b05f36e761fab9bbf0
-go install
-```
-
-Do this prior to generating code.
-
 ### Non-generated code
 
-The API code generation does **not** touch the following, which we are writing locally:
-- `main.go`
-- `handlers/`
-
-(basically anything outside of `generated`).
-
+Anything outside of `generated/` is our own code and should not be touched by a regeneration of the API code from the Swagger specification.
 
 ## SWAGGER Generated Documentation
 
-To see the SWAGGER generated documentation, run the following:
+To see the SWAGGER generated documentation, go to https://sul-dlss-labs.github.io/taco/. This is automatically generated off of the Swagger spec in this repository on the `master` branch.
+
+If you want to generate this documentation locally, you can run the following:
 
 ```shell
 $ swagger serve swagger.yml
 ```
 
-This should prompt you to your web browser for the HTML generated docs. TBD: how we can have this consistently running on our servers de facto at a URL for the documentation.
+This should prompt you to your web browser for the HTML generated docs.
