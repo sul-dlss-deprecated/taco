@@ -93,7 +93,7 @@ $ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
 
 Then you can interact with it using `curl`:
 ```shell
-$ curl -X POST -H "Content-Type: application/json" -d '{"title":"value1", "sourceId":"value2"}' http://localhost:8080/v1/resource
+$ curl -X POST -H "Content-Type: application/json" -d@examples/request.json http://localhost:8080/v1/resource
 ```
 
 it will return a response like:
