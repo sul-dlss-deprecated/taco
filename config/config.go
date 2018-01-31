@@ -6,29 +6,29 @@ import (
 )
 
 type Config struct {
-	AWS_Region  string
-	Dynamo_Db   string
-	Disable_SSL bool
-	Table_Name  string
+	AWS_Dynamo_Region string
+	Dynamo_Db         string
+	Disable_SSL       bool
+	Table_Name        string
 }
 
 func NewConfig() *Config {
 	return &Config{
-		AWS_Region:  aws_region(),
-		Dynamo_Db:   dynamo_db(),
-		Disable_SSL: disable_ssl(),
-		Table_Name:  table_name(),
+		AWS_Dynamo_Region: aws_dynamo_region(),
+		Dynamo_Db:         dynamo_db(),
+		Disable_SSL:       disable_ssl(),
+		Table_Name:        table_name(),
 	}
 }
 
-func aws_region() string {
+func aws_dynamo_region() string {
 	var region string
-	region = os.Getenv("AWS_REGION")
+	region = os.Getenv("AWS_DYNAMO_REGION")
 	if region == "" {
 		region = "localstack"
-		log.Printf("AWS_REGION: Using default [localstack].")
+		log.Printf("AWS_DYNAMO_REGION: Using default [localstack].")
 	}
-	log.Printf("AWS_REGION: Found setting [%s]", region)
+	log.Printf("AWS_DYNAMO_REGION: Found setting [%s]", region)
 	return region
 }
 

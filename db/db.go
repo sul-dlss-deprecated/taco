@@ -1,11 +1,11 @@
 package db
 
 import (
-	"github.com/sul-dlss-labs/taco/config"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/sul-dlss-labs/taco/config"
 )
 
 var db *dynamodb.DynamoDB
@@ -14,7 +14,7 @@ var db *dynamodb.DynamoDB
 func NewConnection() *dynamodb.DynamoDB {
 	config := config.NewConfig()
 	return dynamodb.New(session.New(&aws.Config{
-		Region:      aws.String(config.AWS_Region),
+		Region:      aws.String(config.AWS_Dynamo_Region),
 		Credentials: credentials.NewEnvCredentials(),
 		Endpoint:    aws.String(config.Dynamo_Db),
 		DisableSSL:  aws.Bool(config.Disable_SSL),
