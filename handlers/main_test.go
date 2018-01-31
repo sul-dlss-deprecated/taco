@@ -3,10 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"testing"
 
-	"github.com/appleboy/gofight"
-	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
@@ -38,20 +35,16 @@ func setupFakeRuntime(repo persistence.Repository) http.Handler {
 	return BuildAPI(rt).Serve(nil)
 }
 
-func TestRetrieveHappyPath(t *testing.T) {
-	r := gofight.New()
-	r.GET("/v1/resource/99").
-		Run(setupFakeRuntime(mockRepo(new(persistence.Resource))),
-			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusOK, r.Code)
-			})
+func mockErrorRepo() persistence.Repository {
+	return &fakeErroringRepository{}
 }
 
-func TestRetrieveNotFound(t *testing.T) {
-	r := gofight.New()
-	r.GET("/v1/resource/100").
-		Run(setupFakeRuntime(mockRepo(nil)),
-			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusNotFound, r.Code)
-			})
+type fakeErroringRepository struct{}
+
+func (f *fakeErroringRepository) GetByID(id string) (*persistence.Resource, error) {
+	return nil, errors.New("broken")
+}
+
+func (f *fakeErroringRepository) SaveItem(resource *persistence.Resource) error {
+	return errors.New("broken")
 }
