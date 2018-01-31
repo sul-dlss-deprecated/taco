@@ -13,41 +13,41 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
-// DepositNewResourceOKCode is the HTTP code returned for type DepositNewResourceOK
-const DepositNewResourceOKCode int = 200
+// DepositNewResourceCreatedCode is the HTTP code returned for type DepositNewResourceCreated
+const DepositNewResourceCreatedCode int = 201
 
-/*DepositNewResourceOK Success response
+/*DepositNewResourceCreated TACO resource created & processing started.
 
-swagger:response depositNewResourceOK
+swagger:response depositNewResourceCreated
 */
-type DepositNewResourceOK struct {
+type DepositNewResourceCreated struct {
 
 	/*
 	  In: Body
 	*/
-	Payload *models.DepositNewResourceOKBody `json:"body,omitempty"`
+	Payload *models.ResourceResponse `json:"body,omitempty"`
 }
 
-// NewDepositNewResourceOK creates DepositNewResourceOK with default headers values
-func NewDepositNewResourceOK() *DepositNewResourceOK {
-	return &DepositNewResourceOK{}
+// NewDepositNewResourceCreated creates DepositNewResourceCreated with default headers values
+func NewDepositNewResourceCreated() *DepositNewResourceCreated {
+	return &DepositNewResourceCreated{}
 }
 
-// WithPayload adds the payload to the deposit new resource o k response
-func (o *DepositNewResourceOK) WithPayload(payload *models.DepositNewResourceOKBody) *DepositNewResourceOK {
+// WithPayload adds the payload to the deposit new resource created response
+func (o *DepositNewResourceCreated) WithPayload(payload *models.ResourceResponse) *DepositNewResourceCreated {
 	o.Payload = payload
 	return o
 }
 
-// SetPayload sets the payload to the deposit new resource o k response
-func (o *DepositNewResourceOK) SetPayload(payload *models.DepositNewResourceOKBody) {
+// SetPayload sets the payload to the deposit new resource created response
+func (o *DepositNewResourceCreated) SetPayload(payload *models.ResourceResponse) {
 	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *DepositNewResourceOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DepositNewResourceCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.WriteHeader(200)
+	rw.WriteHeader(201)
 	if o.Payload != nil {
 		payload := o.Payload
 		if err := producer.Produce(rw, payload); err != nil {
@@ -56,25 +56,94 @@ func (o *DepositNewResourceOK) WriteResponse(rw http.ResponseWriter, producer ru
 	}
 }
 
-// DepositNewResourceMethodNotAllowedCode is the HTTP code returned for type DepositNewResourceMethodNotAllowed
-const DepositNewResourceMethodNotAllowedCode int = 405
+// DepositNewResourceUnauthorizedCode is the HTTP code returned for type DepositNewResourceUnauthorized
+const DepositNewResourceUnauthorizedCode int = 401
 
-/*DepositNewResourceMethodNotAllowed Invalid input
+/*DepositNewResourceUnauthorized You are not authorized to create a resource in TACO.
 
-swagger:response depositNewResourceMethodNotAllowed
+swagger:response depositNewResourceUnauthorized
 */
-type DepositNewResourceMethodNotAllowed struct {
+type DepositNewResourceUnauthorized struct {
 }
 
-// NewDepositNewResourceMethodNotAllowed creates DepositNewResourceMethodNotAllowed with default headers values
-func NewDepositNewResourceMethodNotAllowed() *DepositNewResourceMethodNotAllowed {
-	return &DepositNewResourceMethodNotAllowed{}
+// NewDepositNewResourceUnauthorized creates DepositNewResourceUnauthorized with default headers values
+func NewDepositNewResourceUnauthorized() *DepositNewResourceUnauthorized {
+	return &DepositNewResourceUnauthorized{}
 }
 
 // WriteResponse to the client
-func (o *DepositNewResourceMethodNotAllowed) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DepositNewResourceUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
-	rw.WriteHeader(405)
+	rw.WriteHeader(401)
+}
+
+// DepositNewResourceUnsupportedMediaTypeCode is the HTTP code returned for type DepositNewResourceUnsupportedMediaType
+const DepositNewResourceUnsupportedMediaTypeCode int = 415
+
+/*DepositNewResourceUnsupportedMediaType Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD.
+
+swagger:response depositNewResourceUnsupportedMediaType
+*/
+type DepositNewResourceUnsupportedMediaType struct {
+}
+
+// NewDepositNewResourceUnsupportedMediaType creates DepositNewResourceUnsupportedMediaType with default headers values
+func NewDepositNewResourceUnsupportedMediaType() *DepositNewResourceUnsupportedMediaType {
+	return &DepositNewResourceUnsupportedMediaType{}
+}
+
+// WriteResponse to the client
+func (o *DepositNewResourceUnsupportedMediaType) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(415)
+}
+
+// DepositNewResourceUnprocessableEntityCode is the HTTP code returned for type DepositNewResourceUnprocessableEntity
+const DepositNewResourceUnprocessableEntityCode int = 422
+
+/*DepositNewResourceUnprocessableEntity The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO.
+
+swagger:response depositNewResourceUnprocessableEntity
+*/
+type DepositNewResourceUnprocessableEntity struct {
+}
+
+// NewDepositNewResourceUnprocessableEntity creates DepositNewResourceUnprocessableEntity with default headers values
+func NewDepositNewResourceUnprocessableEntity() *DepositNewResourceUnprocessableEntity {
+	return &DepositNewResourceUnprocessableEntity{}
+}
+
+// WriteResponse to the client
+func (o *DepositNewResourceUnprocessableEntity) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(422)
+}
+
+// DepositNewResourceInternalServerErrorCode is the HTTP code returned for type DepositNewResourceInternalServerError
+const DepositNewResourceInternalServerErrorCode int = 500
+
+/*DepositNewResourceInternalServerError This resource could be created at this time by TACO.
+
+swagger:response depositNewResourceInternalServerError
+*/
+type DepositNewResourceInternalServerError struct {
+}
+
+// NewDepositNewResourceInternalServerError creates DepositNewResourceInternalServerError with default headers values
+func NewDepositNewResourceInternalServerError() *DepositNewResourceInternalServerError {
+	return &DepositNewResourceInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *DepositNewResourceInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(500)
 }

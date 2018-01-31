@@ -23,23 +23,27 @@ import (
 // NewTacoAPI creates a new Taco instance
 func NewTacoAPI(spec *loads.Document) *TacoAPI {
 	return &TacoAPI{
-		handlers:            make(map[string]map[string]http.Handler),
-		formats:             strfmt.Default,
-		defaultConsumes:     "application/json",
-		defaultProduces:     "application/json",
-		ServerShutdown:      func() {},
-		spec:                spec,
-		ServeError:          errors.ServeError,
-		BasicAuthenticator:  security.BasicAuth,
-		APIKeyAuthenticator: security.APIKeyAuth,
-		BearerAuthenticator: security.BearerAuth,
-		JSONConsumer:        runtime.JSONConsumer(),
-		JSONProducer:        runtime.JSONProducer(),
+		handlers:              make(map[string]map[string]http.Handler),
+		formats:               strfmt.Default,
+		defaultConsumes:       "application/json",
+		defaultProduces:       "application/json",
+		ServerShutdown:        func() {},
+		spec:                  spec,
+		ServeError:            errors.ServeError,
+		BasicAuthenticator:    security.BasicAuth,
+		APIKeyAuthenticator:   security.APIKeyAuth,
+		BearerAuthenticator:   security.BearerAuth,
+		JSONConsumer:          runtime.JSONConsumer(),
+		MultipartformConsumer: runtime.DiscardConsumer,
+		JSONProducer:          runtime.JSONProducer(),
 		DepositNewFileHandler: DepositNewFileHandlerFunc(func(params DepositNewFileParams) middleware.Responder {
 			return middleware.NotImplemented("operation DepositNewFile has not yet been implemented")
 		}),
 		DepositNewResourceHandler: DepositNewResourceHandlerFunc(func(params DepositNewResourceParams) middleware.Responder {
 			return middleware.NotImplemented("operation DepositNewResource has not yet been implemented")
+		}),
+		GetProcessStatusHandler: GetProcessStatusHandlerFunc(func(params GetProcessStatusParams) middleware.Responder {
+			return middleware.NotImplemented("operation GetProcessStatus has not yet been implemented")
 		}),
 		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams) middleware.Responder {
 			return middleware.NotImplemented("operation RetrieveResource has not yet been implemented")
@@ -50,7 +54,7 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 	}
 }
 
-/*TacoAPI TACO, the Stanford Digital Repository (SDR) Management Layer interface */
+/*TacoAPI TACO, the Stanford Digital Repository (SDR) Management Layer API */
 type TacoAPI struct {
 	spec            *loads.Document
 	context         *middleware.Context
@@ -72,6 +76,8 @@ type TacoAPI struct {
 
 	// JSONConsumer registers a consumer for a "application/json" mime type
 	JSONConsumer runtime.Consumer
+	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
+	MultipartformConsumer runtime.Consumer
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
@@ -80,6 +86,8 @@ type TacoAPI struct {
 	DepositNewFileHandler DepositNewFileHandler
 	// DepositNewResourceHandler sets the operation handler for the deposit new resource operation
 	DepositNewResourceHandler DepositNewResourceHandler
+	// GetProcessStatusHandler sets the operation handler for the get process status operation
+	GetProcessStatusHandler GetProcessStatusHandler
 	// RetrieveResourceHandler sets the operation handler for the retrieve resource operation
 	RetrieveResourceHandler RetrieveResourceHandler
 	// UpdateResourceHandler sets the operation handler for the update resource operation
@@ -143,6 +151,10 @@ func (o *TacoAPI) Validate() error {
 		unregistered = append(unregistered, "JSONConsumer")
 	}
 
+	if o.MultipartformConsumer == nil {
+		unregistered = append(unregistered, "MultipartformConsumer")
+	}
+
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
 	}
@@ -153,6 +165,10 @@ func (o *TacoAPI) Validate() error {
 
 	if o.DepositNewResourceHandler == nil {
 		unregistered = append(unregistered, "DepositNewResourceHandler")
+	}
+
+	if o.GetProcessStatusHandler == nil {
+		unregistered = append(unregistered, "GetProcessStatusHandler")
 	}
 
 	if o.RetrieveResourceHandler == nil {
@@ -198,6 +214,12 @@ func (o *TacoAPI) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer 
 
 		case "application/json":
 			result["application/json"] = o.JSONConsumer
+
+		case "application/json+ld":
+			result["application/json+ld"] = o.JSONConsumer
+
+		case "multipart/form-data":
+			result["multipart/form-data"] = o.MultipartformConsumer
 
 		}
 	}
@@ -262,6 +284,11 @@ func (o *TacoAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/resource"] = NewDepositNewResource(o.context, o.DepositNewResourceHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/status/{ID}"] = NewGetProcessStatus(o.context, o.GetProcessStatusHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

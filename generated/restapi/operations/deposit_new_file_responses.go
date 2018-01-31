@@ -9,50 +9,118 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+
+	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
-// DepositNewFileOKCode is the HTTP code returned for type DepositNewFileOK
-const DepositNewFileOKCode int = 200
+// DepositNewFileCreatedCode is the HTTP code returned for type DepositNewFileCreated
+const DepositNewFileCreatedCode int = 201
 
-/*DepositNewFileOK OK
+/*DepositNewFileCreated TACO binary ingested, File management metadata created, & File processing started.
 
-swagger:response depositNewFileOK
+swagger:response depositNewFileCreated
 */
-type DepositNewFileOK struct {
+type DepositNewFileCreated struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.ResourceResponse `json:"body,omitempty"`
 }
 
-// NewDepositNewFileOK creates DepositNewFileOK with default headers values
-func NewDepositNewFileOK() *DepositNewFileOK {
-	return &DepositNewFileOK{}
+// NewDepositNewFileCreated creates DepositNewFileCreated with default headers values
+func NewDepositNewFileCreated() *DepositNewFileCreated {
+	return &DepositNewFileCreated{}
+}
+
+// WithPayload adds the payload to the deposit new file created response
+func (o *DepositNewFileCreated) WithPayload(payload *models.ResourceResponse) *DepositNewFileCreated {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the deposit new file created response
+func (o *DepositNewFileCreated) SetPayload(payload *models.ResourceResponse) {
+	o.Payload = payload
 }
 
 // WriteResponse to the client
-func (o *DepositNewFileOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DepositNewFileCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
-	rw.WriteHeader(200)
+	rw.WriteHeader(201)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
-// DepositNewFileMethodNotAllowedCode is the HTTP code returned for type DepositNewFileMethodNotAllowed
-const DepositNewFileMethodNotAllowedCode int = 405
+// DepositNewFileUnauthorizedCode is the HTTP code returned for type DepositNewFileUnauthorized
+const DepositNewFileUnauthorizedCode int = 401
 
-/*DepositNewFileMethodNotAllowed Invalid input
+/*DepositNewFileUnauthorized You are not authorized to ingest a File into TACO.
 
-swagger:response depositNewFileMethodNotAllowed
+swagger:response depositNewFileUnauthorized
 */
-type DepositNewFileMethodNotAllowed struct {
+type DepositNewFileUnauthorized struct {
 }
 
-// NewDepositNewFileMethodNotAllowed creates DepositNewFileMethodNotAllowed with default headers values
-func NewDepositNewFileMethodNotAllowed() *DepositNewFileMethodNotAllowed {
-	return &DepositNewFileMethodNotAllowed{}
+// NewDepositNewFileUnauthorized creates DepositNewFileUnauthorized with default headers values
+func NewDepositNewFileUnauthorized() *DepositNewFileUnauthorized {
+	return &DepositNewFileUnauthorized{}
 }
 
 // WriteResponse to the client
-func (o *DepositNewFileMethodNotAllowed) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DepositNewFileUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
-	rw.WriteHeader(405)
+	rw.WriteHeader(401)
+}
+
+// DepositNewFileUnsupportedMediaTypeCode is the HTTP code returned for type DepositNewFileUnsupportedMediaType
+const DepositNewFileUnsupportedMediaTypeCode int = 415
+
+/*DepositNewFileUnsupportedMediaType Unsupported file type provided.
+
+swagger:response depositNewFileUnsupportedMediaType
+*/
+type DepositNewFileUnsupportedMediaType struct {
+}
+
+// NewDepositNewFileUnsupportedMediaType creates DepositNewFileUnsupportedMediaType with default headers values
+func NewDepositNewFileUnsupportedMediaType() *DepositNewFileUnsupportedMediaType {
+	return &DepositNewFileUnsupportedMediaType{}
+}
+
+// WriteResponse to the client
+func (o *DepositNewFileUnsupportedMediaType) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(415)
+}
+
+// DepositNewFileInternalServerErrorCode is the HTTP code returned for type DepositNewFileInternalServerError
+const DepositNewFileInternalServerErrorCode int = 500
+
+/*DepositNewFileInternalServerError This file could be ingested at this time by TACO.
+
+swagger:response depositNewFileInternalServerError
+*/
+type DepositNewFileInternalServerError struct {
+}
+
+// NewDepositNewFileInternalServerError creates DepositNewFileInternalServerError with default headers values
+func NewDepositNewFileInternalServerError() *DepositNewFileInternalServerError {
+	return &DepositNewFileInternalServerError{}
+}
+
+// WriteResponse to the client
+func (o *DepositNewFileInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(500)
 }

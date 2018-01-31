@@ -32,7 +32,7 @@ type DepositNewResourceParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*JSON-LD Representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.
+	/*JSON-LD representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.
 	  Required: true
 	  In: body
 	*/

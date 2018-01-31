@@ -31,9 +31,9 @@ func NewRetrieveResource(ctx *middleware.Context, handler RetrieveResourceHandle
 
 /*RetrieveResource swagger:route GET /resource/{ID} retrieveResource
 
-Retrieve the metadata for a deposited / existing resource within SDR.
+Retrieve TACO Resource Metadata.
 
-Retrieves the metadata (as JSON-LD and SDR MAP) for an existing, deposited resource (Collection, Digital Repository Object, Fileset, File metadata object [not binary] or subclass of those) in SDR. The resource is identified by the DRUID or SDR identifier assigned.
+Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.
 
 */
 type RetrieveResource struct {

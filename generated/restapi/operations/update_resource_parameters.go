@@ -39,7 +39,7 @@ type UpdateResourceParams struct {
 	  In: path
 	*/
 	ID string
-	/*JSON-LD Representation of the resource metadata you want to change for that specified resouce (identified via its identifier or DRUID). Needs to fit the SDR 3.0 MAP requirements.
+	/*JSON-LD Representation of the resource metadata required fields and only the fields you wish to update (identified via its TACO identifier). Needs to fit the SDR 3.0 MAP requirements.
 	  Required: true
 	  In: body
 	*/
