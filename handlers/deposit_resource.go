@@ -30,8 +30,8 @@ func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams
 		panic(err)
 	}
 
-	response := &models.DepositNewResourceOKBody{ID: resourceID}
-	return operations.NewDepositNewResourceOK().WithPayload(response)
+	response := &models.DepositNewResourceCreatedBody{ID: resourceID}
+	return operations.NewDepositNewResourceCreated().WithPayload(response)
 }
 
 func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositNewResourceParams) error {

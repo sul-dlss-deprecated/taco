@@ -82,8 +82,8 @@ func init() {
           }
         ],
         "responses": {
-          "200": {
-            "description": "Success response",
+          "201": {
+            "description": "Created",
             "schema": {
               "type": "object",
               "properties": {

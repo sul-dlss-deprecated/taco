@@ -36,7 +36,7 @@ func TestCreateResourceHappyPath(t *testing.T) {
 		}).
 		Run(setupFakeRuntime(repo),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusOK, r.Code)
+				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(repo.(*fakeRepository).CreatedResources))
 
 			})

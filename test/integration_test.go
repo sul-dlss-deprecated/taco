@@ -39,7 +39,7 @@ func TestBalooSimple(t *testing.T) {
 		SetHeader("Foo", "Bar").
 		JSON(map[string]string{"title": "value1", "sourceId": "value2"}).
 		Expect(t).
-		Status(200).
+		Status(201).
 		Type("json").
 		JSONSchema(schema).
 		Done()
