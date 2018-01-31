@@ -78,3 +78,61 @@ func (o *DepositNewResourceMethodNotAllowed) WriteResponse(rw http.ResponseWrite
 
 	rw.WriteHeader(405)
 }
+
+/*DepositNewResourceDefault error
+
+swagger:response depositNewResourceDefault
+*/
+type DepositNewResourceDefault struct {
+	_statusCode int
+
+	/*
+	  In: Body
+	*/
+	Payload *models.Error `json:"body,omitempty"`
+}
+
+// NewDepositNewResourceDefault creates DepositNewResourceDefault with default headers values
+func NewDepositNewResourceDefault(code int) *DepositNewResourceDefault {
+	if code <= 0 {
+		code = 500
+	}
+
+	return &DepositNewResourceDefault{
+		_statusCode: code,
+	}
+}
+
+// WithStatusCode adds the status to the deposit new resource default response
+func (o *DepositNewResourceDefault) WithStatusCode(code int) *DepositNewResourceDefault {
+	o._statusCode = code
+	return o
+}
+
+// SetStatusCode sets the status to the deposit new resource default response
+func (o *DepositNewResourceDefault) SetStatusCode(code int) {
+	o._statusCode = code
+}
+
+// WithPayload adds the payload to the deposit new resource default response
+func (o *DepositNewResourceDefault) WithPayload(payload *models.Error) *DepositNewResourceDefault {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the deposit new resource default response
+func (o *DepositNewResourceDefault) SetPayload(payload *models.Error) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *DepositNewResourceDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(o._statusCode)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

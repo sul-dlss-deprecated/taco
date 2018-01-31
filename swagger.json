@@ -44,6 +44,12 @@
           },
           "405" : {
             "description" : "Invalid input"
+          },
+          "default" : {
+            "description": "error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
           }
         }
       }
@@ -176,6 +182,23 @@
       "example" : {
         "filename" : "mybook.pdf",
         "UUID" : "a03eea52-77a0-4e55-9026-b022d61c89fc"
+      }
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64",
+          "example": 500
+        },
+        "message": {
+          "type": "string",
+          "example": "There was a problem connecting to the database"
+        }
       }
     }
   }
