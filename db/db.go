@@ -5,17 +5,18 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/spf13/viper"
+	"github.com/sul-dlss-labs/taco/config"
 )
 
 var db *dynamodb.DynamoDB
 
 // NewConnection creates a new connection to Dynamo using our config
-func NewConnection(c *viper.Viper) *dynamodb.DynamoDB {
+func NewConnection() *dynamodb.DynamoDB {
+	config := config.NewConfig()
 	return dynamodb.New(session.New(&aws.Config{
-		Region:      aws.String(c.GetString("db.region")),
+		Region:      aws.String(config.AWS_Region),
 		Credentials: credentials.NewEnvCredentials(),
-		Endpoint:    aws.String(c.GetString("db.endpoint")),
-		DisableSSL:  aws.Bool(c.GetBool("db.disable_ssl")),
+		Endpoint:    aws.String(config.Dynamo_Db_Endpoint),
+		DisableSSL:  aws.Bool(config.Dynamo_Disable_SSL),
 	}))
 }

@@ -27,6 +27,10 @@ $ go get github.com/sul-dlss-labs/taco
     * If your project has that, make sure your dependencies are synced via running `dep ensure`.
     * If you need to add a new dependency, run `dep ensure -add github.com/pkg/errors`. This should add the dependency and put the new dependency in your `Gopkg.*` files.
 
+5. Localstack and Environment Variables
+    * Local development depends on [localstack](https://github.com/localstack/localstack) to mock the AWS environment.
+    * Environment Variables for development default to [localstack](https://github.com/localstack/localstack), if these are run on non-standard ports, review the environment variables in [config](config/config.go)
+     
 ## Running the Go Code locally without a build
 
 ```shell

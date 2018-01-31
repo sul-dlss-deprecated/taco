@@ -2,13 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"os"
 
-	"github.com/spf13/viper"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/handlers"
 )
@@ -16,15 +12,8 @@ import (
 var portFlag = flag.Int("port", 8080, "Port to run this service on")
 
 func main() {
-	mode := os.Getenv("TACO_ENV")
-	if mode == "" {
-		mode = "development"
-	}
 
-	configFile := fmt.Sprintf("../../config/%s.yaml", mode)
-	config.Init(configFile)
-
-	rt, err := taco.NewRuntime(viper.GetViper())
+	rt, err := taco.NewRuntime()
 	if err != nil {
 		log.Fatalln(err)
 	}

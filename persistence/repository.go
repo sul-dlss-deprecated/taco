@@ -7,14 +7,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/spf13/viper"
+	"github.com/sul-dlss-labs/taco/config"
 )
 
 // NewRepository -- Creates a new repository
-func NewRepository(config viper.Viper, db *dynamodb.DynamoDB) (*DynamoRepository, error) {
-	tableName := aws.String(config.GetString("resource_repository.table_name"))
-	return &DynamoRepository{config: config,
-			db:        db,
+func NewRepository(db *dynamodb.DynamoDB) (*DynamoRepository, error) {
+	config := config.NewConfig()
+	tableName := aws.String(config.Resource_Table_Name)
+	return &DynamoRepository{db: db,
 			tableName: tableName},
 		nil
 }
@@ -26,7 +26,6 @@ type Repository interface {
 
 // DynamoRepository -- The fetching object
 type DynamoRepository struct {
-	config    viper.Viper
 	db        *dynamodb.DynamoDB
 	tableName *string
 }

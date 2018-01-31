@@ -6,10 +6,8 @@ import (
 	"testing"
 
 	"github.com/appleboy/gofight"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
@@ -36,8 +34,7 @@ func (f *fakeRepository) SaveItem(resource *persistence.Resource) error {
 }
 
 func setupFakeRuntime(repo persistence.Repository) http.Handler {
-	config.Init("../config/test.yaml")
-	rt, _ := taco.NewRuntimeForRepository(viper.GetViper(), repo)
+	rt, _ := taco.NewRuntimeForRepository(repo)
 	return BuildAPI(rt).Serve(nil)
 }
 
