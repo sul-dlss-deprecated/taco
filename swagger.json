@@ -137,20 +137,60 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "body",
-          "description" : "File / Binary.",
+          "description" : "Binary to be added to an Object in TACO.",
           "required" : true,
           "schema" : {
             "$ref" : "#/definitions/File"
           }
         } ],
         "responses" : {
-          "200" : {
-            "description" : "OK"
+          "201" : {
+            "description" : "TACO File binary and metadata created & processing started.",
+            "schema" : {
+              "$ref": "#/definitions/ResourceResponse"
+            }
           },
-          "405" : {
-            "description" : "Invalid input"
+          "401" : {
+            "description" : "You are not authorized to create a File in TACO."
+          },
+          "415" : {
+            "description" : "Unsupported file type provided."
+          },
+          "500" : {
+            "description" : "This File could be created at this time by TACO."
           }
         }
+      }
+    },
+    "/status/{ID}" : {
+      "get" : {
+        "summary" : "Resource Processing Status.",
+        "description" : "Get the processing status and history for a resource.",
+        "operationId" : "getProcessStatus",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "ID",
+          "in" : "path",
+          "description" : "SDR Identifier for the Resource.",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Processing status for the TACO resource.",
+            "schema" : {
+              "$ref": "#/definitions/ProcessResponse"
+            }
+          },
+          "401" : {
+            "description" : "You are not authorized to view this resource's processing status in TACO."
+          },
+          "404" : {
+            "description" : "Check your identifier - resource not found."
+          },
+          "500" : {
+            "description" : "This resource's processing status could be retrieved at this time by TACO."
+          }
       }
     }
   },
@@ -227,6 +267,18 @@
       }
     },
     "ResourceResponse": {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "oo000oo0001"
+        }
+      },
+      "example" : {
+        "id" : "oo000oo0001"
+      }
+    },
+    "ProcessResponse": {
       "type" : "object",
       "properties" : {
         "id" : {
