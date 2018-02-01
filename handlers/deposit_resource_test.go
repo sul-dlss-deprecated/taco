@@ -1,28 +1,12 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 	"testing"
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/taco/persistence"
 )
-
-func mockErrorRepo() persistence.Repository {
-	return &fakeErroringRepository{}
-}
-
-type fakeErroringRepository struct{}
-
-func (f *fakeErroringRepository) GetByID(id string) (*persistence.Resource, error) {
-	return nil, nil
-}
-
-func (f *fakeErroringRepository) SaveItem(resource *persistence.Resource) error {
-	return errors.New("not found")
-}
 
 func TestCreateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
