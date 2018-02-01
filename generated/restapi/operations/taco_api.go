@@ -45,6 +45,9 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		GetProcessStatusHandler: GetProcessStatusHandlerFunc(func(params GetProcessStatusParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetProcessStatus has not yet been implemented")
 		}),
+		HealthCheckHandler: HealthCheckHandlerFunc(func(params HealthCheckParams) middleware.Responder {
+			return middleware.NotImplemented("operation HealthCheck has not yet been implemented")
+		}),
 		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams) middleware.Responder {
 			return middleware.NotImplemented("operation RetrieveResource has not yet been implemented")
 		}),
@@ -74,7 +77,7 @@ type TacoAPI struct {
 	// It has a default implemention in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
 
-	// JSONConsumer registers a consumer for a "application/json" mime type
+	// JSONConsumer registers a consumer for a "application/json+ld" mime type
 	JSONConsumer runtime.Consumer
 	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
 	MultipartformConsumer runtime.Consumer
@@ -88,6 +91,8 @@ type TacoAPI struct {
 	DepositNewResourceHandler DepositNewResourceHandler
 	// GetProcessStatusHandler sets the operation handler for the get process status operation
 	GetProcessStatusHandler GetProcessStatusHandler
+	// HealthCheckHandler sets the operation handler for the health check operation
+	HealthCheckHandler HealthCheckHandler
 	// RetrieveResourceHandler sets the operation handler for the retrieve resource operation
 	RetrieveResourceHandler RetrieveResourceHandler
 	// UpdateResourceHandler sets the operation handler for the update resource operation
@@ -169,6 +174,10 @@ func (o *TacoAPI) Validate() error {
 
 	if o.GetProcessStatusHandler == nil {
 		unregistered = append(unregistered, "GetProcessStatusHandler")
+	}
+
+	if o.HealthCheckHandler == nil {
+		unregistered = append(unregistered, "HealthCheckHandler")
 	}
 
 	if o.RetrieveResourceHandler == nil {
@@ -289,6 +298,11 @@ func (o *TacoAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/status/{ID}"] = NewGetProcessStatus(o.context, o.GetProcessStatusHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/healthcheck"] = NewHealthCheck(o.context, o.HealthCheckHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

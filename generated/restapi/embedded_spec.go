@@ -69,6 +69,27 @@ func init() {
         }
       }
     },
+    "/healthcheck": {
+      "get": {
+        "description": "The healthcheck endpoint provides information about the health of the service.",
+        "summary": "Health Check",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "The service is functioning nominally",
+            "schema": {
+              "$ref": "#/definitions/HealthCheckResponse"
+            }
+          },
+          "503": {
+            "description": "The service is not working correctly",
+            "schema": {
+              "$ref": "#/definitions/HealthCheckResponse"
+            }
+          }
+        }
+      }
+    },
     "/resource": {
       "post": {
         "description": "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
@@ -241,6 +262,18 @@ func init() {
     }
   },
   "definitions": {
+    "HealthCheckResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "The status of the service",
+          "type": "string"
+        }
+      },
+      "example": {
+        "status": "OK"
+      }
+    },
     "ProcessResponse": {
       "type": "object",
       "properties": {

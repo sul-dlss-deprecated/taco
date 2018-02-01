@@ -70,6 +70,19 @@ func TestBalooSimple(t *testing.T) {
 		Done()
 }
 
+func TestHealthCheck(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	setupTest().Get("/v1/healthcheck").
+		Expect(t).
+		Status(200).
+		Type("json").
+		JSON(map[string]string{"status": "OK"}).
+		Done()
+}
+
 // assert implements an assertion function with custom validation logic.
 // If the assertion fails it should return an error.
 // This has the side effect of setting the top level id variable
