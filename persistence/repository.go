@@ -13,12 +13,13 @@ import (
 // NewRepository -- Creates a new repository
 func NewRepository(db *dynamodb.DynamoDB) (*DynamoRepository, error) {
 	config := config.NewConfig()
-	tableName := aws.String(config.Resource_Table_Name)
+	tableName := aws.String(config.ResourceTableName)
 	return &DynamoRepository{db: db,
 			tableName: tableName},
 		nil
 }
 
+// Repository the interface for the metadata repository
 type Repository interface {
 	GetByID(string) (*Resource, error)
 	SaveItem(*Resource) error
