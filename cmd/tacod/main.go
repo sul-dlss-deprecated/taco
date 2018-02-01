@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/sul-dlss-labs/taco"
+	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/handlers"
 )
@@ -12,8 +13,7 @@ import (
 var portFlag = flag.Int("port", 8080, "Port to run this service on")
 
 func main() {
-
-	rt, err := taco.NewRuntime()
+	rt, err := taco.NewRuntime(config.NewConfig())
 	if err != nil {
 		log.Fatalln(err)
 	}
