@@ -192,6 +192,27 @@
           }
         }
       }
+    },
+    "/healthcheck": {
+      "get": {
+         "summary": "Health Check",
+         "description": "The healthcheck endpoint provides information about the health of the service.",
+         "operationId": "healthCheck",
+         "responses": {
+           "200": {
+             "description": "The service is functioning nominally",
+             "schema": {
+               "$ref": "#/definitions/HealthCheckResponse"
+             }
+           },
+           "503": {
+             "description": "The service is not working correctly",
+             "schema": {
+               "$ref": "#/definitions/HealthCheckResponse"
+             }
+           }
+         }
+      }
     }
   },
   "definitions": {
@@ -288,6 +309,18 @@
       },
       "example": {
         "id": "oo000oo0001"
+      }
+    },
+    "HealthCheckResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "The status of the service"
+        }
+      },
+      "example": {
+        "status": "OK"
       }
     }
   }
