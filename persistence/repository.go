@@ -11,8 +11,7 @@ import (
 )
 
 // NewRepository -- Creates a new repository
-func NewRepository(db *dynamodb.DynamoDB) (*DynamoRepository, error) {
-	config := config.NewConfig()
+func NewRepository(config *config.Config, db *dynamodb.DynamoDB) (*DynamoRepository, error) {
 	tableName := aws.String(config.ResourceTableName)
 	return &DynamoRepository{db: db,
 			tableName: tableName},

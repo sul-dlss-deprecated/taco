@@ -1,13 +1,14 @@
 package taco
 
 import (
+	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
 // NewRuntime creates a new application level runtime that encapsulates the shared services for this application
-func NewRuntime() (*Runtime, error) {
-	repository, err := persistence.NewRepository(db.NewConnection())
+func NewRuntime(config *config.Config) (*Runtime, error) {
+	repository, err := persistence.NewRepository(config, db.NewConnection())
 	if err != nil {
 		return nil, err
 	}
