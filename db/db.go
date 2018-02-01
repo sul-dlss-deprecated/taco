@@ -14,9 +14,9 @@ var db *dynamodb.DynamoDB
 func NewConnection() *dynamodb.DynamoDB {
 	config := config.NewConfig()
 	return dynamodb.New(session.New(&aws.Config{
-		Region:      aws.String(config.AWS_Region),
+		Region:      aws.String(config.AWSRegion),
 		Credentials: credentials.NewEnvCredentials(),
-		Endpoint:    aws.String(config.Dynamo_Db_Endpoint),
-		DisableSSL:  aws.Bool(config.Dynamo_Disable_SSL),
+		Endpoint:    aws.String(config.DynamodbEndpoint),
+		DisableSSL:  aws.Bool(config.DynamodbDisableSSL),
 	}))
 }

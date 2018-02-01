@@ -5,62 +5,46 @@ import (
 	"os"
 )
 
+// Config is configuration for the TACO application
 type Config struct {
-	AWS_Region          string
-	Dynamo_Db_Endpoint  string
-	Dynamo_Disable_SSL  bool
-	Resource_Table_Name string
+	AWSRegion          string
+	DynamodbEndpoint   string
+	DynamodbDisableSSL bool
+	ResourceTableName  string
+	DepositStreamName  string
 }
 
+// NewConfig creates a new configuration with values from environment variables
+// or defaults
 func NewConfig() *Config {
 	return &Config{
-		AWS_Region:          aws_region(),
-		Dynamo_Db_Endpoint:  dynamo_db_endpoint(),
-		Dynamo_Disable_SSL:  dynamo_disable_ssl(),
-		Resource_Table_Name: resource_table_name(),
+		AWSRegion:          getString("AWS_REGION", "localstack"),
+		DynamodbEndpoint:   getString("DYNAMO_DB_ENDPOINT", "localhost:4569"),
+		DynamodbDisableSSL: getBool("DYNAMODB_DISABLE_SSL", true),
+		ResourceTableName:  getString("RESOURCE_TABLE_NAME", "resources"),
+		DepositStreamName:  getString("DEPOSIT_STREAM_NAME", "deposit"),
 	}
 }
 
-func aws_region() string {
-	var region string
-	region = os.Getenv("AWS_REGION")
-	if region == "" {
-		region = "localstack"
-		log.Printf("AWS_REGION: Using default [localstack].")
+func getString(envVar string, defaultValue string) string {
+	var value string
+	value = os.Getenv(envVar)
+	if value == "" {
+		value = defaultValue
+		log.Printf("%s: Using default [%s].", envVar, defaultValue)
+		return defaultValue
 	}
-	log.Printf("AWS_REGION: Found setting [%s]", region)
-	return region
+	log.Printf("%s: Found setting [%s].", envVar, value)
+	return value
 }
 
-func dynamo_db_endpoint() string {
-	var db string
-	db = os.Getenv("DYNAMO_DB_ENDPOINT")
-	if db == "" {
-		db = "localhost:4569"
-		log.Printf("DYNAMO_DB_ENDPOINT: Using default [localhost:4569].")
-	}
-	log.Printf("DYNAMO_DB_ENDPOINT: Found setting [%s]", db)
-	return db
-}
-
-func dynamo_disable_ssl() bool {
-	var disablessl string
-	disablessl = os.Getenv("DYNAMODB_DISABLE_SSL")
-	if disablessl == "FALSE" || disablessl == "false" {
-		log.Printf("DYNAMODB_DISABLE_SSL: Found setting [false].")
+func getBool(envVar string, defaultValue bool) bool {
+	var value string
+	value = os.Getenv(envVar)
+	if value == "FALSE" || value == "false" {
+		log.Printf("%s: Using default [%s].", envVar, value)
 		return false
-	} else {
-		log.Printf("DYNAMODB_DISABLE_SSL: Using default [true].")
-		return true
 	}
-}
-
-func resource_table_name() string {
-	var tablename string
-	tablename = os.Getenv("RESOURCE_TABLE_NAME")
-	if tablename == "" {
-		tablename = "resources"
-		log.Printf("RESOURCE_TABLE_NAME: Using default [resources].")
-	}
-	return tablename
+	log.Printf("%s: defaulting to true.", envVar)
+	return true
 }
