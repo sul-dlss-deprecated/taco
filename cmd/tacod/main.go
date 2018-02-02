@@ -3,13 +3,10 @@ package main
 import (
 	"log"
 
-	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/handlers"
-	"github.com/sul-dlss-labs/taco/logger"
-	"github.com/sul-dlss-labs/taco/middleware"
 )
 
 func main() {
@@ -28,11 +25,7 @@ func main() {
 func createServer(rt *taco.Runtime) *restapi.Server {
 	api := handlers.BuildAPI(rt)
 	server := restapi.NewServer(api)
-	handler := alice.New(
-		middleware.NewRecoveryMW(),
-		logger.NewRequestLoggerMW(),
-	).Then(api.Serve(nil))
-	server.SetHandler(handler)
+	server.SetHandler(handlers.BuildHandler(api))
 	defer server.Shutdown()
 
 	// set the port this service will be run on
