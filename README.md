@@ -35,6 +35,7 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
 
 6. Configuration
     * Configuration variables for development default to point at [Localstack](docs/localstack.md) services.  You can override the default configuration by using environment variables. See the list of the environment variables in [config](config/config.go)
+    * If you want to report failures to HoneyBadger set `HONEYBADGER_API_KEY=aaaaaaaa`
 
 ## Running the Go Code locally without a build
 

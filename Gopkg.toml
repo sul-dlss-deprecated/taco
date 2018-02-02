@@ -80,3 +80,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/justinas/alice"
+  
+[[constraint]]
+  name = "github.com/honeybadger-io/honeybadger-go"
+  version = "0.2.1"
