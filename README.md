@@ -29,9 +29,10 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
     * If your project has those file populated, then make sure your dependencies are synced via running `dep ensure`.
     * If you need to add a new dependency, run `dep ensure -add github.com/pkg/errors`. This should add the dependency and put the new dependency in your `Gopkg.*` files.
 
-5. Localstack and Environment Variables
-    * Local development depends on [localstack](https://github.com/localstack/localstack) to mock the AWS environment.
-    * Environment Variables for development default to [localstack](https://github.com/localstack/localstack), if these are run on non-standard ports, review the environment variables in [config](config/config.go)
+5. [Localstack](docs/localstack.md)
+
+6. Configuration
+    * Configuration variables for development default to point at [Localstack](docs/localstack.md) services.  You can override the default configuration by using environment variables. See the list of the environment variables in [config](config/config.go)
 
 ## Running the Go Code locally without a build
 
@@ -58,43 +59,7 @@ $ go build -o tacod cmd/tacod/main.go
 $ ./tacod
 ```
 
-## Testing
-The unit tests have no external dependencies and can be run like so:
-```shell
-$ go test -v ./... -short
-```
-
-The integration test depends on the taco binary running, localstack running (see below) and the DynamoDB table having been created. Once these conditions are met you can run the integration tests using:
-
-```shell
-$ go test test/integration_test.go --port 8080
-```
-
 ## Running the TACO Binary
-If you are running locally, we are stubbing out AWS services using the library `localstack`. See more information on installing `localstack` here: https://github.com/localstack/localstack#installing.
-
-First start up DynamoDB, Kinesis and S3 locally via localstack:
-```shell
-$ SERVICES=dynamodb,kinesis,s3 localstack start
-```
-
-Then create the table:
-```shell
-$ awslocal dynamodb create-table --table-name resources \
-  --attribute-definitions "AttributeName=id,AttributeType=S" \
-  --key-schema "AttributeName=id,KeyType=HASH" \
-  --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
-```
-
-Next create the S3 bucket:
-```shell
-$ awslocal s3api create-bucket --bucket taco-deposited-files
-```
-
-Then create the Kinesis stream:
-```shell
-$ awslocal kinesis create-stream --stream-name deposit --shard-count 3
-```
 
 Now start the API server (passing in API keys; these can be fake and are only required for localstack):
 ```shell
@@ -122,6 +87,19 @@ Create an uploaded file by doing:
 ```shell
 $ curl -F upFile=@localfilename http://localhost:8080/v1/file
 ```
+
+## Testing
+The unit tests have no external dependencies and can be run like so:
+```shell
+$ go test -v ./... -short
+```
+
+The integration test depends on the taco binary and [Localstack](docs/localstack.md) running.  Once these conditions are met you can run the integration tests using:
+
+```shell
+$ go test test/integration_test.go --port 8080
+```
+
 
 ## API Code Structure
 
