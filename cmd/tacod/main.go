@@ -4,10 +4,12 @@ import (
 	"flag"
 	"log"
 
+	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/handlers"
+	"github.com/sul-dlss-labs/taco/logger"
 )
 
 var portFlag = flag.Int("port", 8080, "Port to run this service on")
@@ -26,7 +28,12 @@ func main() {
 }
 
 func createServer(rt *taco.Runtime) *restapi.Server {
-	server := restapi.NewServer(handlers.BuildAPI(rt))
+	api := handlers.BuildAPI(rt)
+	server := restapi.NewServer(api)
+	handler := alice.New(
+		logger.NewRequestLoggerMW(),
+	).Then(api.Serve(nil))
+	server.SetHandler(handler)
 	defer server.Shutdown()
 
 	// parse flags
