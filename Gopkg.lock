@@ -143,7 +143,7 @@
   branch = "master"
   name = "github.com/go-openapi/strfmt"
   packages = ["."]
-  revision = "4dd3d302e100bae008baedc42d446ce83bdd10ad"
+  revision = "2a209b09157e641d338e025dc43229ab93d07cc7"
 
 [[projects]]
   branch = "master"
@@ -173,6 +173,12 @@
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   revision = "0b12d6b5"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/justinas/alice"
+  packages = ["."]
+  revision = "03f45bd4b7dad4734bc4620e46a35789349abb20"
 
 [[projects]]
   branch = "master"
@@ -305,6 +311,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "bc209a8965deb42b08b8d31870657523bc9909fd3ba1de12f0592983b59a604f"
+  inputs-digest = "293a73af3dbe33df080860fa311fc97f6d09acd00e90cd2397186845a7ea5045"
   solver-name = "gps-cdcl"
   solver-version = 1
