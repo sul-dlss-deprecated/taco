@@ -11,7 +11,7 @@ import (
 const path = "/v1/file"
 const contentType = "multipart/form-data; boundary=------------------------a31e2ddd4b2c0d92"
 const body = `--------------------------a31e2ddd4b2c0d92
-Content-Disposition: form-data; name="upFile"; filename="foo.txt"
+Content-Disposition: form-data; name="upload"; filename="foo.txt"
 Content-Type: text/plain
 
 Hello

@@ -34,7 +34,7 @@ type DepositNewFileParams struct {
 	  Required: true
 	  In: formData
 	*/
-	UpFile runtime.File
+	Upload runtime.File
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -51,13 +51,13 @@ func (o *DepositNewFileParams) BindRequest(r *http.Request, route *middleware.Ma
 		}
 	}
 
-	upFile, upFileHeader, err := r.FormFile("upFile")
+	upload, uploadHeader, err := r.FormFile("upload")
 	if err != nil {
-		res = append(res, errors.New(400, "reading file %q failed: %v", "upFile", err))
-	} else if err := o.bindUpFile(upFile, upFileHeader); err != nil {
+		res = append(res, errors.New(400, "reading file %q failed: %v", "upload", err))
+	} else if err := o.bindUpload(upload, uploadHeader); err != nil {
 		res = append(res, err)
 	} else {
-		o.UpFile = runtime.File{Data: upFile, Header: upFileHeader}
+		o.Upload = runtime.File{Data: upload, Header: uploadHeader}
 	}
 
 	if len(res) > 0 {
@@ -66,7 +66,7 @@ func (o *DepositNewFileParams) BindRequest(r *http.Request, route *middleware.Ma
 	return nil
 }
 
-func (o *DepositNewFileParams) bindUpFile(file multipart.File, header *multipart.FileHeader) error {
+func (o *DepositNewFileParams) bindUpload(file multipart.File, header *multipart.FileHeader) error {
 
 	return nil
 }
