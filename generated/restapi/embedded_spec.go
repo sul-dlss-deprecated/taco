@@ -191,7 +191,7 @@ func init() {
           },
           {
             "description": "JSON-LD Representation of the resource metadata required fields and only the fields you wish to update (identified via its TACO identifier). Needs to fit the SDR 3.0 MAP requirements.",
-            "name": "body",
+            "name": "payload",
             "in": "body",
             "required": true,
             "schema": {

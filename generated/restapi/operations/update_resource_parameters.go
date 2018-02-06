@@ -43,7 +43,7 @@ type UpdateResourceParams struct {
 	  Required: true
 	  In: body
 	*/
-	Body *models.Resource
+	Payload *models.Resource
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -62,9 +62,9 @@ func (o *UpdateResourceParams) BindRequest(r *http.Request, route *middleware.Ma
 		var body models.Resource
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
-				res = append(res, errors.Required("body", "body"))
+				res = append(res, errors.Required("payload", "body"))
 			} else {
-				res = append(res, errors.NewParseError("body", "body", "", err))
+				res = append(res, errors.NewParseError("payload", "body", "", err))
 			}
 
 		} else {
@@ -73,12 +73,12 @@ func (o *UpdateResourceParams) BindRequest(r *http.Request, route *middleware.Ma
 			}
 
 			if len(res) == 0 {
-				o.Body = &body
+				o.Payload = &body
 			}
 		}
 
 	} else {
-		res = append(res, errors.Required("body", "body"))
+		res = append(res, errors.Required("payload", "body"))
 	}
 
 	if len(res) > 0 {

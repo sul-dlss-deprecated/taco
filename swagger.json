@@ -96,7 +96,7 @@
           "type": "string"
         }, {
           "in": "body",
-          "name": "body",
+          "name": "payload",
           "description": "JSON-LD Representation of the resource metadata required fields and only the fields you wish to update (identified via its TACO identifier). Needs to fit the SDR 3.0 MAP requirements.",
           "required": true,
           "schema": {
