@@ -10,6 +10,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/handlers"
 	"github.com/sul-dlss-labs/taco/logger"
+	"github.com/sul-dlss-labs/taco/middleware"
 )
 
 var portFlag = flag.Int("port", 8080, "Port to run this service on")
@@ -31,6 +32,7 @@ func createServer(rt *taco.Runtime) *restapi.Server {
 	api := handlers.BuildAPI(rt)
 	server := restapi.NewServer(api)
 	handler := alice.New(
+		middleware.NewRecoveryMW(),
 		logger.NewRequestLoggerMW(),
 	).Then(api.Serve(nil))
 	server.SetHandler(handler)
