@@ -77,7 +77,7 @@ func TestCreateFile(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	file := multipart.FormFile{Name: "upFile", Reader: strings.NewReader("data")}
+	file := multipart.FormFile{Name: "upload", Reader: strings.NewReader("data")}
 	files := []multipart.FormFile{file}
 	setupTest().Post("/v1/file").
 		SetHeader("Foo", "Bar").

@@ -137,7 +137,7 @@
         "produces": ["application/json"],
         "parameters": [{
           "in": "formData",
-          "name": "upFile",
+          "name": "upload",
           "type": "file",
           "description": "Binary to be added to an Object in TACO.",
           "required": true

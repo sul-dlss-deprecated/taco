@@ -31,7 +31,7 @@ func (d *depositFileEntry) Handle(params operations.DepositNewFileParams) middle
 		panic(err)
 	}
 
-	location, err := d.copyFileToStorage(id, params.UpFile)
+	location, err := d.copyFileToStorage(id, params.Upload)
 	if err != nil {
 		log.Printf("[ERROR] %s", err)
 		return operations.NewDepositNewFileInternalServerError()
@@ -39,7 +39,7 @@ func (d *depositFileEntry) Handle(params operations.DepositNewFileParams) middle
 
 	log.Printf("The location of the file is: %s", *location)
 
-	if err := d.createFileResource(id, params.UpFile.Header.Filename); err != nil {
+	if err := d.createFileResource(id, params.Upload.Header.Filename); err != nil {
 		log.Printf("[ERROR] %s", err)
 		return operations.NewDepositNewFileInternalServerError()
 	}

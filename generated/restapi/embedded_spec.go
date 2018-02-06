@@ -45,7 +45,7 @@ func init() {
           {
             "type": "file",
             "description": "Binary to be added to an Object in TACO.",
-            "name": "upFile",
+            "name": "upload",
             "in": "formData",
             "required": true
           }
