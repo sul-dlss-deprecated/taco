@@ -40,7 +40,7 @@ func init() {
           "application/json"
         ],
         "summary": "Deposit New File (binary).",
-        "operationId": "depositNewFile",
+        "operationId": "depositFile",
         "parameters": [
           {
             "type": "file",
@@ -101,7 +101,7 @@ func init() {
           "application/json"
         ],
         "summary": "Deposit New TACO Resource.",
-        "operationId": "depositNewResource",
+        "operationId": "depositResource",
         "parameters": [
           {
             "description": "JSON-LD representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.",

@@ -38,11 +38,11 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	api.DepositNewFileHandler = operations.DepositNewFileHandlerFunc(func(params operations.DepositNewFileParams) middleware.Responder {
-		return middleware.NotImplemented("operation .DepositNewFile has not yet been implemented")
+	api.DepositFileHandler = operations.DepositFileHandlerFunc(func(params operations.DepositFileParams) middleware.Responder {
+		return middleware.NotImplemented("operation .DepositFile has not yet been implemented")
 	})
-	api.DepositNewResourceHandler = operations.DepositNewResourceHandlerFunc(func(params operations.DepositNewResourceParams) middleware.Responder {
-		return middleware.NotImplemented("operation .DepositNewResource has not yet been implemented")
+	api.DepositResourceHandler = operations.DepositResourceHandlerFunc(func(params operations.DepositResourceParams) middleware.Responder {
+		return middleware.NotImplemented("operation .DepositResource has not yet been implemented")
 	})
 	api.GetProcessStatusHandler = operations.GetProcessStatusHandlerFunc(func(params operations.GetProcessStatusParams) middleware.Responder {
 		return middleware.NotImplemented("operation .GetProcessStatus has not yet been implemented")

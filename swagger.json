@@ -17,7 +17,7 @@
       "post": {
         "summary": "Deposit New TACO Resource.",
         "description": "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
-        "operationId": "depositNewResource",
+        "operationId": "depositResource",
         "consumes": ["application/json", "application/json+ld"],
         "produces": ["application/json"],
         "parameters": [ {
@@ -132,7 +132,7 @@
       "post": {
         "summary": "Deposit New File (binary).",
         "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
-        "operationId": "depositNewFile",
+        "operationId": "depositFile",
         "consumes": ["multipart/form-data"],
         "produces": ["application/json"],
         "parameters": [{
