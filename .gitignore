@@ -26,3 +26,4 @@ main
 # For Swagger Tools
 .swagger-codegen
 .swagger-codegen-ignore
+.python-version
