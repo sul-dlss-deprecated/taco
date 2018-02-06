@@ -16,7 +16,7 @@ const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
 const fileType = "http://sdr.sul.stanford.edu/contexts/sdr3-file.jsonld"
 
 // NewDepositFile -- Accepts requests to create a file and pushes it to s3.
-func NewDepositFile(rt *taco.Runtime) operations.DepositNewFileHandler {
+func NewDepositFile(rt *taco.Runtime) operations.DepositFileHandler {
 	return &depositFileEntry{rt: rt}
 }
 
@@ -25,7 +25,7 @@ type depositFileEntry struct {
 }
 
 // Handle the deposit file request
-func (d *depositFileEntry) Handle(params operations.DepositNewFileParams) middleware.Responder {
+func (d *depositFileEntry) Handle(params operations.DepositFileParams) middleware.Responder {
 	id, err := identifier.NewService().Mint()
 	if err != nil {
 		panic(err)
@@ -34,17 +34,17 @@ func (d *depositFileEntry) Handle(params operations.DepositNewFileParams) middle
 	location, err := d.copyFileToStorage(id, params.Upload)
 	if err != nil {
 		log.Printf("[ERROR] %s", err)
-		return operations.NewDepositNewFileInternalServerError()
+		return operations.NewDepositFileInternalServerError()
 	}
 
 	log.Printf("The location of the file is: %s", *location)
 
 	if err := d.createFileResource(id, params.Upload.Header.Filename); err != nil {
 		log.Printf("[ERROR] %s", err)
-		return operations.NewDepositNewFileInternalServerError()
+		return operations.NewDepositFileInternalServerError()
 	}
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
-	return operations.NewDepositNewResourceCreated().WithPayload(&models.ResourceResponse{ID: id})
+	return operations.NewDepositResourceCreated().WithPayload(&models.ResourceResponse{ID: id})
 }
 
 func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*string, error) {

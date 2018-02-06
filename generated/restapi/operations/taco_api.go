@@ -36,11 +36,11 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
-		DepositNewFileHandler: DepositNewFileHandlerFunc(func(params DepositNewFileParams) middleware.Responder {
-			return middleware.NotImplemented("operation DepositNewFile has not yet been implemented")
+		DepositFileHandler: DepositFileHandlerFunc(func(params DepositFileParams) middleware.Responder {
+			return middleware.NotImplemented("operation DepositFile has not yet been implemented")
 		}),
-		DepositNewResourceHandler: DepositNewResourceHandlerFunc(func(params DepositNewResourceParams) middleware.Responder {
-			return middleware.NotImplemented("operation DepositNewResource has not yet been implemented")
+		DepositResourceHandler: DepositResourceHandlerFunc(func(params DepositResourceParams) middleware.Responder {
+			return middleware.NotImplemented("operation DepositResource has not yet been implemented")
 		}),
 		GetProcessStatusHandler: GetProcessStatusHandlerFunc(func(params GetProcessStatusParams) middleware.Responder {
 			return middleware.NotImplemented("operation GetProcessStatus has not yet been implemented")
@@ -85,10 +85,10 @@ type TacoAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// DepositNewFileHandler sets the operation handler for the deposit new file operation
-	DepositNewFileHandler DepositNewFileHandler
-	// DepositNewResourceHandler sets the operation handler for the deposit new resource operation
-	DepositNewResourceHandler DepositNewResourceHandler
+	// DepositFileHandler sets the operation handler for the deposit file operation
+	DepositFileHandler DepositFileHandler
+	// DepositResourceHandler sets the operation handler for the deposit resource operation
+	DepositResourceHandler DepositResourceHandler
 	// GetProcessStatusHandler sets the operation handler for the get process status operation
 	GetProcessStatusHandler GetProcessStatusHandler
 	// HealthCheckHandler sets the operation handler for the health check operation
@@ -164,12 +164,12 @@ func (o *TacoAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.DepositNewFileHandler == nil {
-		unregistered = append(unregistered, "DepositNewFileHandler")
+	if o.DepositFileHandler == nil {
+		unregistered = append(unregistered, "DepositFileHandler")
 	}
 
-	if o.DepositNewResourceHandler == nil {
-		unregistered = append(unregistered, "DepositNewResourceHandler")
+	if o.DepositResourceHandler == nil {
+		unregistered = append(unregistered, "DepositResourceHandler")
 	}
 
 	if o.GetProcessStatusHandler == nil {
@@ -287,12 +287,12 @@ func (o *TacoAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/file"] = NewDepositNewFile(o.context, o.DepositNewFileHandler)
+	o.handlers["POST"]["/file"] = NewDepositFile(o.context, o.DepositFileHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/resource"] = NewDepositNewResource(o.context, o.DepositNewResourceHandler)
+	o.handlers["POST"]["/resource"] = NewDepositResource(o.context, o.DepositResourceHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

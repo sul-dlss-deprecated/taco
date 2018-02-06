@@ -11,42 +11,42 @@ import (
 	middleware "github.com/go-openapi/runtime/middleware"
 )
 
-// DepositNewFileHandlerFunc turns a function with the right signature into a deposit new file handler
-type DepositNewFileHandlerFunc func(DepositNewFileParams) middleware.Responder
+// DepositFileHandlerFunc turns a function with the right signature into a deposit file handler
+type DepositFileHandlerFunc func(DepositFileParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn DepositNewFileHandlerFunc) Handle(params DepositNewFileParams) middleware.Responder {
+func (fn DepositFileHandlerFunc) Handle(params DepositFileParams) middleware.Responder {
 	return fn(params)
 }
 
-// DepositNewFileHandler interface for that can handle valid deposit new file params
-type DepositNewFileHandler interface {
-	Handle(DepositNewFileParams) middleware.Responder
+// DepositFileHandler interface for that can handle valid deposit file params
+type DepositFileHandler interface {
+	Handle(DepositFileParams) middleware.Responder
 }
 
-// NewDepositNewFile creates a new http.Handler for the deposit new file operation
-func NewDepositNewFile(ctx *middleware.Context, handler DepositNewFileHandler) *DepositNewFile {
-	return &DepositNewFile{Context: ctx, Handler: handler}
+// NewDepositFile creates a new http.Handler for the deposit file operation
+func NewDepositFile(ctx *middleware.Context, handler DepositFileHandler) *DepositFile {
+	return &DepositFile{Context: ctx, Handler: handler}
 }
 
-/*DepositNewFile swagger:route POST /file depositNewFile
+/*DepositFile swagger:route POST /file depositFile
 
 Deposit New File (binary).
 
 Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).
 
 */
-type DepositNewFile struct {
+type DepositFile struct {
 	Context *middleware.Context
-	Handler DepositNewFileHandler
+	Handler DepositFileHandler
 }
 
-func (o *DepositNewFile) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (o *DepositFile) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	route, rCtx, _ := o.Context.RouteInfo(r)
 	if rCtx != nil {
 		r = rCtx
 	}
-	var Params = NewDepositNewFileParams()
+	var Params = NewDepositFileParams()
 
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)

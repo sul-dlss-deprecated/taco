@@ -13,7 +13,7 @@ import (
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(rt *taco.Runtime) operations.DepositNewResourceHandler {
+func NewDepositResource(rt *taco.Runtime) operations.DepositResourceHandler {
 	return &depositResourceEntry{rt: rt}
 }
 
@@ -22,7 +22,7 @@ type depositResourceEntry struct {
 }
 
 // Handle the delete entry request
-func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams) middleware.Responder {
+func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) middleware.Responder {
 	resourceID, err := identifier.NewService().Mint()
 	if err != nil {
 		panic(err)
@@ -38,15 +38,15 @@ func (d *depositResourceEntry) Handle(params operations.DepositNewResourceParams
 	}
 
 	response := &models.ResourceResponse{ID: resourceID}
-	return operations.NewDepositNewResourceCreated().WithPayload(response)
+	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositNewResourceParams) error {
+func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositResourceParams) error {
 	resource := d.persistableResourceFromParams(resourceID, params)
 	return d.rt.Repository().SaveItem(resource)
 }
 
-func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositNewResourceParams) *persistence.Resource {
+func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
 	resource.Access = *params.Payload.Access
 	resource.AtContext = *params.Payload.AtContext

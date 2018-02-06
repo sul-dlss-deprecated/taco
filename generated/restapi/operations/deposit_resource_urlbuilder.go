@@ -11,15 +11,15 @@ import (
 	golangswaggerpaths "path"
 )
 
-// DepositNewFileURL generates an URL for the deposit new file operation
-type DepositNewFileURL struct {
+// DepositResourceURL generates an URL for the deposit resource operation
+type DepositResourceURL struct {
 	_basePath string
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *DepositNewFileURL) WithBasePath(bp string) *DepositNewFileURL {
+func (o *DepositResourceURL) WithBasePath(bp string) *DepositResourceURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -27,15 +27,15 @@ func (o *DepositNewFileURL) WithBasePath(bp string) *DepositNewFileURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *DepositNewFileURL) SetBasePath(bp string) {
+func (o *DepositResourceURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *DepositNewFileURL) Build() (*url.URL, error) {
+func (o *DepositResourceURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/file"
+	var _path = "/resource"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -47,7 +47,7 @@ func (o *DepositNewFileURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *DepositNewFileURL) Must(u *url.URL, err error) *url.URL {
+func (o *DepositResourceURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -58,17 +58,17 @@ func (o *DepositNewFileURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *DepositNewFileURL) String() string {
+func (o *DepositResourceURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *DepositNewFileURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *DepositResourceURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on DepositNewFileURL")
+		return nil, errors.New("scheme is required for a full url on DepositResourceURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on DepositNewFileURL")
+		return nil, errors.New("host is required for a full url on DepositResourceURL")
 	}
 
 	base, err := o.Build()
@@ -82,6 +82,6 @@ func (o *DepositNewFileURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *DepositNewFileURL) StringFull(scheme, host string) string {
+func (o *DepositResourceURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }
