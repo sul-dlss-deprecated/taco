@@ -2,6 +2,7 @@ package validators
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema"
@@ -28,6 +29,15 @@ func (d *DepositResourceValidator) ValidateResource(resource *datautils.Resource
 	if err := d.schema.Validate(toReader(resource)); err != nil {
 		return buildErrors(err.(*jsonschema.ValidationError))
 	}
+
+	// TODO: Move to separate validator
+	dedupeIdentifier := resource.DedupeIdentifier()
+	if dedupeIdentifier != "" {
+		any, _ := d.repository.AnyWithDedupeIdentifier(dedupeIdentifier)
+		if any {
+			return d.buildErrors(fmt.Sprintf("Unique key violation for dedupeIdentifier %s", dedupeIdentifier))
+		}
+	}
 	return nil
 }
 
@@ -37,4 +47,16 @@ func toReader(resource *datautils.Resource) *strings.Reader {
 		panic(err)
 	}
 	return strings.NewReader(string(json[:]))
+}
+
+func (d *DepositResourceValidator) buildErrors(message string) *models.ErrorResponseErrors {
+	errors := models.ErrorResponseErrors{}
+	source := &models.ErrorSource{Pointer: "sourceId"}
+	problem := &models.Error{
+		Title:  "Validation Error",
+		Detail: message,
+		Source: source,
+	}
+	errors = append(errors, problem)
+	return &errors
 }

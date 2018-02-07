@@ -38,13 +38,18 @@ table:
 				--attribute-definitions AttributeName=tacoIdentifier,AttributeType=S \
 				AttributeName=externalIdentifier,AttributeType=S \
 				AttributeName=version,AttributeType=N \
+				AttributeName=dedupeIdentifier,AttributeType=S \
 				--key-schema "AttributeName=tacoIdentifier,KeyType=HASH" \
 				--provisioned-throughput=ReadCapacityUnits=10,WriteCapacityUnits=10 \
-				--global-secondary-indexes "IndexName=ResourceByExternalIDAndVersion, \
-					KeySchema=[{AttributeName=externalIdentifier,KeyType=HASH}, \
-					           {AttributeName=version,KeyType=RANGE}], \
-					Projection={ProjectionType=ALL}, \
-					ProvisionedThroughput={ReadCapacityUnits=10,WriteCapacityUnits=10}" ; \
+				--global-secondary-indexes "[{\"IndexName\":\"ResourceByExternalIDAndVersion\", \
+				          \"KeySchema\":[{\"AttributeName\":\"externalIdentifier\",\"KeyType\":\"HASH\"}, \
+				                     {\"AttributeName\":\"version\",\"KeyType\":\"RANGE\"}], \
+				          \"Projection\":{\"ProjectionType\":\"ALL\"}, \
+				          \"ProvisionedThroughput\":{\"ReadCapacityUnits\":10,\"WriteCapacityUnits\":10}}, \
+				          {\"IndexName\":\"ResourceByDedupeIdentifier\", \
+				          \"KeySchema\":[{\"AttributeName\":\"dedupeIdentifier\",\"KeyType\":\"HASH\"}], \
+				          \"Projection\":{\"ProjectionType\":\"KEYS_ONLY\"}, \
+				          \"ProvisionedThroughput\":{\"ReadCapacityUnits\":10,\"WriteCapacityUnits\":10}}]" ; \
 	fi;
 
 bucket:

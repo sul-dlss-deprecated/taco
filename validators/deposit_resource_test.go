@@ -21,3 +21,10 @@ func TestDepositResourceIsInvalid(t *testing.T) {
 	err := depositValidator.ValidateResource(resource)
 	assert.Equal(t, "Validation Error", (*err)[0].Title)
 }
+
+func TestInvalidDuplicateSourceId(t *testing.T) {
+	resource := testResource("create-bs646cd8717.json")
+	depositValidator = NewDepositResourceValidator(newMockRepository(resource))
+	err := depositValidator.ValidateResource(resource)
+	assert.Equal(t, "Validation Error", (*err)[0].Title)
+}

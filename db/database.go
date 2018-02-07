@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
@@ -15,12 +16,15 @@ type Database interface {
 	DeleteByID(tacoIdentifier string) error
 	RetrieveVersion(externalID string, version *string) (*datautils.Resource, error)
 	RetrieveLatest(externalID string) (*datautils.Resource, error)
+	AnyWithDedupeIdentifier(string) (bool, error)
+	DestroyAll() error
 }
 
 // DynamodbDatabase Represents a connection to Dynamo
 type DynamodbDatabase struct {
 	Connection *dynamodb.DynamoDB
 	Table      string
+	IndexName  string
 }
 
 // RecordNotFound is an error type returned when no record was returnd from the database
@@ -38,8 +42,17 @@ func (e RecordNotFound) Error() string {
 	return fmt.Sprintf("Unable to find record for %s", *e.ID)
 }
 
-// Connect creates a dynamodb connection
-func Connect(session *session.Session, dynamodbEndpoint string) *dynamodb.DynamoDB {
+// NewDynamodbDatabase creates an instance of DynamoDatabase
+func NewDynamodbDatabase(session *session.Session, config *config.Config) *DynamodbDatabase {
+	return &DynamodbDatabase{
+		Connection: connect(session, config.DynamodbEndpoint),
+		Table:      config.ResourceTableName,
+		IndexName:  config.ResourceIndexName,
+	}
+}
+
+// connect creates a dynamodb connection
+func connect(session *session.Session, dynamodbEndpoint string) *dynamodb.DynamoDB {
 	dynamoConfig := &aws.Config{Endpoint: aws.String(dynamodbEndpoint)}
 	return dynamodb.New(session, dynamoConfig)
 }

@@ -39,7 +39,7 @@ func TestRetrieveVersion(t *testing.T) {
 
 	resource = datautils.NewResource(datautils.JSONObject{}).
 		WithVersion(3).
-		WithLabel("Middle one").
+		WithLabel("Hello world").
 		WithExternalIdentifier(id).
 		WithID("7777779")
 
@@ -126,12 +126,31 @@ func TestRetrieveVersionNotFound(t *testing.T) {
 	assert.Equal(t, err.Error(), "Unable to find record for 8888 with version: 9")
 }
 
+func TestAnyWithDedupeIdentifier(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+	repo := initDatabase()
+	dedupeID := "8888"
+	repo.DestroyAll()
+	any, err := repo.AnyWithDedupeIdentifier(dedupeID)
+	assert.Nil(t, err)
+	assert.False(t, any)
+
+	jsonData := jsonData()
+	jsonData["dedupeIdentifier"] = dedupeID
+	resource := datautils.NewResource(jsonData)
+	err = repo.Insert(resource)
+	assert.Nil(t, err)
+
+	any, err = repo.AnyWithDedupeIdentifier(dedupeID)
+	assert.Nil(t, err)
+	assert.True(t, any)
+}
+
 func initDatabase() Database {
 	testConfig := config.NewConfig()
-	return &DynamodbDatabase{
-		Connection: Connect(aws_session.Connect(testConfig.AwsDisableSSL), testConfig.DynamodbEndpoint),
-		Table:      testConfig.ResourceTableName,
-	}
+	return NewDynamodbDatabase(aws_session.Connect(testConfig.AwsDisableSSL), testConfig)
 }
 
 func jsonData() datautils.JSONObject {

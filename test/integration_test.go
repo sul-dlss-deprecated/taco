@@ -13,16 +13,20 @@ import (
 	"time"
 
 	"github.com/buger/jsonparser"
+	"github.com/sul-dlss-labs/taco/aws_session"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/datautils"
+	"github.com/sul-dlss-labs/taco/db"
 	baloo "gopkg.in/h2non/baloo.v3"
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
+var conf = config.NewConfig()
+
 func setupTest() *baloo.Client {
 	remoteHost, ok := os.LookupEnv("TEST_REMOTE_ENDPOINT")
 	if !ok {
-		port := config.NewConfig().Port
+		port := conf.Port
 		remoteHost = fmt.Sprintf("localhost:%v", port)
 	}
 	return baloo.New(fmt.Sprintf("http://%s", remoteHost))
@@ -45,10 +49,20 @@ var id string
 var externalIdentifier string
 var tacoIdentifier string
 
+func clearDatabase() {
+	awsSession := aws_session.Connect(conf.AwsDisableSSL)
+	database := db.NewDynamodbDatabase(awsSession, conf)
+	err := database.DestroyAll()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func TestCreateAndDestroyResource(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
+	clearDatabase()
 
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
@@ -85,6 +99,7 @@ func TestUpdateResource(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skpping integration test in short mode")
 	}
+	clearDatabase()
 
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
@@ -137,6 +152,7 @@ func TestRetrieveVersions(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
+	clearDatabase()
 
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").

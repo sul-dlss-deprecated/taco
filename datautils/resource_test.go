@@ -48,6 +48,16 @@ func TestWithType(t *testing.T) {
 	assert.Equal(t, "Foo", resource.Type())
 }
 
+func TestDedupeIdentifier(t *testing.T) {
+	json := JSONObject{}
+	resource := NewResource(json)
+	assert.Equal(t, "", resource.DedupeIdentifier())
+
+	json = JSONObject{"dedupeIdentifier": "Foo"}
+	resource = NewResource(json)
+	assert.Equal(t, "Foo", resource.DedupeIdentifier())
+}
+
 func TestIsObject(t *testing.T) {
 	fileJSON := JSONObject{"@type": FileType}
 	file := NewResource(fileJSON)

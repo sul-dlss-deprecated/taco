@@ -125,7 +125,7 @@ func TestUpdateInvalidResource(t *testing.T) {
 			"label":              "My work",
 			"preserve":           true,
 			"publish":            true,
-			"sourceId":           "bib12345678"}).
+			"dedupeIdentifier":   "bib12345678"}).
 		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
