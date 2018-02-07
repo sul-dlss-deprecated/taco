@@ -3,7 +3,6 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,20 +10,14 @@ import (
 	"testing"
 
 	"github.com/buger/jsonparser"
+	"github.com/sul-dlss-labs/taco/config"
 	baloo "gopkg.in/h2non/baloo.v3"
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
-var port string
-
-// For a custom port, invoke this as:
-//   go test test/integration_test.go --port 3000
-func init() {
-	flag.StringVar(&port, "port", "8080", "port for test server")
-}
-
 func setupTest() *baloo.Client {
-	return baloo.New(fmt.Sprintf("http://localhost:%s", port))
+	port := config.NewConfig().Port
+	return baloo.New(fmt.Sprintf("http://localhost:%v", port))
 }
 
 const createSchema = `{

@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 )
 
 // Config is configuration for the TACO application
@@ -17,6 +18,7 @@ type Config struct {
 	S3Endpoint         string
 	S3BucketName       string
 	S3DisableSSL       bool
+	Port               int
 }
 
 // NewConfig creates a new configuration with values from environment variables
@@ -33,6 +35,7 @@ func NewConfig() *Config {
 		S3Endpoint:         getString("S3_ENDPOINT", "localhost:4572"),
 		S3BucketName:       getString("S3_BUCKET_NAME", "taco-deposited-files"),
 		S3DisableSSL:       getBool("S3_DISABLE_SSL", true),
+		Port:               getInteger("TACO_PORT", 8080),
 	}
 }
 
@@ -55,6 +58,16 @@ func getBool(envVar string, defaultValue bool) bool {
 		log.Printf("%s: Using default [%s].", envVar, value)
 		return false
 	}
-	log.Printf("%s: defaulting to true.", envVar)
+	log.Printf("%s: Found setting [true].", envVar)
 	return true
+}
+
+func getInteger(envVar string, defaultValue int) int {
+	value, err := strconv.Atoi(os.Getenv(envVar))
+	if err != nil || value == 0 {
+		log.Printf("%s: Using default [%v].", envVar, defaultValue)
+		return defaultValue
+	}
+	log.Printf("%s: Found setting [%v].", envVar, value)
+	return value
 }

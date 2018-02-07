@@ -99,7 +99,7 @@ $ go test -v ./... -short
 The integration test depends on the taco binary and [Localstack](docs/localstack.md) running.  Once these conditions are met you can run the integration tests using:
 
 ```shell
-$ go test test/integration_test.go --port 8080
+$ go test test/integration_test.go
 ```
 
 

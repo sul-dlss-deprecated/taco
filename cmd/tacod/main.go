@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"log"
 
 	"github.com/justinas/alice"
@@ -12,8 +11,6 @@ import (
 	"github.com/sul-dlss-labs/taco/logger"
 	"github.com/sul-dlss-labs/taco/middleware"
 )
-
-var portFlag = flag.Int("port", 8080, "Port to run this service on")
 
 func main() {
 	rt, err := taco.NewRuntime(config.NewConfig())
@@ -38,9 +35,7 @@ func createServer(rt *taco.Runtime) *restapi.Server {
 	server.SetHandler(handler)
 	defer server.Shutdown()
 
-	// parse flags
-	flag.Parse()
 	// set the port this service will be run on
-	server.Port = *portFlag
+	server.Port = rt.Config().Port
 	return server
 }
