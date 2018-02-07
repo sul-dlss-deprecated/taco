@@ -20,7 +20,7 @@ func setupTest() *baloo.Client {
 	return baloo.New(fmt.Sprintf("http://localhost:%v", port))
 }
 
-const createSchema = `{
+const resourceSchema = `{
   "title": "Create response",
   "type": "object",
   "properties": {
@@ -32,6 +32,7 @@ const createSchema = `{
 }`
 
 var id string
+var label string
 
 func TestCreateResource(t *testing.T) {
 	if testing.Short() {
@@ -54,7 +55,7 @@ func TestCreateResource(t *testing.T) {
 		Expect(t).
 		Status(201).
 		Type("json").
-		JSONSchema(createSchema).
+		JSONSchema(resourceSchema).
 		AssertFunc(assertResourceResponse).
 		Done()
 
@@ -63,6 +64,65 @@ func TestCreateResource(t *testing.T) {
 		Status(200).
 		Type("json").
 		Done()
+}
+
+func TestUpdateResource(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skpping integration test in short mode")
+	}
+
+	byt, err := ioutil.ReadFile("../examples/request.json")
+	if err != nil {
+		panic(err)
+	}
+	var postData map[string]interface{}
+
+	if err := json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
+
+	setupTest().Post("/v1/resource").
+		SetHeader("Foo", "Bar").
+		JSON(postData).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	byt, err = ioutil.ReadFile("../examples/update_request.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var patchData map[string]interface{}
+
+	if err := json.Unmarshal(byt, &patchData); err != nil {
+		panic(err)
+	}
+
+	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("Content-Type", "application/json").
+		JSON(patchData).
+		Expect(t).
+		Status(200).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		Expect(t).
+		Status(200).
+		Type("json").
+		AssertFunc(assertUpdatedResourceResponse).
+		Done()
+
+		// minimal integration test for label (the only field changed in our update statement)
+	if label != patchData["label"] {
+		t.Errorf("Updated label not applied.")
+	}
 }
 
 func TestCreateFile(t *testing.T) {
@@ -78,7 +138,7 @@ func TestCreateFile(t *testing.T) {
 		Expect(t).
 		Status(201).
 		Type("json").
-		JSONSchema(createSchema).
+		JSONSchema(resourceSchema).
 		AssertFunc(assertResourceResponse).
 		Done()
 
@@ -113,5 +173,15 @@ func assertResourceResponse(res *http.Response, req *http.Request) error {
 	buf.ReadFrom(res.Body)
 	jsonID, _ := jsonparser.GetString(buf.Bytes(), "id")
 	id = jsonID
+	return nil
+}
+
+func assertUpdatedResourceResponse(res *http.Response, req *http.Request) error {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	jsonID, _ := jsonparser.GetString(buf.Bytes(), "id")
+	jsonLabel, _ := jsonparser.GetString(buf.Bytes(), "label")
+	id = jsonID
+	label = jsonLabel
 	return nil
 }

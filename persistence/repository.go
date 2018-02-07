@@ -20,7 +20,8 @@ func NewDynamoRepository(config *config.Config, db *dynamodb.DynamoDB) *DynamoRe
 // Repository the interface for the metadata repository
 type Repository interface {
 	GetByID(string) (*Resource, error)
-	SaveItem(*Resource) error
+	CreateItem(*Resource) error
+	UpdateItem(*Resource) error
 }
 
 // DynamoRepository -- The fetching object
@@ -30,7 +31,7 @@ type DynamoRepository struct {
 }
 
 // SaveItem perist the resource in dynamo db
-func (h DynamoRepository) SaveItem(resource *Resource) error {
+func (h DynamoRepository) CreateItem(resource *Resource) error {
 	row, err := dynamodbattribute.MarshalMap(resource)
 
 	if err != nil {
@@ -77,4 +78,25 @@ func (h DynamoRepository) GetByID(id string) (*Resource, error) {
 		return nil, errors.New("not found")
 	}
 	return resource, nil
+}
+
+// UpdateItem - Replaces an existing resource in the repository
+func (h DynamoRepository) UpdateItem(resource *Resource) error {
+	row, err := dynamodbattribute.MarshalMap(resource)
+
+	if err != nil {
+		return err
+	}
+
+	input := &dynamodb.PutItemInput{
+		Item:      row,
+		TableName: h.tableName,
+	}
+
+	_, err = h.db.PutItem(input)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

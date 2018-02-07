@@ -46,7 +46,7 @@ jobs:
           background: true
       - run:
           name: wait for server
-          command: sleep 5
+          command: sleep 15
       - run:
           name: Run tests
           command: AWS_ACCESS_KEY_ID=999 AWS_SECRET_KEY=999 TACO_PORT=3000 go test -v ./...
