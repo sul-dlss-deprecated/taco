@@ -301,17 +301,26 @@ func init() {
           "description": "URI for the JSON-LD context definitions",
           "type": "string",
           "format": "uri",
+          "pattern": "http://sdr\\.sul\\.stanford\\.edu/contexts/taco-base\\.jsonld",
           "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
         },
         "@type": {
           "description": "URI for the resource type",
           "type": "string",
           "format": "uri",
+          "pattern": "http://sdr\\.sul\\.stanford\\.edu/models/sdr3-(object|collection|file)\\.jsonld",
           "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
         },
         "access": {
           "description": "What groups should be able to access (view) the resource in Access environments",
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "world",
+            "stanford",
+            "location-based",
+            "citation-only",
+            "dark"
+          ]
         },
         "contained-by": {
           "description": "The parent resource(s) of this resource.",

@@ -224,17 +224,21 @@
           "type": "string",
           "format": "uri",
           "description": "URI for the JSON-LD context definitions",
-          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
+          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+          "pattern": "http://sdr\\.sul\\.stanford\\.edu/contexts/taco-base\\.jsonld"
         },
         "@type": {
           "type": "string",
           "format": "uri",
           "description": "URI for the resource type",
-          "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
+          "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+          "pattern": "http://sdr\\.sul\\.stanford\\.edu/models/sdr3-(object|collection|file)\\.jsonld"
+
         },
         "access": {
           "type": "string",
-          "description": "What groups should be able to access (view) the resource in Access environments"
+          "description": "What groups should be able to access (view) the resource in Access environments",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
         },
         "contains": {
           "type": "array",

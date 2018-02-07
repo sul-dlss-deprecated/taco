@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -19,10 +21,12 @@ type Resource struct {
 
 	// URI for the JSON-LD context definitions
 	// Required: true
+	// Pattern: http://sdr\.sul\.stanford\.edu/contexts/taco-base\.jsonld
 	AtContext *strfmt.URI `json:"@context"`
 
 	// URI for the resource type
 	// Required: true
+	// Pattern: http://sdr\.sul\.stanford\.edu/models/sdr3-(object|collection|file)\.jsonld
 	AtType *strfmt.URI `json:"@type"`
 
 	// What groups should be able to access (view) the resource in Access environments
@@ -110,6 +114,10 @@ func (m *Resource) validateAtContext(formats strfmt.Registry) error {
 		return err
 	}
 
+	if err := validate.Pattern("@context", "body", string(*m.AtContext), `http://sdr\.sul\.stanford\.edu/contexts/taco-base\.jsonld`); err != nil {
+		return err
+	}
+
 	if err := validate.FormatOf("@context", "body", "uri", m.AtContext.String(), formats); err != nil {
 		return err
 	}
@@ -123,6 +131,10 @@ func (m *Resource) validateAtType(formats strfmt.Registry) error {
 		return err
 	}
 
+	if err := validate.Pattern("@type", "body", string(*m.AtType), `http://sdr\.sul\.stanford\.edu/models/sdr3-(object|collection|file)\.jsonld`); err != nil {
+		return err
+	}
+
 	if err := validate.FormatOf("@type", "body", "uri", m.AtType.String(), formats); err != nil {
 		return err
 	}
@@ -130,9 +142,47 @@ func (m *Resource) validateAtType(formats strfmt.Registry) error {
 	return nil
 }
 
+var resourceTypeAccessPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["world","stanford","location-based","citation-only","dark"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		resourceTypeAccessPropEnum = append(resourceTypeAccessPropEnum, v)
+	}
+}
+
+const (
+	// ResourceAccessWorld captures enum value "world"
+	ResourceAccessWorld string = "world"
+	// ResourceAccessStanford captures enum value "stanford"
+	ResourceAccessStanford string = "stanford"
+	// ResourceAccessLocationBased captures enum value "location-based"
+	ResourceAccessLocationBased string = "location-based"
+	// ResourceAccessCitationOnly captures enum value "citation-only"
+	ResourceAccessCitationOnly string = "citation-only"
+	// ResourceAccessDark captures enum value "dark"
+	ResourceAccessDark string = "dark"
+)
+
+// prop value enum
+func (m *Resource) validateAccessEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, resourceTypeAccessPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Resource) validateAccess(formats strfmt.Registry) error {
 
 	if err := validate.Required("access", "body", m.Access); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateAccessEnum("access", "body", *m.Access); err != nil {
 		return err
 	}
 
