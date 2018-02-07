@@ -1,0 +1,8 @@
+{
+		"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+		"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+		"access":   "world",
+		"label":    "My updated SDR3 resource",
+		"preserve": true,
+		"publish":  true
+}

@@ -53,7 +53,7 @@ func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*str
 
 func (d *depositFileEntry) createFileResource(resourceID string, filename string) error {
 	resource := d.buildPersistableResource(resourceID, filename)
-	return d.rt.Repository().SaveItem(resource)
+	return d.rt.Repository().CreateItem(resource)
 }
 
 func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *persistence.Resource {
