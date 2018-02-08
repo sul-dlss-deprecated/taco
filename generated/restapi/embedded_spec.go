@@ -170,6 +170,40 @@ func init() {
           }
         }
       },
+      "delete": {
+        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those).",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Delete a TACO Resource.",
+        "operationId": "deleteResource",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "SDR Identifier for the Resource.",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "TACO resource metadata delete.",
+            "schema": {
+              "$ref": "#/definitions/ResourceResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "401": {
+            "description": "You are not authorized to delete a resource in TACO."
+          },
+          "500": {
+            "description": "This resource could be updated at this time by TACO."
+          }
+        }
+      },
       "patch": {
         "description": "Updates the metadata for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). Only include the required fields and the fields you wish to have changed. Will return the TACO resource identifier.",
         "consumes": [

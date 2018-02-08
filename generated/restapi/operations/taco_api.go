@@ -36,6 +36,9 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
+		DeleteResourceHandler: DeleteResourceHandlerFunc(func(params DeleteResourceParams) middleware.Responder {
+			return middleware.NotImplemented("operation DeleteResource has not yet been implemented")
+		}),
 		DepositFileHandler: DepositFileHandlerFunc(func(params DepositFileParams) middleware.Responder {
 			return middleware.NotImplemented("operation DepositFile has not yet been implemented")
 		}),
@@ -77,7 +80,7 @@ type TacoAPI struct {
 	// It has a default implemention in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
 
-	// JSONConsumer registers a consumer for a "application/json" mime type
+	// JSONConsumer registers a consumer for a "application/json+ld" mime type
 	JSONConsumer runtime.Consumer
 	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
 	MultipartformConsumer runtime.Consumer
@@ -85,6 +88,8 @@ type TacoAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
+	// DeleteResourceHandler sets the operation handler for the delete resource operation
+	DeleteResourceHandler DeleteResourceHandler
 	// DepositFileHandler sets the operation handler for the deposit file operation
 	DepositFileHandler DepositFileHandler
 	// DepositResourceHandler sets the operation handler for the deposit resource operation
@@ -162,6 +167,10 @@ func (o *TacoAPI) Validate() error {
 
 	if o.JSONProducer == nil {
 		unregistered = append(unregistered, "JSONProducer")
+	}
+
+	if o.DeleteResourceHandler == nil {
+		unregistered = append(unregistered, "DeleteResourceHandler")
 	}
 
 	if o.DepositFileHandler == nil {
@@ -283,6 +292,11 @@ func (o *TacoAPI) initHandlerCache() {
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
 	}
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/resource/{ID}"] = NewDeleteResource(o.context, o.DeleteResourceHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
