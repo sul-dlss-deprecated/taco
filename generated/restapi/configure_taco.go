@@ -38,6 +38,9 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.DeleteResourceHandler = operations.DeleteResourceHandlerFunc(func(params operations.DeleteResourceParams) middleware.Responder {
+		return middleware.NotImplemented("operation .DeleteResource has not yet been implemented")
+	})
 	api.DepositFileHandler = operations.DepositFileHandlerFunc(func(params operations.DepositFileParams) middleware.Responder {
 		return middleware.NotImplemented("operation .DepositFile has not yet been implemented")
 	})
