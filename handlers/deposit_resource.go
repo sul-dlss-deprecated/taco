@@ -54,7 +54,7 @@ func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, 
 	resource.Label = *params.Payload.Label
 	resource.Preserve = *params.Payload.Preserve
 	resource.Publish = *params.Payload.Publish
-	// resource.SourceID = *params.Payload.SourceID
+	resource.SourceID = params.Payload.SourceID
 	return resource
 }
 
