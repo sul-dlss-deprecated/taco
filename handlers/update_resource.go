@@ -45,12 +45,12 @@ func (d *updateResourceEntry) updateResource(resourceID string, params operation
 
 func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, params operations.UpdateResourceParams) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Body.Access
-	resource.AtContext = *params.Body.AtContext
-	resource.AtType = *params.Body.AtType
-	resource.Label = *params.Body.Label
-	resource.Preserve = *params.Body.Preserve
-	resource.Publish = *params.Body.Publish
-	resource.SourceID = *params.Body.SourceID
+	resource.Access = *params.Payload.Access
+	resource.AtContext = *params.Payload.AtContext
+	resource.AtType = *params.Payload.AtType
+	resource.Label = *params.Payload.Label
+	resource.Preserve = *params.Payload.Preserve
+	resource.Publish = *params.Payload.Publish
+	// resource.SourceID = *params.Payload.SourceID
 	return resource
 }

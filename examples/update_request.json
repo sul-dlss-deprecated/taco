@@ -4,5 +4,6 @@
 		"access":   "world",
 		"label":    "My updated SDR3 resource",
 		"preserve": true,
-		"publish":  true
+		"publish":  true,
+		"sourceId": "bib12345678"
 }
