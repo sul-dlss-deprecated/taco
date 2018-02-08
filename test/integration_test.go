@@ -3,6 +3,7 @@ package test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -32,7 +33,6 @@ const resourceSchema = `{
 }`
 
 var id string
-var label string
 
 func TestCreateResource(t *testing.T) {
 	if testing.Short() {
@@ -118,11 +118,6 @@ func TestUpdateResource(t *testing.T) {
 		Type("json").
 		AssertFunc(assertUpdatedResourceResponse).
 		Done()
-
-		// minimal integration test for label (the only field changed in our update statement)
-	if label != patchData["label"] {
-		t.Errorf("Updated label not applied.")
-	}
 }
 
 func TestCreateFile(t *testing.T) {
@@ -179,9 +174,9 @@ func assertResourceResponse(res *http.Response, req *http.Request) error {
 func assertUpdatedResourceResponse(res *http.Response, req *http.Request) error {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(res.Body)
-	jsonID, _ := jsonparser.GetString(buf.Bytes(), "id")
 	jsonLabel, _ := jsonparser.GetString(buf.Bytes(), "label")
-	id = jsonID
-	label = jsonLabel
+	if jsonLabel != "My updated SDR3 resource" {
+		return errors.New("UpdateResource failure")
+	}
 	return nil
 }
