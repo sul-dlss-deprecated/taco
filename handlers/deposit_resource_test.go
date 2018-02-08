@@ -44,16 +44,21 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 }
 
 // TODO: Handle errors
-// func TestCreateResourceFailure(t *testing.T) {
-// 	r := gofight.New()
-// 	r.POST("/v1/resource").
-// 		SetJSON(gofight.D{
-// 			"id":       "oo000oo0001",
-// 			"sourceId": "bib12345678",
-// 			"title":    "My work",
-// 		}).
-// 		Run(setupFakeRuntime(mockErrorRepo()),
-// 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-// 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
-// 			})
-// }
+func TestCreateResourceFailure(t *testing.T) {
+	r := gofight.New()
+	assert.Panics(t,
+		func() {
+			r.POST("/v1/resource").
+				SetJSON(gofight.D{
+					"id":       "oo000oo0001",
+					"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+					"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+					"access":   "world",
+					"label":    "My work",
+					"preserve": true,
+					"publish":  true,
+					"sourceId": "bib12345678"}).
+				Run(setupFakeRuntime().WithRepository(mockErrorRepo()).Handler(),
+					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
+		})
+}
