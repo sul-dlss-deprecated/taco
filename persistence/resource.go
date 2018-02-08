@@ -11,9 +11,9 @@ type Resource struct {
 	ID        string     `json:"id"`
 	AtType    strfmt.URI `json:"@type"`
 	AtContext strfmt.URI `json:"@context"`
-	Access    string     `json:"@access"`
+	Access    string     `json:"access"`
 	Label     string     `json:"label"`
-	Preserve  bool       `json:"@preserve"`
-	Publish   bool       `json:"@publish"`
+	Preserve  bool       `json:"preserve"`
+	Publish   bool       `json:"publish"`
 	SourceID  string     `json:"source_id"`
 }
