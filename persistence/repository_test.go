@@ -16,7 +16,7 @@ func TestSaveAndRetrieve(t *testing.T) {
 	config := config.NewConfig()
 	repo := NewDynamoRepository(config, db.NewConnection(config))
 	resource := &Resource{ID: id, Label: "Hello world"}
-	err := repo.SaveItem(resource)
+	err := repo.CreateItem(resource)
 	assert.Nil(t, err)
 	item, err := repo.GetByID(id)
 	assert.Nil(t, err)
