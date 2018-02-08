@@ -10,23 +10,21 @@ import (
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
-// NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
+// NewUpdateResource -- Accepts requests to update a resource.
 func NewUpdateResource(rt *taco.Runtime) operations.UpdateResourceHandler {
-	return &updateResourceEntry{rt: rt, repository: rt.Repository()}
+	return &updateResourceEntry{rt: rt}
 }
 
 type updateResourceEntry struct {
-	rt         *taco.Runtime
-	repository persistence.Repository
+	rt *taco.Runtime
 }
 
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
-	resource, err := d.repository.GetByID(params.ID)
+	resource, err := d.rt.Repository().GetByID(params.ID)
 
 	if err == nil {
 		if err := d.updateResource(resource.ID, params); err != nil {
-			// TODO: handle this with an error response
 			panic(err)
 		} else {
 			log.Printf("Resource Update Successful")
@@ -53,5 +51,6 @@ func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, p
 	resource.Label = *params.Body.Label
 	resource.Preserve = *params.Body.Preserve
 	resource.Publish = *params.Body.Publish
+	resource.SourceID = *params.Body.SourceID
 	return resource
 }
