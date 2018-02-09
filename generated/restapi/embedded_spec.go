@@ -127,7 +127,10 @@ func init() {
             "description": "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
           },
           "422": {
-            "description": "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO."
+            "description": "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           },
           "500": {
             "description": "This resource could be created at this time by TACO."
@@ -216,7 +219,10 @@ func init() {
             "description": "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
           },
           "422": {
-            "description": "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO."
+            "description": "The resource JSON provided had an unspecified or unsupported field, or is otherwise unprocessable by TACO.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           },
           "500": {
             "description": "This resource could be updated at this time by TACO."
@@ -262,6 +268,41 @@ func init() {
     }
   },
   "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "detail": {
+          "description": "a human-readable explanation specific to this occurrence of the problem.",
+          "type": "string",
+          "example": "Title must contain at least three characters."
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "pointer": {
+              "type": "string",
+              "example": "/data/attributes/title"
+            }
+          }
+        },
+        "title": {
+          "description": "a short, human-readable summary of the problem that SHOULD NOT change from occurrence to occurrence of the problem.",
+          "type": "string",
+          "example": "Invalid Attribute"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Error"
+          }
+        }
+      }
+    },
     "HealthCheckResponse": {
       "type": "object",
       "properties": {
