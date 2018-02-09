@@ -88,7 +88,7 @@ $ curl -H "Content-Type: application/json"  http://localhost:8080/v1/resource/fe
 Create an uploaded file by doing:
 
 ```shell
-$ curl -F upload=@localfilename http://localhost:8080/v1/file
+$ curl -F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
 ```
 
 ## Testing
