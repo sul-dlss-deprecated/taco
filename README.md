@@ -119,6 +119,14 @@ Than you can upload that file into TACO by doing:
 ```shell
 $ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
 -F "upload=@test.pdf;type=application/pdf" http://localhost:8080/v1/file
+
+{"id":"ef8e96fc-b29a-452e-b311-ca695256e7ca"}
+```
+
+Then you can retrieve the file by accessing it at that identifier:
+
+```shell
+$ curl -L http://localhost:8080/v1/file/ef8e96fc-b29a-452e-b311-ca695256e7ca
 ```
 
 ## Running TACO via docker compose

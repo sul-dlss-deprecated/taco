@@ -9,7 +9,7 @@ import (
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
-func TestRetrieveHappyPath(t *testing.T) {
+func TestRetrieveResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(&datautils.Resource{})
 	r.GET("/v1/resource/99").
@@ -22,7 +22,7 @@ func TestRetrieveHappyPath(t *testing.T) {
 			})
 }
 
-func TestRetrieveNotFound(t *testing.T) {
+func TestRetrieveResourceNotFound(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/resource/100").
 		SetHeader(gofight.H{

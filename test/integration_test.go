@@ -186,7 +186,7 @@ func TestCreateFile(t *testing.T) {
 		AssertFunc(assertResourceResponse).
 		Done()
 
-	file := multipart.FormFile{Name: "upload", Reader: strings.NewReader("data")}
+	file := multipart.FormFile{Name: "upload", Reader: strings.NewReader("sample data")}
 	files := []multipart.FormFile{file}
 	filePath := fmt.Sprintf("/v1/resource/%s/file", id)
 	setupTest().Post(filePath).
@@ -204,6 +204,11 @@ func TestCreateFile(t *testing.T) {
 		Expect(t).
 		Status(200).
 		Type("json").
+		Done()
+
+	setupTest().Get(fmt.Sprintf("/v1/file/%s", id)).
+		Expect(t).
+		BodyEquals("sample data").
 		Done()
 }
 
