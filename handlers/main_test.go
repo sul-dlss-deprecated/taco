@@ -4,11 +4,11 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/go-openapi/runtime"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
+	"github.com/sul-dlss-labs/taco/uploaded"
 )
 
 func mockRepo(record *persistence.Resource) persistence.Repository {
@@ -47,14 +47,14 @@ type fakeStream struct {
 func (d fakeStream) SendMessage(message string) error { return nil }
 
 func mockStorage() storage.Storage {
-	return &fakeStorage{CreatedFiles: []runtime.File{}}
+	return &fakeStorage{CreatedFiles: []*uploaded.File{}}
 }
 
 type fakeStorage struct {
-	CreatedFiles []runtime.File
+	CreatedFiles []*uploaded.File
 }
 
-func (f *fakeStorage) UploadFile(id string, file runtime.File) (*string, error) {
+func (f *fakeStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
 	f.CreatedFiles = append(f.CreatedFiles, file)
 	path := "s3FileLocation"
 	return &path, nil
@@ -116,6 +116,6 @@ func mockErrorStorage() storage.Storage {
 
 type fakeErroringStorage struct{}
 
-func (f *fakeErroringStorage) UploadFile(id string, file runtime.File) (*string, error) {
+func (f *fakeErroringStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
 	return nil, errors.New("broken")
 }

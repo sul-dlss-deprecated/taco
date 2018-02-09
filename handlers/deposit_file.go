@@ -10,6 +10,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/uploaded"
 )
 
 const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
@@ -48,7 +49,12 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 }
 
 func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*string, error) {
-	return d.rt.FileStorage().UploadFile(id, file)
+	filename := file.Header.Filename
+	contentType := file.Header.Header.Get("Content-Type")
+	log.Printf("Saving file \"%s\" with content-type: %s", filename, contentType)
+
+	upload := uploaded.NewFile(filename, contentType, file.Data)
+	return d.rt.FileStorage().UploadFile(id, upload)
 }
 
 func (d *depositFileEntry) createFileResource(resourceID string, filename string) error {
