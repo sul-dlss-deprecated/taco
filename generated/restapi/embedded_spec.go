@@ -30,6 +30,41 @@ func init() {
   "host": "sdr.dlss.stanford.edu",
   "basePath": "/v1",
   "paths": {
+    "/file/{ID}": {
+      "get": {
+        "description": "Retrieves the binary associated with the TACO identifier.",
+        "summary": "Retrieve TACO managed binary.",
+        "operationId": "retrieveFile",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "TACO Resource Identifier.",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "The location of the requested binary content.",
+            "headers": {
+              "Location": {
+                "type": "string"
+              }
+            }
+          },
+          "401": {
+            "description": "You are not authorized to retrieve this resource's binary."
+          },
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
+          },
+          "500": {
+            "description": "This resource's binary could not be retrieved at this time by TACO."
+          }
+        }
+      }
+    },
     "/healthcheck": {
       "get": {
         "description": "The healthcheck endpoint provides information about the health of the service.",
