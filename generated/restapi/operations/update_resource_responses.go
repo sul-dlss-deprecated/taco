@@ -133,6 +133,11 @@ const UpdateResourceUnprocessableEntityCode int = 422
 swagger:response updateResourceUnprocessableEntity
 */
 type UpdateResourceUnprocessableEntity struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.ErrorResponse `json:"body,omitempty"`
 }
 
 // NewUpdateResourceUnprocessableEntity creates UpdateResourceUnprocessableEntity with default headers values
@@ -140,12 +145,27 @@ func NewUpdateResourceUnprocessableEntity() *UpdateResourceUnprocessableEntity {
 	return &UpdateResourceUnprocessableEntity{}
 }
 
+// WithPayload adds the payload to the update resource unprocessable entity response
+func (o *UpdateResourceUnprocessableEntity) WithPayload(payload *models.ErrorResponse) *UpdateResourceUnprocessableEntity {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the update resource unprocessable entity response
+func (o *UpdateResourceUnprocessableEntity) SetPayload(payload *models.ErrorResponse) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *UpdateResourceUnprocessableEntity) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(422)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }
 
 // UpdateResourceInternalServerErrorCode is the HTTP code returned for type UpdateResourceInternalServerError
