@@ -69,6 +69,40 @@ func init() {
         }
       }
     },
+    "/file/{ID}": {
+      "get": {
+        "description": "Retrieves the binary associated with the TACO identifier.",
+        "summary": "Retrieve TACO managed binary.",
+        "operationId": "retrieveFile",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "TACO Resource Identifier.",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested binary content.",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "401": {
+            "description": "You are not authorized to retrieve this resource's binary."
+          },
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
+          },
+          "500": {
+            "description": "This resource's binary could not be retrieved at this time by TACO."
+          }
+        }
+      }
+    },
     "/healthcheck": {
       "get": {
         "description": "The healthcheck endpoint provides information about the health of the service.",
@@ -255,7 +289,7 @@ func init() {
             "description": "Resource not found. Please check your provided TACO identifier."
           },
           "500": {
-            "description": "This resource's processing status could be retrieved at this time by TACO."
+            "description": "This resource's processing status could not be retrieved at this time by TACO."
           }
         }
       }

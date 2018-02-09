@@ -105,7 +105,7 @@ func (o *GetProcessStatusNotFound) WriteResponse(rw http.ResponseWriter, produce
 // GetProcessStatusInternalServerErrorCode is the HTTP code returned for type GetProcessStatusInternalServerError
 const GetProcessStatusInternalServerErrorCode int = 500
 
-/*GetProcessStatusInternalServerError This resource's processing status could be retrieved at this time by TACO.
+/*GetProcessStatusInternalServerError This resource's processing status could not be retrieved at this time by TACO.
 
 swagger:response getProcessStatusInternalServerError
 */

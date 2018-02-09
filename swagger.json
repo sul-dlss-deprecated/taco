@@ -161,6 +161,38 @@
         }
       }
     },
+    "/file/{ID}": {
+      "get": {
+        "summary": "Retrieve TACO managed binary.",
+        "description": "Retrieves the binary associated with the TACO identifier.",
+        "operationId": "retrieveFile",
+        "parameters": [{
+          "name": "ID",
+          "in": "path",
+          "description": "TACO Resource Identifier.",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "The requested binary content.",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          "401": {
+            "description": "You are not authorized to retrieve this resource's binary."
+          },
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
+          },
+          "500": {
+            "description": "This resource's binary could not be retrieved at this time by TACO."
+          }
+        }
+      }
+    },
     "/status/{ID}": {
       "get": {
         "summary": "Resource Processing Status.",
@@ -188,7 +220,7 @@
             "description": "Resource not found. Please check your provided TACO identifier."
           },
           "500": {
-            "description": "This resource's processing status could be retrieved at this time by TACO."
+            "description": "This resource's processing status could not be retrieved at this time by TACO."
           }
         }
       }
