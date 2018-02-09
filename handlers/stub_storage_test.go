@@ -11,22 +11,31 @@ type MockStorage struct {
 	CreatedFiles []*datautils.File
 }
 
+func NewMockStorage() storage.Storage {
+	return &MockStorage{CreatedFiles: []*datautils.File{}}
+}
+
 func (s *MockStorage) UploadFile(id string, file *datautils.File) (*string, error) {
 	s.CreatedFiles = append(s.CreatedFiles, file)
 	path := "s3FileLocation"
 	return &path, nil
 }
 
-func NewMockStorage() storage.Storage {
-	return &MockStorage{CreatedFiles: []*datautils.File{}}
+func (s *MockStorage) CreateSignedURL(s3URI string) (*string, error) {
+	path := "https://example.com/file-123"
+	return &path, nil
 }
+
+type MockErrorStorage struct{}
 
 func NewMockErrorStorage() storage.Storage {
-	return &fakeErroringStorage{}
+	return &MockErrorStorage{}
 }
 
-type fakeErroringStorage struct{}
-
-func (f *fakeErroringStorage) UploadFile(id string, file *datautils.File) (*string, error) {
+func (f *MockErrorStorage) UploadFile(id string, file *datautils.File) (*string, error) {
 	return nil, errors.New("broken")
+}
+
+func (f *MockErrorStorage) CreateSignedURL(s3URI string) (*string, error) {
+	return nil, errors.New("Broken")
 }

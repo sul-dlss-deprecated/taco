@@ -21,6 +21,7 @@ func BuildAPI(database db.Database, storage storage.Storage, identifierService i
 	}
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
 	api.DeleteResourceHandler = NewDeleteResource(database)
+	api.RetrieveFileHandler = NewRetrieveFile(database, storage)
 	api.DepositResourceHandler = NewDepositResource(database, depositResourceValidator(database), identifierService)
 	api.UpdateResourceHandler = NewUpdateResource(database, updateResourceValidator(database))
 	api.DepositFileHandler = NewDepositFile(database, storage, depositFileValidator(database), identifierService)
