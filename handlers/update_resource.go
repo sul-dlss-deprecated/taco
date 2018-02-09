@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -26,8 +27,11 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	if err == nil {
 		if err := d.updateResource(resource.ID, params); err != nil {
 			panic(err)
-		} else {
-			log.Printf("Resource Update Successful")
+		}
+
+		if err := d.addToStream(&resource.ID); err != nil {
+			// TODO: handle this with an error response
+			panic(err)
 		}
 
 		response := &models.ResourceResponse{ID: params.ID}
@@ -53,4 +57,18 @@ func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, p
 	resource.Publish = *params.Payload.Publish
 	resource.SourceID = params.Payload.SourceID
 	return resource
+}
+
+func (d *updateResourceEntry) addToStream(id *string) error {
+	message, err := json.Marshal(id)
+	if err != nil {
+		return err
+	}
+	if d.rt.Stream() == nil {
+		log.Printf("Stream is nil")
+	}
+	if err := d.rt.Stream().SendMessage(string(message)); err != nil {
+		return err
+	}
+	return nil
 }
