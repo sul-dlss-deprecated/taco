@@ -18,13 +18,16 @@ const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
 const fileType = "http://sdr.sul.stanford.edu/contexts/sdr3-file.jsonld"
 
 // NewDepositFile -- Accepts requests to create a file and pushes it to s3.
-func NewDepositFile(database db.Database, uploader storage.Storage) operations.DepositFileHandler {
-	return &depositFileEntry{database: database, storage: uploader}
+func NewDepositFile(database db.Database, uploader storage.Storage, identifierService identifier.Service) operations.DepositFileHandler {
+	return &depositFileEntry{database: database,
+		storage:           uploader,
+		identifierService: identifierService}
 }
 
 type depositFileEntry struct {
-	database db.Database
-	storage  storage.Storage
+	database          db.Database
+	storage           storage.Storage
+	identifierService identifier.Service
 }
 
 // Handle the deposit file request
@@ -34,7 +37,7 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 		return operations.NewDepositFileInternalServerError() // TODO: need a better error
 	}
 
-	id, err := identifier.NewService().Mint()
+	id, err := d.identifierService.Mint()
 	if err != nil {
 		panic(err)
 	}

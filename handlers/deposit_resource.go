@@ -16,14 +16,20 @@ import (
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(database db.Database, stream streaming.Stream, validator validators.ResourceValidator) operations.DepositResourceHandler {
-	return &depositResource{database: database, stream: stream, validator: validator}
+func NewDepositResource(database db.Database, stream streaming.Stream, validator validators.ResourceValidator, identifierService identifier.Service) operations.DepositResourceHandler {
+	return &depositResource{
+		database:          database,
+		stream:            stream,
+		validator:         validator,
+		identifierService: identifierService,
+	}
 }
 
 type depositResource struct {
-	database  db.Database
-	stream    streaming.Stream
-	validator validators.ResourceValidator
+	database          db.Database
+	stream            streaming.Stream
+	validator         validators.ResourceValidator
+	identifierService identifier.Service
 }
 
 // Handle the delete entry request
@@ -37,7 +43,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 		return operations.NewDepositResourceUnprocessableEntity()
 	}
 
-	resourceID, err := identifier.NewService().Mint()
+	resourceID, err := d.identifierService.Mint()
 	if err != nil {
 		panic(err)
 	}

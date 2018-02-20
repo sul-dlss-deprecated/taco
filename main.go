@@ -16,15 +16,14 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/handlers"
+	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/middleware"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
 )
 
 type Taco struct {
-	config     *config.Config
-	server     *restapi.Server
-	awsSession *session.Session
+	server *restapi.Server
 }
 
 var tacoServer Taco
@@ -32,21 +31,23 @@ var tacoServer Taco
 func main() {
 
 	// Initialize our global struct
-	tacoServer.config = config.NewConfig()
-	tacoServer.awsSession = aws_session.Connect(tacoServer.config.AwsDisableSSL)
+	config := config.NewConfig()
+	awsSession := aws_session.Connect(config.AwsDisableSSL)
 	database := &db.DynamodbDatabase{
-		Connection: db.Connect(tacoServer.awsSession, tacoServer.config.DynamodbEndpoint),
-		Table:      tacoServer.config.ResourceTableName,
+		Connection: db.Connect(awsSession, config.DynamodbEndpoint),
+		Table:      config.ResourceTableName,
 	}
 	stream := &streaming.KinesisStream{
-		Connection: streaming.Connect(tacoServer.awsSession, tacoServer.config.KinesisEndpoint),
-		StreamName: tacoServer.config.DepositStreamName,
+		Connection: streaming.Connect(awsSession, config.KinesisEndpoint),
+		StreamName: config.DepositStreamName,
 	}
 	storage := &storage.S3BucketStorage{
-		Uploader:     connectToStorage(),
-		S3BucketName: tacoServer.config.S3BucketName,
+		Uploader:     connectToStorage(awsSession, config.S3Endpoint),
+		S3BucketName: config.S3BucketName,
 	}
-	tacoServer.server = createServer(database, stream, storage)
+
+	identifierService := identifier.NewService(config)
+	tacoServer.server = createServer(database, stream, storage, identifierService, config.Port)
 
 	// serve API
 	if err := tacoServer.server.Serve(); err != nil {
@@ -56,23 +57,23 @@ func main() {
 
 // NewS3Bucket creates a new storage adapter that uses S3 bucket storage to
 // actually store the files
-func connectToStorage() *s3manager.Uploader {
+func connectToStorage(awsSession *session.Session, endpoint string) *s3manager.Uploader {
 	forcePath := true // This is required for localstack
-	s3Svc := s3.New(tacoServer.awsSession, &aws.Config{
-		Endpoint:         aws.String(tacoServer.config.S3Endpoint),
+	s3Svc := s3.New(awsSession, &aws.Config{
+		Endpoint:         aws.String(endpoint),
 		S3ForcePathStyle: &forcePath,
 	})
 	return s3manager.NewUploaderWithClient(s3Svc)
 }
 
-func createServer(database db.Database, stream streaming.Stream, storage storage.Storage) *restapi.Server {
-	api := handlers.BuildAPI(database, stream, storage)
+func createServer(database db.Database, stream streaming.Stream, storage storage.Storage, identifierService identifier.Service, port int) *restapi.Server {
+	api := handlers.BuildAPI(database, stream, storage, identifierService)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 	defer server.Shutdown()
 
 	// set the port this service will be run on
-	server.Port = tacoServer.config.Port
+	server.Port = port
 	return server
 }
 
