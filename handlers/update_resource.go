@@ -30,7 +30,6 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		}
 
 		if err := d.addToStream(&resource.ID); err != nil {
-			// TODO: handle this with an error response
 			panic(err)
 		}
 
