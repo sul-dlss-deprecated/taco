@@ -139,6 +139,7 @@
   name = "github.com/go-openapi/runtime"
   packages = [
     ".",
+    "client",
     "flagext",
     "logger",
     "middleware",
@@ -247,6 +248,16 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/sul-dlss-labs/identifier-service"
+  packages = [
+    "generated/client",
+    "generated/client/operations",
+    "generated/models"
+  ]
+  revision = "e0a6ed023ef5cd7cd01da9a089624b7e5d19b40e"
+
+[[projects]]
   name = "github.com/tylerb/graceful"
   packages = ["."]
   revision = "4654dfbb6ad53cb5e27f37d99b02e16c1872fbbb"
@@ -275,6 +286,7 @@
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "idna",
     "publicsuffix"
   ]
@@ -358,6 +370,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8829465dfbdbd452afcf0579a0c81101c8d8bffb28692cc8b1155ab844d195c5"
+  inputs-digest = "b860cb4fc0d0ad581b14cb3b6b57d6fe5ef027e23c67396075d75c1ae381ddff"
   solver-name = "gps-cdcl"
   solver-version = 1

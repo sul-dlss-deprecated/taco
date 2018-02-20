@@ -8,7 +8,6 @@ import (
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/validators"
 )
@@ -29,7 +28,7 @@ func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) m
 		return operations.NewDepositResourceUnprocessableEntity()
 	}
 
-	resourceID, err := identifier.NewService().Mint()
+	resourceID, err := d.rt.Identifier().Mint()
 	if err != nil {
 		panic(err)
 	}

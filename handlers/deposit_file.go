@@ -8,7 +8,6 @@ import (
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/uploaded"
 	"github.com/sul-dlss-labs/taco/validators"
@@ -33,7 +32,7 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 		return operations.NewDepositFileInternalServerError() // TODO: need a better error
 	}
 
-	id, err := identifier.NewService().Mint()
+	id, err := d.rt.Identifier().Mint()
 	if err != nil {
 		panic(err)
 	}

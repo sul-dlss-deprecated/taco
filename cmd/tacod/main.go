@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	rt, err := taco.NewRuntime(config.NewConfig())
+	rt, err := taco.NewDefaultRuntime(config.NewConfig())
 	if err != nil {
 		log.Fatalln(err)
 	}
