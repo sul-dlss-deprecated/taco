@@ -1,0 +1,153 @@
+{
+  "title": "Fileset",
+  "description": "Relevant groupings of Files. Also called a File Grouping.",
+  "type": "object",
+  "required": ["@context", "@type", "label", "version", "administrative", "accessAndPermissions", "identification", "structural"],
+  "properties": {
+    "@context": {
+      "description": "URI for the JSON-LD context definitions.",
+      "type": "string",
+      "format": "URI"
+    },
+    "@type": {
+      "description": "The content type of the Fileset.",
+      "type": "string",
+      "format": "URI",
+      "enum": ["http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
+      ]
+    },
+    "citation": {
+      "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
+      "type": "string"
+    },
+    "depositor": {
+      "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Primary label or name for an Agent.",
+          "type": "string"
+        },
+        "sunetID": {
+          "description": "Stanford University NetID for the Agent.",
+          "type": "string"
+        }
+      }
+    },
+    "label": {
+      "description": "Primary processing label (can be same as title) for a Fileset.",
+      "type": "string"
+    },
+    "version": {
+      "description": "Version for the Fileset within SDR.",
+      "type": "integer"
+    },
+    "accessAndPermissions": {
+      "description": "Access & Permissions Metadata for the Fileset.",
+      "type": "object",
+      "required": ["access", "download"],
+      "properties": {
+        "access": {
+          "description": "Access level for the Fileset.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        },
+        "download": {
+          "description": "Download level for the Fileset metadata.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        }
+      }
+    },
+    "administrative": {
+      "type": "object",
+      "description": "Administrative metadata for the SDR resource.",
+      "required": ["created", "preserve"],
+      "properties": {
+        "created": {
+          "description": "When the resource in SDR was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted": {
+          "description": "If the resource has been deleted (but not purged).",
+          "type": "boolean"
+        },
+        "gravestoneMessage": {
+          "description": "Message describing why the resource was deleted.",
+          "type": "string"
+        },
+        "lastUpdated": {
+          "description": "When the resource in SDR was last updated.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "partOfProject": {
+          "description": "Administrative or Internal project this resource is a part of.",
+          "type": "string"
+        },
+        "preserve": {
+          "description": "If this resource should be sent to Preservation.",
+          "type": "boolean"
+        },
+        "remediatedBy": {
+          "description": "The Agent (User, Group, Application, Department, other) that remediated a Fileset in SDR.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Primary label or name for an Agent.",
+                "type": "string"
+              },
+              "sunetID": {
+                "description": "Stanford University NetID for the Agent.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "identification": {
+      "description": "Identifying information for the Fileset.",
+      "type": "object",
+      "required": ["identifier", "UUID"],
+      "properties": {
+        "identifier": {
+          "description": "Identifier for the Fileset within SDR.",
+          "type": "string"
+        },
+        "UUID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUID for the Fileset within TACO."
+        }
+      }
+    },
+    "structural": {
+      "description": "Structural metadata for the Fileset.",
+      "type": "object",
+      "properties": {
+        "contains": {
+          "description": "Files contained by this Fileset. Files relevant to that Fileset and representing the same parent DRO.",
+          "type": "array",
+          "items": [{
+            "type": "string",
+            "format": "URI"
+          }]
+        },
+        "isContainedBy": {
+          "description": "Parent DRO that is represented by the files in this Fileset.",
+          "type": "string",
+          "format": "URI"
+        },
+        "isTargetOf": {
+          "description": "An Annotation instance that applies to this Fileset.",
+          "type": "string",
+          "format": "URI"
+        }
+      }
+    }
+  }
+}
