@@ -40,9 +40,11 @@
       "properties": {
         "required": ["name"],
         "name": {
+          "description": "Primary label or name for an Agent.",
           "type": "string"
         },
         "sunetID": {
+          "description": "Stanford University NetID for the Agent.",
           "type": "string"
         }
       }
