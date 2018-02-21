@@ -34,9 +34,22 @@
       "description": "Format of the File.",
       "type": "string"
     },
+    "hasMessageDigest": {
+      "description": "The output of the message digest algorithm.",
+      "type": "string"
+    },
+    "hasMimeType": {
+      "description": "MIME Type of the File.",
+      "type": "string",
+      "format": "mime-type"
+    },
     "label": {
       "description": "Primary processing label (can be same as title) for a File.",
       "type": "string"
+    },
+    "size": {
+      "description": "Size of the File (binary) in bytes.",
+      "type": "integer"
     },
     "use": {
       "description": "Use for the File.",
