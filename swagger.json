@@ -129,7 +129,7 @@
       },
       "delete": {
         "summary": "Delete a TACO Resource.",
-        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those).",
+        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File resource (metadata) and File binary, or subclass of those).",
         "operationId": "deleteResource",
         "produces": ["application/json"],
         "parameters": [{
@@ -153,7 +153,7 @@
             "description": "You are not authorized to delete a resource in TACO."
           },
           "500": {
-            "description": "This resource could be updated at this time by TACO."
+            "description": "This resource could not be deleted at this time by TACO."
           }
         }
       }
