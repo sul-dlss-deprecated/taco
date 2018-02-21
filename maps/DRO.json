@@ -38,7 +38,6 @@
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
       "type": "object",
       "properties": {
-        "required": ["name"],
         "name": {
           "description": "Primary label or name for an Agent.",
           "type": "string"
@@ -59,7 +58,7 @@
     },
     "accessAndPermissions": {
       "description": "Access & Permissions Metadata for the DRO.",
-      "type": "Object",
+      "type": "object",
       "required": ["access", "download"],
       "properties": {
         "access": {
@@ -77,7 +76,6 @@
           "items": {
             "type": "object",
             "properties": {
-              "required": ["name"],
               "name": {
                 "description": "Primary label or name for an Agent.",
                 "type": "string"
@@ -100,7 +98,8 @@
         },
         "embargoReleaseDate": {
           "description": "Date when the DRO is released from an embargo, if an embargo exists.",
-          "type": "dateTime"
+          "type": "string",
+          "format": "date-time"
         },
         "license": {
           "description": "The license governing reuse of the DRO. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).",
@@ -128,15 +127,16 @@
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
-          "type": "dateTime"
+          "type": "string",
+          "format": "date-time"
         },
         "deleted": {
           "description": "If the resource has been deleted (but not purged).",
-          "type": "Boolean"
+          "type": "boolean"
         },
         "gravestoneMessage": {
           "description": "Message describing why the object was deleted.",
-          "type": "string",
+          "type": "string"
         },
         "isDescribedBy": {
           "description": "Pointer to the PURL/XML file that is a traditional representation of the metadata for the DRO.",
@@ -145,7 +145,8 @@
         },
         "updated": {
           "description": "When the resource in SDR was last updated.",
-          "type": "dateTime"
+          "type": "string",
+          "format": "date-time"
         },
         "partOfProject": {
           "description": "Administrative or Internal project this resource is a part of.",
@@ -153,7 +154,7 @@
         },
         "preserve": {
           "description": "If this resource should be sent to Preservation.",
-          "type": "boolean",
+          "type": "boolean"
         },
         "remediatedBy": {
           "description": "The Agent (User, Group, Application, Department, other) that remediated a DRO in SDR.",
@@ -161,7 +162,6 @@
           "items": {
             "type": "object",
             "properties": {
-              "required": ["name"],
               "name": {
                 "description": "Primary label or name for an Agent.",
                 "type": "string"
@@ -177,7 +177,7 @@
     },
     "identification": {
       "description": "Identifying information for the DRO.",
-      "type": "Object",
+      "type": "object",
       "required": ["identifier", "UUID"],
       "properties": {
         "catkey": {
@@ -218,7 +218,7 @@
       "properties": {
         "contains": {
           "description": "Filesets that contain the digital representations (Files) of the DRO.",
-          "type": "Array",
+          "type": "array",
           "items": {
             "type": "string",
             "format": "URI"
@@ -231,7 +231,7 @@
         },
         "hasMember": {
           "description": "Component or 'children' digital repository objects that are a part or portion of this 'parent' or aggregate DRO.",
-          "type": "Array",
+          "type": "array",
           "items": [{
             "type": "string",
             "format": "URI"
@@ -239,7 +239,7 @@
         },
         "isMemberOf": {
           "description": "'Parent' or aggregate DRO or the Digital Repository Collection that this DRO belongs to.",
-          "type": "Array",
+          "type": "array",
           "items": [{
             "type": "string",
             "format": "URI"
@@ -257,5 +257,4 @@
       }
     }
   }
-}
 }
