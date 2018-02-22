@@ -41,15 +41,13 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 
 	location, err := d.copyFileToStorage(id, params.Upload)
 	if err != nil {
-		log.Printf("[ERROR] %s", err)
-		return operations.NewDepositFileInternalServerError()
+		panic(err)
 	}
 
 	log.Printf("The location of the file is: %s", *location)
 
 	if err := d.createFileResource(id, params.Upload.Header.Filename); err != nil {
-		log.Printf("[ERROR] %s", err)
-		return operations.NewDepositFileInternalServerError()
+		panic(err)
 	}
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
 	response := map[string]interface{}{"id": id}
