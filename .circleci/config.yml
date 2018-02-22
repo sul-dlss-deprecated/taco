@@ -3,7 +3,12 @@ jobs:
   build_and_test:
     docker:
       - image: circleci/golang:latest
-      - image: localstack/localstack
+        environment:
+          AWS_REGION: us-west-2
+          AWS_ACCESS_KEY_ID: 999
+          AWS_SECRET_ACCESS_KEY: 999
+          TACO_PORT: 3000
+      - image: localstack/localstack:latest
         environment:
           DEBUG: 1
           SERVICES: dynamodb,s3,kinesis
@@ -20,11 +25,11 @@ jobs:
       - run:
           name: Install AWS CLI
           command: |
-            sudo apt-get -y -qq update
-            sudo apt-get -y -qq install awscli
+            sudo apt-get install -y python-pip libyaml-dev python-dev
+            sudo pip install awscli
       - run:
           name: Create table
-          command: AWS_ACCESS_KEY_ID=999 AWS_SECRET_ACCESS_KEY=999 aws dynamodb create-table
+          command: aws dynamodb create-table
             --endpoint-url=http://localhost:4569 --table-name resources
             --region localstack
             --attribute-definitions "AttributeName=id,AttributeType=S"
@@ -32,25 +37,24 @@ jobs:
             --provisioned-throughput=ReadCapacityUnits=10,WriteCapacityUnits=10
       - run:
           name: Create bucket
-          command: AWS_ACCESS_KEY_ID=999 AWS_SECRET_ACCESS_KEY=999 aws s3api create-bucket
+          command: aws s3api create-bucket
             --endpoint-url=http://localhost:4572 --bucket taco-deposited-files
             --region localstack
       - run:
-          name: Create channel
-          command: AWS_ACCESS_KEY_ID=999 AWS_SECRET_ACCESS_KEY=999 aws kinesis create-stream
+          name: Create stream
+          command: aws kinesis create-stream
             --endpoint-url=http://localhost:4568 --stream-name deposit --shard-count 3
             --region localstack
       - run:
           name: Start server
-          command: cd cmd/tacod && AWS_ACCESS_KEY_ID=999 AWS_SECRET_KEY=999 TACO_PORT=3000 go run main.go
+          command: go run cmd/tacod/main.go
           background: true
       - run:
           name: wait for server
           command: sleep 15
       - run:
           name: Run tests
-          command: AWS_ACCESS_KEY_ID=999 AWS_SECRET_KEY=999 TACO_PORT=3000 go test -v ./...
-
+          command: go test -v ./...
 
   register_image:
     docker:
@@ -67,32 +71,35 @@ jobs:
             docker login -u $DOCKER_USER -p $DOCKER_PASS
             docker push suldlss/taco:$CIRCLE_SHA1
 
-  # deploy_to_dev:
-  #   docker:
-  #     - image: circleci/golang:latest
-  #   working_directory: /go/src/github.com/sul-dlss-labs/taco
-  #   steps:
-  #     - run:
-  #         name: Install AWS CLI
-  #         command: |
-  #           sudo apt-get install -y python-pip libyaml-dev python-dev jq
-  #           sudo pip install awscli
-  #     - checkout
-  #     - run:
-  #         name: Inject Environment Variables into Container (dev)
-  #         command: |
-  #           sed -i "s|REPLACE_TAG|$CIRCLE_SHA1|" container-definition.json
-  #           cat container-definition.json  # Print task definition in logs
-  #     - run:
-  #         name: Register Task & Update Service (dev)
-  #         command: |
-  #           export AWS_ACCESS_KEY_ID=$DEV_AWS_KEY
-  #           export AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET
-  #           aws configure set region $DEV_AWS_REGION
-  #           aws configure set default.output json
-  #           aws configure list  # Get confirmation it worked in your logs
-  #           revision=$(aws ecs register-task-definition --cli-input-json file://container-definition.json --region $DEV_AWS_REGION | jq --raw-output --exit-status '.taskDefinition.taskDefinitionArn')
-  #           aws ecs update-service --cluster default --service taco --task-definition "$revision" --region $DEV_AWS_REGION
+  deploy_to_dev:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/sul-dlss-labs/taco
+    steps:
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get install -y python-pip libyaml-dev python-dev jq
+            sudo pip install awscli
+      - checkout
+      - run:
+          name: Inject Environment Variables into Container (dev)
+          command: |
+            sed -i "s|REPLACE_TAG|$CIRCLE_SHA1|" container-definition.json
+            sed -i "s|REPLACE_REGION|$DEV_AWS_REGION|g" container-definition.json
+            sed -i "s|REPLACE_ACCOUNT_ID|$AWS_ACCOUNT_ID|" container-definition.json
+            sed -i "s|REPLACE_ENVIRONMENT|dev|g" container-definition.json
+            cat container-definition.json  # Print task definition in logs
+      - run:
+          name: Register Task & Update Service (dev)
+          command: |
+            export AWS_ACCESS_KEY_ID=$DEV_AWS_KEY
+            export AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET
+            aws configure set region $DEV_AWS_REGION
+            aws configure set default.output json
+            aws configure list  # Get confirmation it worked in your logs
+            revision=$(aws ecs register-task-definition --cli-input-json file://container-definition.json --region $DEV_AWS_REGION | jq --raw-output --exit-status '.taskDefinition.taskDefinitionArn')
+            aws ecs update-service --cluster infrastructure --service taco --task-definition "$revision" --region $DEV_AWS_REGION
 
 workflows:
   version: 2
@@ -121,14 +128,14 @@ workflows:
               ignore: /.*/
             tags:
               only: /v[0-9]+(\.[0-9]+)*(-dev)/
-      # - deploy_to_dev:
-      #     requires:
-      #       - register_image
-      #     filters:
-      #       branches:
-      #         ignore: /.*/
-      #       tags:
-      #         only: /v[0-9]+(\.[0-9]+)*(-dev)/
+      - deploy_to_dev:
+          requires:
+            - register_image
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*(-dev)/
 
   deploy_master_to_dev:
     jobs:
@@ -146,11 +153,11 @@ workflows:
               only: master
             tags:
               ignore: /.*/
-      # - deploy_to_dev:
-      #     requires:
-      #       - register_image
-      #     filters:
-      #       branches:
-      #         only: master
-      #       tags:
-      #         ignore: /.*/
+      - deploy_to_dev:
+          requires:
+            - register_image
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /.*/
