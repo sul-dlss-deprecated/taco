@@ -22,14 +22,13 @@ func TestCreateFileHappyPath(t *testing.T) {
 	r := gofight.New()
 	storage := NewMockStorage()
 	repo := NewMockDatabase(nil)
-	handler := handler(repo, nil, storage)
 
 	r.POST(filePath).
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler,
+		Run(handler(repo, nil, storage),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(storage.(*MockStorage).CreatedFiles))
@@ -69,28 +68,32 @@ func TestCreateFileWrongContentType(t *testing.T) {
 
 func TestCreateFileFailure(t *testing.T) {
 	r := gofight.New()
+	repo := NewMockDatabase(nil)
 	storage := NewMockErrorStorage()
-	r.POST(filePath).
-		SetHeader(gofight.H{
-			"Content-Type": contentType,
-		}).
-		SetBody(body).
-		Run(handler(nil, nil, storage),
-			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusInternalServerError, r.Code)
-			})
+	assert.Panics(t,
+		func() {
+			r.POST(filePath).
+				SetHeader(gofight.H{
+					"Content-Type": contentType,
+				}).
+				SetBody(body).
+				Run(handler(repo, nil, storage),
+					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
+		})
 }
 
 func TestCreateFileResourceFailure(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockErrorDatabase()
-	r.POST(filePath).
-		SetHeader(gofight.H{
-			"Content-Type": contentType,
-		}).
-		SetBody(body).
-		Run(handler(repo, nil, nil),
-			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusInternalServerError, r.Code)
-			})
+	assert.Panics(t,
+		func() {
+
+			r.POST(filePath).
+				SetHeader(gofight.H{
+					"Content-Type": contentType,
+				}).
+				SetBody(body).
+				Run(handler(repo, nil, nil),
+					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
+		})
 }
