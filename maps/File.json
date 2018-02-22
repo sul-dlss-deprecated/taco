@@ -1,0 +1,167 @@
+{
+  "title": "File",
+  "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
+  "type": "object",
+  "required": ["@context", "@type", "label", "version", "administrative", "accessAndPermissions", "identification", "structural"],
+  "properties": {
+    "@context": {
+      "description": "URI for the JSON-LD context definitions.",
+      "type": "string",
+      "format": "URI"
+    },
+    "@type": {
+      "description": "The content type of the File.",
+      "type": "string",
+      "format": "URI",
+      "enum": ["http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
+      ]
+    },
+    "depositor": {
+      "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Primary label or name for an Agent.",
+          "type": "string"
+        },
+        "sunetID": {
+          "description": "Stanford University NetID for the Agent.",
+          "type": "string"
+        }
+      }
+    },
+    "format": {
+      "description": "Format of the File.",
+      "type": "string"
+    },
+    "hasMessageDigest": {
+      "description": "The output of the message digest algorithm.",
+      "type": "string"
+    },
+    "hasMimeType": {
+      "description": "MIME Type of the File.",
+      "type": "string",
+      "format": "mime-type"
+    },
+    "label": {
+      "description": "Primary processing label (can be same as title) for a File.",
+      "type": "string"
+    },
+    "size": {
+      "description": "Size of the File (binary) in bytes.",
+      "type": "integer"
+    },
+    "use": {
+      "description": "Use for the File.",
+      "type": "string"
+    },
+    "version": {
+      "description": "Version for the File within SDR.",
+      "type": "integer"
+    },
+    "accessAndPermissions": {
+      "description": "Access & Permissions Metadata for the File.",
+      "type": "object",
+      "required": ["access", "download"],
+      "properties": {
+        "access": {
+          "description": "Access level for the File.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        },
+        "download": {
+          "description": "Download level for the File binary.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        }
+      }
+    },
+    "administrative": {
+      "type": "object",
+      "description": "Administrative metadata for the SDR resource.",
+      "required": ["created", "isDescribedBy", "preserve"],
+      "properties": {
+        "created": {
+          "description": "When the resource in SDR was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted": {
+          "description": "If the resource has been deleted (but not purged).",
+          "type": "boolean"
+        },
+        "gravestoneMessage": {
+          "description": "Message describing why the resource was deleted.",
+          "type": "string"
+        },
+        "isDescribedBy": {
+          "description": "Technical metadata file that represents the File (binary).",
+          "type": "string",
+          "format": "URL"
+        },
+        "lastUpdated": {
+          "description": "When the resource in SDR was last updated.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "partOfProject": {
+          "description": "Administrative or Internal project this resource is a part of.",
+          "type": "string"
+        },
+        "preserve": {
+          "description": "If this resource should be sent to Preservation.",
+          "type": "boolean"
+        },
+        "remediatedBy": {
+          "description": "The Agent (User, Group, Application, Department, other) that remediated this File in SDR.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Primary label or name for an Agent.",
+                "type": "string"
+              },
+              "sunetID": {
+                "description": "Stanford University NetID for the Agent.",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "identification": {
+      "description": "Identifying information for the File.",
+      "type": "object",
+      "required": ["identifier", "UUID"],
+      "properties": {
+        "identifier": {
+          "description": "Identifier for the File within SDR.",
+          "type": "string"
+        },
+        "UUID": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUID for the File within TACO."
+        }
+      }
+    },
+    "structural": {
+      "description": "Structural metadata for the File.",
+      "type": "object",
+      "properties": {
+        "isContainedBy": {
+          "description": "Fileset that contains this File.",
+          "type": "string",
+          "format": "URI"
+        },
+        "isTargetOf": {
+          "description": "An Annotation instance that applies to this File.",
+          "type": "string",
+          "format": "URI"
+        }
+      }
+    }
+  }
+}
