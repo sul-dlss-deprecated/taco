@@ -6,9 +6,6 @@ The next generation repository system for DLSS
 
 ## Development practices
 Some agreements laid out by the development team are listed in the [Development Practices](./docs/Development_Practices.md) document.
-## Swagger API
-
-This configuration is for AWS API Gateway.  It was retrieved by going to the API, selecting the "prod" under "Stages" and then doing "Export" and selecting "Export as Swagger + API Gateway Extensions"
 
 ## Go Local Development Setup
 
@@ -31,9 +28,9 @@ This configuration is for AWS API Gateway.  It was retrieved by going to the API
     * If your project has those file populated, then make sure your dependencies are synced via running `dep ensure`.
     * If you need to add a new dependency, run `dep ensure -add github.com/pkg/errors`. This should add the dependency and put the new dependency in your `Gopkg.*` files.
 
-5. [Localstack](docs/localstack.md)
+5. [Set up Localstack to Fake AWS Services Locally](docs/localstack.md)
 
-6. Configuration
+6. Setup Configuration Variables
     * Configuration variables for development default to point at [Localstack](docs/localstack.md) services.  You can override the default configuration by using environment variables. See the list of the environment variables in [config](config/config.go)
     * If you want to report failures to HoneyBadger set `HONEYBADGER_API_KEY=aaaaaaaa`
 
