@@ -16,9 +16,9 @@
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "citation": {
-      "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
-      "type": "string"
+    "currentVersion": {
+      "description": "If this is the current version (most recent version) for the resource.",
+      "type": "boolean"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",

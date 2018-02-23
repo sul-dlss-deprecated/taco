@@ -16,6 +16,10 @@
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
+    "currentVersion": {
+      "description": "If this is the current version (most recent version) for the resource.",
+      "type": "boolean"
+    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
       "type": "object",
