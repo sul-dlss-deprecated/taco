@@ -241,22 +241,19 @@
             "format": "URI"
           }]
         },
-        "isMemberOf": {
-          "description": "'Parent' or aggregate DRO or the Digital Repository Collection that this DRO belongs to.",
-          "type": "array",
-          "items": [{
-            "type": "string",
-            "format": "URI"
-          }]
-        },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the DRO.",
           "type": "string",
           "format": "URI"
         },
-        "hasMemberOrder": {
-          "description": "A provided sequence or ordering of members of the DRO, including some metadata about the sequence (i.e. order label, order type, if order is primary, etc.).",
-          "type": "object"
+        "hasMemberOrders": {
+          "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
+          "type": "array",
+          "items": [
+            {
+              "$ref": "Sequence.json"
+            }
+          ]
         }
       }
     }

@@ -129,14 +129,6 @@
       "description": "Structural metadata for the Fileset.",
       "type": "object",
       "properties": {
-        "contains": {
-          "description": "Files contained by this Fileset. Files relevant to that Fileset and representing the same parent DRO.",
-          "type": "array",
-          "items": [{
-            "type": "string",
-            "format": "URI"
-          }]
-        },
         "isContainedBy": {
           "description": "Parent DRO that is represented by the files in this Fileset.",
           "type": "string",
