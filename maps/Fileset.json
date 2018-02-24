@@ -62,7 +62,7 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "preserve"],
+      "required": ["created", "sdrPreserve"],
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -86,7 +86,7 @@
           "description": "Administrative or Internal project this resource is a part of.",
           "type": "string"
         },
-        "preserve": {
+        "sdrPreserve": {
           "description": "If this resource should be sent to Preservation.",
           "type": "boolean"
         },
@@ -112,13 +112,13 @@
     "identification": {
       "description": "Identifying information for the Fileset.",
       "type": "object",
-      "required": ["identifier", "UUID"],
+      "required": ["identifier", "sdrUUID"],
       "properties": {
         "identifier": {
           "description": "Identifier for the Fileset within SDR.",
           "type": "string"
         },
-        "UUID": {
+        "sdrUUID": {
           "type": "string",
           "format": "uuid",
           "description": "UUID for the Fileset within TACO."

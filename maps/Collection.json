@@ -91,7 +91,7 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "isDescribedBy", "preserve"],
+      "required": ["created", "isDescribedBy", "sdrPreserve"],
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -120,7 +120,7 @@
           "description": "Administrative or Internal project this resource is a part of.",
           "type": "string"
         },
-        "preserve": {
+        "sdrPreserve": {
           "description": "If this resource should be sent to Preservation.",
           "type": "boolean"
         },
@@ -146,7 +146,7 @@
     "identification": {
       "description": "Identifying information for the Collection.",
       "type": "object",
-      "required": ["identifier", "UUID"],
+      "required": ["identifier", "sdrUUID"],
       "properties": {
         "catkey": {
           "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same collection being described by the bibliographic record.",
@@ -168,7 +168,7 @@
           "description": "For anything that cannot cleanly map into isRepresentationOf.",
           "type": "string"
         },
-        "UUID": {
+        "sdrUUID": {
           "type": "string",
           "format": "uuid",
           "description": "UUID for the Collection within TACO."
