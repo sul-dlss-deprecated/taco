@@ -26,11 +26,10 @@ func postData() map[string]interface{} {
 func TestCreateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(nil)
-	stream := NewMockStream("")
 
 	r.POST("/v1/resource").
 		SetJSON(postData()).
-		Run(handler(repo, stream, nil),
+		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
@@ -45,7 +44,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			"id":    "oo000oo0001",
 			"title": "My work",
 		}).
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
@@ -63,7 +62,7 @@ func TestCreateResourceSemanticallyValid(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(NewMockDatabase(nil), nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
@@ -75,7 +74,7 @@ func TestCreateResourceFailure(t *testing.T) {
 		func() {
 			r.POST("/v1/resource").
 				SetJSON(postData()).
-				Run(handler(NewMockErrorDatabase(), NewMockStream(""), nil),
+				Run(handler(NewMockErrorDatabase(), nil, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

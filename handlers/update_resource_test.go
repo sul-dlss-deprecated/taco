@@ -44,7 +44,7 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessage).
-		Run(handler(repo, NewMockStream(""), nil),
+		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 			})
@@ -55,7 +55,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessage).
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})
@@ -64,7 +64,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})

@@ -21,7 +21,7 @@ func BuildAPI(database db.Database, stream streaming.Stream, storage storage.Sto
 	api.DepositResourceHandler = NewDepositResource(database, stream, depositValidator, identifierService)
 	updateValidator := validators.NewUpdateResourceValidator(database)
 	api.UpdateResourceHandler = NewUpdateResource(database, stream, updateValidator)
-	api.DepositFileHandler = NewDepositFile(database, storage, identifierService)
+	api.DepositFileHandler = NewDepositFile(database, storage, stream, identifierService)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api
 }

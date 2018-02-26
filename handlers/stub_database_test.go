@@ -16,7 +16,7 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 		database = NewMockDatabase(nil)
 	}
 	if stream == nil {
-		stream = NewMockStream("")
+		stream = NewMockStream()
 	}
 	if storage == nil {
 		storage = NewMockStorage()
