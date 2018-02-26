@@ -16,6 +16,10 @@
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
+    "currentVersion": {
+      "description": "If this is the current version (most recent version) for the resource.",
+      "type": "boolean"
+    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
       "type": "object",
@@ -79,7 +83,7 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "isDescribedBy", "preserve"],
+      "required": ["created", "isDescribedBy", "sdrPreserve"],
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -108,7 +112,7 @@
           "description": "Administrative or Internal project this resource is a part of.",
           "type": "string"
         },
-        "preserve": {
+        "sdrPreserve": {
           "description": "If this resource should be sent to Preservation.",
           "type": "boolean"
         },
@@ -134,13 +138,13 @@
     "identification": {
       "description": "Identifying information for the File.",
       "type": "object",
-      "required": ["identifier", "UUID"],
+      "required": ["identifier", "sdrUUID"],
       "properties": {
         "identifier": {
           "description": "Identifier for the File within SDR.",
           "type": "string"
         },
-        "UUID": {
+        "sdrUUID": {
           "type": "string",
           "format": "uuid",
           "description": "UUID for the File within TACO."

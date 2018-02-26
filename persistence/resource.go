@@ -13,7 +13,7 @@ type Resource struct {
 	AtContext strfmt.URI `json:"@context"`
 	Access    string     `json:"access"`
 	Label     string     `json:"label"`
-	Preserve  bool       `json:"preserve"`
+	Preserve  bool       `json:"sdrPreserve"`
 	Publish   bool       `json:"publish"`
 	SourceID  string     `json:"source_id"`
 }

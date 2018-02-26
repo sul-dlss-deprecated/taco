@@ -34,6 +34,10 @@
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
+    "currentVersion": {
+      "description": "If this is the current version (most recent version) for the resource.",
+      "type": "boolean"
+    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
       "type": "object",
@@ -123,7 +127,7 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "isDescribedBy", "preserve"],
+      "required": ["created", "isDescribedBy", "sdrPreserve"],
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -152,7 +156,7 @@
           "description": "Administrative or Internal project this resource is a part of.",
           "type": "string"
         },
-        "preserve": {
+        "sdrPreserve": {
           "description": "If this resource should be sent to Preservation.",
           "type": "boolean"
         },
@@ -178,7 +182,7 @@
     "identification": {
       "description": "Identifying information for the DRO.",
       "type": "object",
-      "required": ["identifier", "UUID"],
+      "required": ["identifier", "sdrUUID"],
       "properties": {
         "catkey": {
           "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same digital object being described by the bibliographic record.",
@@ -204,7 +208,7 @@
           "description": "For anything that cannot cleanly map into is representation of.",
           "type": "string"
         },
-        "UUID": {
+        "sdrUUID": {
           "type": "string",
           "format": "uuid",
           "description": "UUID for the DRO within TACO."
@@ -237,22 +241,19 @@
             "format": "URI"
           }]
         },
-        "isMemberOf": {
-          "description": "'Parent' or aggregate DRO or the Digital Repository Collection that this DRO belongs to.",
-          "type": "array",
-          "items": [{
-            "type": "string",
-            "format": "URI"
-          }]
-        },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the DRO.",
           "type": "string",
           "format": "URI"
         },
-        "hasMemberOrder": {
-          "description": "A provided sequence or ordering of members of the DRO, including some metadata about the sequence (i.e. order label, order type, if order is primary, etc.).",
-          "type": "object"
+        "hasMemberOrders": {
+          "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
+          "type": "array",
+          "items": [
+            {
+              "$ref": "Sequence.json"
+            }
+          ]
         }
       }
     }
