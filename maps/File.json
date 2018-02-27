@@ -63,8 +63,8 @@
       "description": "Version for the File within SDR.",
       "type": "integer"
     },
-    "accessAndPermissions": {
-      "description": "Access & Permissions Metadata for the File.",
+    "access": {
+      "description": "Access Metadata for the File.",
       "type": "object",
       "required": ["access", "download"],
       "properties": {

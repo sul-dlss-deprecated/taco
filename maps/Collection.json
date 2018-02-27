@@ -49,8 +49,8 @@
       "description": "Version for the Collection within SDR.",
       "type": "integer"
     },
-    "accessAndPermissions": {
-      "description": "Access & Permissions Metadata for the Collection.",
+    "access": {
+      "description": "Access Metadata for the Collection.",
       "type": "object",
       "required": ["access", "download"],
       "properties": {
