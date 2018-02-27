@@ -8,7 +8,6 @@ import (
 
 // Config is configuration for the TACO application
 type Config struct {
-	AWSRegion          string
 	DynamodbEndpoint   string
 	DynamodbDisableSSL bool
 	KinesisEndpoint    string
@@ -25,7 +24,6 @@ type Config struct {
 // or defaults
 func NewConfig() *Config {
 	return &Config{
-		AWSRegion:          getString("AWS_REGION", "localstack"),
 		DynamodbEndpoint:   getString("DYNAMO_DB_ENDPOINT", "localhost:4569"),
 		DynamodbDisableSSL: getBool("DYNAMODB_DISABLE_SSL", true),
 		ResourceTableName:  getString("RESOURCE_TABLE_NAME", "resources"),

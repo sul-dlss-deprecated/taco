@@ -37,8 +37,7 @@ Some agreements laid out by the development team are listed in the [Development 
 ## Running the Go Code locally without a build
 
 ```shell
-$ cd cmd/tacod
-$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
+$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run cmd/tacod/main.go
 ```
 
 Note: we explain the AWS keys usage below.
@@ -63,7 +62,7 @@ $ ./tacod
 
 Now start the API server (passing in API keys; these can be fake and are only required for localstack):
 ```shell
-$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
+$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
 ```
 
 Then you can interact with it using `curl`:
