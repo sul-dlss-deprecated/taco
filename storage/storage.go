@@ -2,7 +2,6 @@ package storage
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/go-openapi/runtime"
@@ -22,15 +21,13 @@ type S3BucketStorage struct {
 
 // NewS3Bucket creates a new S3 bucket storage
 func NewS3Bucket(config *config.Config) Storage {
-	sess, err := session.NewSessionWithOptions(session.Options{
-		Config: aws.Config{
-
-			Region:      aws.String(config.AWSRegion),
-			Credentials: credentials.NewEnvCredentials(),
-			Endpoint:    aws.String(config.S3Endpoint),
-			DisableSSL:  aws.Bool(config.S3DisableSSL),
-		},
+	sess, err := session.NewSession(&aws.Config{
+		Endpoint:   aws.String(config.S3Endpoint),
+		DisableSSL: aws.Bool(config.S3DisableSSL),
 	})
+	if err != nil {
+		panic(err)
+	}
 	// This is required for localstack:
 	sess.Config.WithS3ForcePathStyle(true)
 	uploader := s3manager.NewUploader(session.Must(sess, err))
