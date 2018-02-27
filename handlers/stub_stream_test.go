@@ -3,13 +3,14 @@ package handlers
 import "github.com/sul-dlss-labs/taco/streaming"
 
 type MockStream struct {
-	message string
+	Messages []streaming.Message
 }
 
-func NewMockStream(message string) streaming.Stream {
-	return &MockStream{message: message}
+func NewMockStream() streaming.Stream {
+	return &MockStream{Messages: []streaming.Message{}}
 }
 
-func (d *MockStream) SendMessage(message string) error {
+func (s *MockStream) SendMessage(message streaming.Message) error {
+	s.Messages = append(s.Messages, message)
 	return nil
 }

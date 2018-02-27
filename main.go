@@ -39,7 +39,7 @@ func main() {
 	}
 	stream := &streaming.KinesisStream{
 		Connection: streaming.Connect(awsSession, config.KinesisEndpoint),
-		StreamName: config.DepositStreamName,
+		StreamName: &config.DepositStreamName,
 	}
 	storage := &storage.S3BucketStorage{
 		Uploader:     connectToStorage(awsSession, config.S3Endpoint),

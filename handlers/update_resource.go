@@ -1,9 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
-	"log"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
@@ -60,12 +57,6 @@ func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, d
 }
 
 func (d *updateResourceEntry) addToStream(id string) error {
-	message, err := json.Marshal(id)
-	if err != nil {
-		return err
-	}
-	if d.stream == nil {
-		log.Printf("Stream is nil")
-	}
-	return d.stream.SendMessage(string(message))
+	message := streaming.Message{ID: id, Action: "update"}
+	return d.stream.SendMessage(message)
 }

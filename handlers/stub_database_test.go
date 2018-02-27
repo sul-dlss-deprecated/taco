@@ -16,7 +16,7 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 		database = NewMockDatabase(nil)
 	}
 	if stream == nil {
-		stream = NewMockStream("")
+		stream = NewMockStream()
 	}
 	if storage == nil {
 		storage = NewMockStorage()
@@ -29,10 +29,15 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 type MockDatabase struct {
 	record           *datautils.Resource
 	CreatedResources []*datautils.Resource
+	DeletedResources []string
 }
 
 func NewMockDatabase(record *datautils.Resource) db.Database {
-	return &MockDatabase{CreatedResources: []*datautils.Resource{}, record: record}
+	return &MockDatabase{
+		CreatedResources: []*datautils.Resource{},
+		DeletedResources: []string{},
+		record:           record,
+	}
 }
 
 func (d *MockDatabase) Insert(params *datautils.Resource) error {
@@ -48,6 +53,11 @@ func (d *MockDatabase) Read(id string) (*datautils.Resource, error) {
 }
 
 func (d *MockDatabase) Update(params *datautils.Resource) error {
+	return nil
+}
+
+func (d *MockDatabase) DeleteByID(id string) error {
+	d.DeletedResources = append(d.DeletedResources, id)
 	return nil
 }
 
@@ -68,4 +78,8 @@ func (d *MockErrorDatabase) Update(params *datautils.Resource) error {
 
 func (d *MockErrorDatabase) Read(id string) (*datautils.Resource, error) {
 	return nil, errors.New("Broken")
+}
+
+func (d *MockErrorDatabase) DeleteByID(id string) error {
+	return errors.New("Broken")
 }

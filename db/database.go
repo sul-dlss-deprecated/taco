@@ -15,6 +15,7 @@ type Database interface {
 	Insert(*datautils.Resource) error
 	Update(*datautils.Resource) error
 	Read(id string) (*datautils.Resource, error)
+	DeleteByID(id string) error
 }
 
 // DynamodbDatabase Represents a connection to Dynamo

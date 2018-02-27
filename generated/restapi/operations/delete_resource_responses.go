@@ -9,73 +9,29 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
-
-	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
-// DeleteResourceOKCode is the HTTP code returned for type DeleteResourceOK
-const DeleteResourceOKCode int = 200
+// DeleteResourceNoContentCode is the HTTP code returned for type DeleteResourceNoContent
+const DeleteResourceNoContentCode int = 204
 
-/*DeleteResourceOK TACO resource metadata delete.
+/*DeleteResourceNoContent TACO resource metadata delete.
 
-swagger:response deleteResourceOK
+swagger:response deleteResourceNoContent
 */
-type DeleteResourceOK struct {
-
-	/*
-	  In: Body
-	*/
-	Payload models.ResourceResponse `json:"body,omitempty"`
+type DeleteResourceNoContent struct {
 }
 
-// NewDeleteResourceOK creates DeleteResourceOK with default headers values
-func NewDeleteResourceOK() *DeleteResourceOK {
-	return &DeleteResourceOK{}
-}
-
-// WithPayload adds the payload to the delete resource o k response
-func (o *DeleteResourceOK) WithPayload(payload models.ResourceResponse) *DeleteResourceOK {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the delete resource o k response
-func (o *DeleteResourceOK) SetPayload(payload models.ResourceResponse) {
-	o.Payload = payload
+// NewDeleteResourceNoContent creates DeleteResourceNoContent with default headers values
+func NewDeleteResourceNoContent() *DeleteResourceNoContent {
+	return &DeleteResourceNoContent{}
 }
 
 // WriteResponse to the client
-func (o *DeleteResourceOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(200)
-	payload := o.Payload
-	if err := producer.Produce(rw, payload); err != nil {
-		panic(err) // let the recovery middleware deal with this
-	}
-
-}
-
-// DeleteResourceBadRequestCode is the HTTP code returned for type DeleteResourceBadRequest
-const DeleteResourceBadRequestCode int = 400
-
-/*DeleteResourceBadRequest Invalid ID supplied
-
-swagger:response deleteResourceBadRequest
-*/
-type DeleteResourceBadRequest struct {
-}
-
-// NewDeleteResourceBadRequest creates DeleteResourceBadRequest with default headers values
-func NewDeleteResourceBadRequest() *DeleteResourceBadRequest {
-	return &DeleteResourceBadRequest{}
-}
-
-// WriteResponse to the client
-func (o *DeleteResourceBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *DeleteResourceNoContent) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
-	rw.WriteHeader(400)
+	rw.WriteHeader(204)
 }
 
 // DeleteResourceUnauthorizedCode is the HTTP code returned for type DeleteResourceUnauthorized
@@ -99,6 +55,29 @@ func (o *DeleteResourceUnauthorized) WriteResponse(rw http.ResponseWriter, produ
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
 	rw.WriteHeader(401)
+}
+
+// DeleteResourceNotFoundCode is the HTTP code returned for type DeleteResourceNotFound
+const DeleteResourceNotFoundCode int = 404
+
+/*DeleteResourceNotFound Invalid ID supplied
+
+swagger:response deleteResourceNotFound
+*/
+type DeleteResourceNotFound struct {
+}
+
+// NewDeleteResourceNotFound creates DeleteResourceNotFound with default headers values
+func NewDeleteResourceNotFound() *DeleteResourceNotFound {
+	return &DeleteResourceNotFound{}
+}
+
+// WriteResponse to the client
+func (o *DeleteResourceNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(404)
 }
 
 // DeleteResourceInternalServerErrorCode is the HTTP code returned for type DeleteResourceInternalServerError

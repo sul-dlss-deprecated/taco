@@ -205,17 +205,14 @@ func init() {
           }
         ],
         "responses": {
-          "200": {
-            "description": "TACO resource metadata delete.",
-            "schema": {
-              "$ref": "#/definitions/ResourceResponse"
-            }
-          },
-          "400": {
-            "description": "Invalid ID supplied"
+          "204": {
+            "description": "TACO resource metadata delete."
           },
           "401": {
             "description": "You are not authorized to delete a resource in TACO."
+          },
+          "404": {
+            "description": "Invalid ID supplied"
           },
           "500": {
             "description": "This resource could not be deleted at this time by TACO."
