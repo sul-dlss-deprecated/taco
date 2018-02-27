@@ -60,8 +60,8 @@
       "description": "Version for the DRO within SDR.",
       "type": "integer"
     },
-    "accessAndPermissions": {
-      "description": "Access & Permissions Metadata for the DRO.",
+    "access": {
+      "description": "Access Metadata for the DRO.",
       "type": "object",
       "required": ["access", "download"],
       "properties": {
@@ -69,27 +69,6 @@
           "description": "Access level for the DRO.",
           "type": "string",
           "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
-        },
-        "approvalRequired": {
-          "description": "Indicates if approval is required to deposit or manage the resource in SDR.",
-          "type": "boolean"
-        },
-        "approvers": {
-          "description": "Agents who are required to approve deposit or management of this resource in SDR.",
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Primary label or name for an Agent.",
-                "type": "string"
-              },
-              "sunetID": {
-                "description": "Stanford University NetID for the Agent.",
-                "type": "string"
-              }
-            }
-          }
         },
         "copyright": {
           "description": "The human readable copyright statement that applies to the DRO.",
@@ -212,6 +191,33 @@
           "type": "string",
           "format": "uuid",
           "description": "UUID for the DRO within TACO."
+        }
+      }
+    },
+    "permissions": {
+      "description": "Permissions Metadata for the DRO.",
+      "type": "object",
+      "properties": {
+        "approvalRequired": {
+          "description": "Indicates if approval is required to deposit or manage the resource in SDR.",
+          "type": "boolean"
+        },
+        "approvers": {
+          "description": "Agents who are required to approve deposit or management of this resource in SDR.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Primary label or name for an Agent.",
+                "type": "string"
+              },
+              "sunetID": {
+                "description": "Stanford University NetID for the Agent.",
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
