@@ -8,7 +8,7 @@ OsX has Apache Bench installed by default at `/usr/sbin/ab`
 
 ```
 $ cd cmd/tacod
-$ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
+$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
 ```
 
 ## Benchmark 1000 create resource requests:
