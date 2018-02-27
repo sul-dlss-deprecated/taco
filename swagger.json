@@ -159,13 +159,10 @@
           "type": "string"
         }],
         "responses": {
-          "200": {
-            "description": "TACO resource metadata delete.",
-            "schema": {
-              "$ref": "#/definitions/ResourceResponse"
-            }
+          "204": {
+            "description": "TACO resource metadata delete."
           },
-          "400": {
+          "404": {
             "description": "Invalid ID supplied"
           },
           "401": {

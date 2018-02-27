@@ -26,14 +26,13 @@ func postData() map[string]interface{} {
 func TestCreateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(nil)
-	stream := NewMockStream("")
 
 	r.POST("/v1/resource").
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
 		SetJSON(postData()).
-		Run(handler(repo, stream, nil),
+		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
@@ -83,7 +82,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			"@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
 			"title": "My work",
 		}).
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
@@ -120,7 +119,7 @@ func TestCreateResourceFailure(t *testing.T) {
 					"On-Behalf-Of": "lmcrae@stanford.edu",
 				}).
 				SetJSON(postData()).
-				Run(handler(NewMockErrorDatabase(), NewMockStream(""), nil),
+				Run(handler(NewMockErrorDatabase(), nil, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

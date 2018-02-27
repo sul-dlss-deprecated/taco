@@ -47,3 +47,7 @@ func (f *fakeRepository) Insert(resource *datautils.Resource) error {
 func (f *fakeRepository) Update(resource *datautils.Resource) error {
 	return errors.New("not implemented")
 }
+
+func (f *fakeRepository) DeleteByID(id string) error {
+	return errors.New("not implemented")
+}

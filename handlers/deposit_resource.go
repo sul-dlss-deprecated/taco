@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -59,7 +58,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		panic(err)
 	}
 
-	if err := d.stream.SendMessage(resourceID); err != nil {
+	if err := d.addToStream(resourceID); err != nil {
 		panic(err)
 	}
 
@@ -67,13 +66,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResource) addToStream(id *string) error {
-	message, err := json.Marshal(id)
-	if err != nil {
-		return err
-	}
-	if d.stream == nil {
-		log.Printf("Stream is nil")
-	}
-	return d.stream.SendMessage(string(message))
+func (d *depositResource) addToStream(id string) error {
+	message := streaming.Message{ID: id, Action: "deposit"}
+	return d.stream.SendMessage(message)
 }
