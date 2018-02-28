@@ -1,0 +1,39 @@
+{
+  "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+  "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+  "citation": "Schwend, Rudolf, Mayor of Zurich, ?-1391. https://purl.stanford.edu/bq582kh2487",
+  "currentVersion": "TRUE",
+  "depositor": {
+    "name": "DOR",
+    "sunetID": "DOR"
+  },
+  "label": "Schwend, Rudolf, Mayor of Zurich, ?-1391",
+  "version": 1,
+  "access": {
+    "access": "world",
+    "copyright": "This work is copyrighted by the creator.",
+    "download": "world",
+    "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "reuseAndReproductionStatement": "Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Special Collections Public Services Librarian at speccollref@stanford.edu."
+  },
+  "administrative": {
+    "created": "2012-10-28T04:13:43.639Z",
+    "deleted": "FALSE",
+    "isDescribedBy": "https://purl.stanford.edu/bq582kh2487.xml",
+    "lastUpdated": "2014-02-19T21:02:26.550Z",
+    "partOfProject": "Leon Kolb Collection of Portraits",
+    "sdrPreserve": "TRUE",
+    "remediatedBy": []
+  },
+  "identification": {
+    "identifier": "druid:bq582kh2487",
+    "sourceId": "Kolb_00015682",
+    "sdrUUID": "dbe81f8a-20b5-11e2-9c4a-0050569b52d5"
+  },
+  "structural": {
+    "contains": [
+      "bq582kh2487_fs1"
+    ],
+    "hasAgreement": "druid:dd327qr3670"
+  }
+}
