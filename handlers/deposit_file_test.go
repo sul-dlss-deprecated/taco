@@ -36,6 +36,8 @@ func TestCreateFileHappyPath(t *testing.T) {
 				fileResource := repo.(*MockDatabase).CreatedResources[0]
 				fileName := fileResource.JSON.GetObj("identification").GetS("filename")
 				assert.Equal(t, fileName, "foo.txt")
+				assert.Equal(t, "text/plain", fileResource.JSON.GetS("hasMimeType"))
+
 			})
 }
 
