@@ -3,69 +3,79 @@ package config
 import (
 	"log"
 	"os"
+	"reflect"
 	"strconv"
+	"strings"
 )
 
 // Config is configuration for the TACO application
 type Config struct {
-	DynamodbEndpoint   string
-	DynamodbDisableSSL bool
-	KinesisEndpoint    string
-	KinesisDisableSSL  bool
-	ResourceTableName  string
-	DepositStreamName  string
-	S3Endpoint         string
-	S3BucketName       string
-	S3DisableSSL       bool
-	Port               int
+	DynamodbEndpoint   string `envVariable:"DYNAMO_DB_ENDPOINT" defaultValue:"localhost:4569"`
+	DynamodbDisableSSL bool   `envVariable:"DYNAMO_DISABLE_SSL" defaultValue:"true"`
+	KinesisEndpoint    string `envVariable:"KINESIS_ENDPOINT" defaultValue:"localhost:4568"`
+	KinesisDisableSSL  bool   `envVariable:"KINESIS_DISABLE_SSL" defaultValue:"true"`
+	ResourceTableName  string `envVariable:"RESOURCE_TABLE_NAME" defaultValue:"resources"`
+	DepositStreamName  string `envVariable:"DEPOSIT_STREAM_NAME" defaultValue:"deposit"`
+	S3Endpoint         string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
+	S3BucketName       string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
+	S3DisableSSL       bool   `envVariable:"S3_DISABLE_SSL" defaultValue:"true"`
+	Port               int    `envVariable:"TACO_PORT" defaultValue:"8080"`
 }
 
 // NewConfig creates a new configuration with values from environment variables
 // or defaults
 func NewConfig() *Config {
-	return &Config{
-		DynamodbEndpoint:   getString("DYNAMO_DB_ENDPOINT", "localhost:4569"),
-		DynamodbDisableSSL: getBool("DYNAMODB_DISABLE_SSL", true),
-		ResourceTableName:  getString("RESOURCE_TABLE_NAME", "resources"),
-		KinesisEndpoint:    getString("KINESIS_ENDPOINT", "localhost:4568"),
-		KinesisDisableSSL:  getBool("KINESIS_DISABLE_SSL", true),
-		DepositStreamName:  getString("DEPOSIT_STREAM_NAME", "deposit"),
-		S3Endpoint:         getString("S3_ENDPOINT", "localhost:4572"),
-		S3BucketName:       getString("S3_BUCKET_NAME", "taco-deposited-files"),
-		S3DisableSSL:       getBool("S3_DISABLE_SSL", true),
-		Port:               getInteger("TACO_PORT", 8080),
+	configuration := Config{}
+	typ := reflect.TypeOf(configuration)
+	fieldsList := reflect.ValueOf(&configuration)
+
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		fieldSetter := fieldsList.Elem().FieldByName(field.Name)
+		envVariable := field.Tag.Get("envVariable")
+		defaultValue := field.Tag.Get("defaultValue")
+
+		switch fieldSetter.Kind() {
+		case reflect.Int:
+			setInteger(fieldSetter, envVariable, defaultValue)
+		case reflect.Bool:
+			setBool(fieldSetter, envVariable, defaultValue)
+		default:
+			setString(fieldSetter, envVariable, defaultValue)
+		}
 	}
+	return &configuration
 }
 
-func getString(envVar string, defaultValue string) string {
-	var value string
-	value = os.Getenv(envVar)
+func setString(field reflect.Value, envVariable string, defaultValue string) {
+	value := os.Getenv(envVariable)
 	if value == "" {
 		value = defaultValue
-		log.Printf("%s: Using default [%s].", envVar, defaultValue)
-		return defaultValue
+		log.Printf("%s: Using default [%s].", envVariable, defaultValue)
 	}
-	log.Printf("%s: Found setting [%s].", envVar, value)
-	return value
+	log.Printf("%s: Found setting [%s].", envVariable, value)
+	field.SetString(value)
 }
 
-func getBool(envVar string, defaultValue bool) bool {
-	var value string
-	value = os.Getenv(envVar)
-	if value == "FALSE" || value == "false" {
-		log.Printf("%s: Using default [%s].", envVar, value)
-		return false
+func setBool(field reflect.Value, envVariable string, defaultValue string) {
+	// defaultValue, _ := strconv.ParseBool(defaultValueAsString)
+	value := os.Getenv(envVariable)
+	if value == "" || strings.ToUpper(value) == "FALSE" {
+		log.Printf("%s: Using default [FALSE].", envVariable)
+		field.SetBool(false)
 	}
-	log.Printf("%s: Found setting [true].", envVar)
-	return true
+	log.Printf("%s: Found setting [%s].", envVariable, value)
+	field.SetBool(true)
 }
 
-func getInteger(envVar string, defaultValue int) int {
-	value, err := strconv.Atoi(os.Getenv(envVar))
+func setInteger(field reflect.Value, envVariable string, defaultValue string) {
+	value, err := strconv.ParseInt(os.Getenv(envVariable), 10, 64)
+	defaultInteger, _ := strconv.ParseInt(defaultValue, 10, 64)
+
 	if err != nil || value == 0 {
-		log.Printf("%s: Using default [%v].", envVar, defaultValue)
-		return defaultValue
+		log.Printf("%s: Using default [%v].", envVariable, defaultInteger)
+		value = defaultInteger
 	}
-	log.Printf("%s: Found setting [%v].", envVar, value)
-	return value
+	log.Printf("%s: Found setting [%v].", envVariable, value)
+	field.SetInt(value)
 }
