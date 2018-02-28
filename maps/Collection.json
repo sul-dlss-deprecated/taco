@@ -2,18 +2,18 @@
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "accessAndPermissions", "identification", "structural"],
+  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
-      "type": "string",
-      "format": "URI"
+      "type": "string"
     },
     "@type": {
       "description": "The content type of the Collection. Selected from an established set of values.",
       "type": "string",
-      "format": "URI",
-      "enum": ["http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld",
+      "enum": [
+        "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
+        "http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-user-collection.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-exhibit.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-series.jsonld"
@@ -83,8 +83,7 @@
         },
         "license": {
           "description": "The license governing reuse of the Collection. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "reuseAndReproductionStatement": {
           "description": "The human readable reuse and reproduction statement that applies to the Collection.",
@@ -116,8 +115,7 @@
         },
         "isDescribedBy": {
           "description": "PURL/XML file that is a traditional representation of the metadata for the Collection.",
-          "type": "string",
-          "format": "URL"
+          "type": "string"
         },
         "lastUpdated": {
           "description": "When the resource in SDR was last updated.",
@@ -190,21 +188,18 @@
       "properties": {
         "hasAgreement": {
           "description": "Agreement that covers the deposit of the Collection into SDR.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "hasMember": {
           "description": "Component digital repository objects or collections that are a part of this collection.",
           "type": "array",
           "items": [{
-            "type": "string",
-            "format": "URI"
+            "type": "string"
           }]
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the Collection.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "hasMemberOrders": {
           "description": "Provided sequences or orderings of members of the Collection, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",

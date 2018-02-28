@@ -2,17 +2,15 @@
   "title": "File",
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "accessAndPermissions", "identification", "structural"],
+  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
-      "type": "string",
-      "format": "URI"
+      "type": "string"
     },
     "@type": {
       "description": "The content type of the File.",
       "type": "string",
-      "format": "URI",
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
@@ -44,8 +42,7 @@
     },
     "hasMimeType": {
       "description": "MIME Type of the File.",
-      "type": "string",
-      "format": "mime-type"
+      "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a File.",
@@ -95,7 +92,7 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "isDescribedBy", "sdrPreserve"],
+      "required": ["created", "sdrPreserve"],
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -109,11 +106,6 @@
         "gravestoneMessage": {
           "description": "Message describing why the resource was deleted.",
           "type": "string"
-        },
-        "isDescribedBy": {
-          "description": "Technical metadata file that represents the File (binary).",
-          "type": "string",
-          "format": "URL"
         },
         "lastUpdated": {
           "description": "When the resource in SDR was last updated.",
@@ -173,13 +165,11 @@
       "properties": {
         "isContainedBy": {
           "description": "Fileset that contains this File.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this File.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         }
       }
     }
