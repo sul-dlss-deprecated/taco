@@ -3,7 +3,6 @@ package handlers
 import (
 	"log"
 
-	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -46,14 +45,15 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 		panic(err)
 	}
 
-	location, err := d.copyFileToStorage(id, params.Upload)
+	upload := d.paramsToFile(params)
+	location, err := d.copyFileToStorage(id, upload)
 	if err != nil {
 		panic(err)
 	}
 
 	log.Printf("The location of the file is: %s", *location)
 
-	if err := d.createFileResource(id, params.Upload.Header.Filename); err != nil {
+	if err := d.createFileResource(id, upload.Metadata); err != nil {
 		panic(err)
 	}
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
@@ -61,23 +61,31 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*string, error) {
-	filename := file.Header.Filename
-	contentType := file.Header.Header.Get("Content-Type")
-	log.Printf("Saving file \"%s\" with content-type: %s", filename, contentType)
-
-	upload := uploaded.NewFile(filename, contentType, file.Data)
-	return d.storage.UploadFile(id, upload)
+func (d *depositFileEntry) paramsToFile(params operations.DepositFileParams) *uploaded.File {
+	file := params.Upload
+	fileHeader := file.Header
+	metadata := uploaded.FileMetadata{
+		Filename:    fileHeader.Filename,
+		ContentType: fileHeader.Header.Get("Content-Type"),
+	}
+	return uploaded.NewFile(metadata, file.Data)
 }
 
-func (d *depositFileEntry) createFileResource(resourceID string, filename string) error {
-	resource := d.buildPersistableResource(resourceID, filename)
+func (d *depositFileEntry) copyFileToStorage(id string, file *uploaded.File) (*string, error) {
+	log.Printf("Saving file \"%s\" with content-type: %s to: %s",
+		file.Metadata.Filename,
+		file.Metadata.ContentType,
+		id)
+	return d.storage.UploadFile(id, file)
+}
+
+func (d *depositFileEntry) createFileResource(resourceID string, metadata uploaded.FileMetadata) error {
+	resource := d.buildPersistableResource(resourceID, metadata)
 	return d.database.Insert(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *datautils.Resource {
-	// TODO: Expand here if we need to set any default properties on the file
-	identification := map[string]interface{}{"filename": filename, "identifier": resourceID, "sdrUUID": resourceID}
-	json := datautils.JSONObject{"id": resourceID, "identification": identification}
+func (d *depositFileEntry) buildPersistableResource(resourceID string, metadata uploaded.FileMetadata) *datautils.Resource {
+	identification := map[string]interface{}{"filename": metadata.Filename, "identifier": resourceID, "sdrUUID": resourceID}
+	json := datautils.JSONObject{"id": resourceID, "identification": identification, "hasMimeType": metadata.ContentType}
 	return datautils.NewResource(json)
 }
