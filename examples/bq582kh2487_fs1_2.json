@@ -1,0 +1,42 @@
+{
+  "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+  "@type": "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld",
+  "currentVersion": "TRUE",
+  "depositor": {
+    "name": "DOR",
+    "sunetID": "DOR"
+  },
+  "format": "http://pcdm.org/file-format-types#Image",
+  "hasMessageDigests": {
+    "md5": "3898c645af2a485527eec1823482bdb5",
+    "sha1": "828f3940e76858cf6fb18fbed36068355f3d5245"
+  },
+  "hasMimeType": "image/jp2",
+  "label": "Image 1. JP2",
+  "presentation": {
+    "height": "5050",
+    "width": "3936"
+  },
+  "size": "3740203",
+  "use": "http://pcdm.org/use#ServiceFile",
+  "version": 1,
+  "access": {
+    "access": "world",
+    "download": "world",
+    },
+  "administrative": {
+    "created": "2012-10-28T04:13:43.639Z",
+    "deleted": "FALSE",
+    "isDescribedBy": "https://purl.stanford.edu/bq582kh2487.xml",
+    "lastUpdated": "2014-02-19T21:02:26.550Z",
+    "sdrPreserve": "FALSE"
+  },
+  "identification": {
+    "filename": "00015682_0001.jp2",
+    "identifier": "druid:bq582kh2487_fs1_1",
+    "sdrUUID": "a49cbb3a-1ca9-11e8-accf-0ed5f89f718b"
+  },
+  "structural": {
+    "isContainedBy": "druid:bq582kh2487_fs1"
+  }
+}
