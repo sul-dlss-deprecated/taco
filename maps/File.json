@@ -38,9 +38,9 @@
       "description": "Format of the File.",
       "type": "string"
     },
-    "hasMessageDigest": {
+    "hasMessageDigests": {
       "description": "The output of the message digest algorithm.",
-      "type": "string"
+      "type": "object"
     },
     "hasMimeType": {
       "description": "MIME Type of the File.",
@@ -50,6 +50,10 @@
     "label": {
       "description": "Primary processing label (can be same as title) for a File.",
       "type": "string"
+    },
+    "presentation": {
+      "description": "Presentation data for the File.",
+      "type": "object"
     },
     "size": {
       "description": "Size of the File (binary) in bytes.",
@@ -62,6 +66,14 @@
     "version": {
       "description": "Version for the File within SDR.",
       "type": "integer"
+    },
+    "precedingVersion": {
+      "description": "Preceding version for the Collection within SDR.",
+      "type": "string"
+    },
+    "followingVersion": {
+      "description": "Following version for the Collection within SDR.",
+      "type": "string"
     },
     "access": {
       "description": "Access Metadata for the File.",
@@ -140,6 +152,10 @@
       "type": "object",
       "required": ["identifier", "sdrUUID"],
       "properties": {
+        "filename": {
+          "description": "Filename for the File from originating systems.",
+          "type": "string"
+        },
         "identifier": {
           "description": "Identifier for the File within SDR.",
           "type": "string"

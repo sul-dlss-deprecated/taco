@@ -42,6 +42,14 @@
       "description": "Version for the Fileset within SDR.",
       "type": "integer"
     },
+    "precedingVersion": {
+      "description": "Preceding version for the Collection within SDR.",
+      "type": "string"
+    },
+    "followingVersion": {
+      "description": "Following version for the Collection within SDR.",
+      "type": "string"
+    },
     "access": {
       "description": "Access Metadata for the Fileset.",
       "type": "object",

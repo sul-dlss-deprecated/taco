@@ -60,6 +60,14 @@
       "description": "Version for the DRO within SDR.",
       "type": "integer"
     },
+    "precedingVersion": {
+      "description": "Preceding version for the Collection within SDR.",
+      "type": "string"
+    },
+    "followingVersion": {
+      "description": "Following version for the Collection within SDR.",
+      "type": "string"
+    },
     "access": {
       "description": "Access Metadata for the DRO.",
       "type": "object",
@@ -126,7 +134,7 @@
           "type": "string",
           "format": "URL"
         },
-        "updated": {
+        "lastUpdated": {
           "description": "When the resource in SDR was last updated.",
           "type": "string",
           "format": "date-time"
