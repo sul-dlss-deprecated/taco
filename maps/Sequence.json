@@ -7,7 +7,6 @@
     "@type": {
       "description": "The type of Sequence.",
       "type": "string",
-      "format": "URI",
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-sequence.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-primary-sequence.jsonld"
       ]

@@ -2,17 +2,15 @@
   "title": "Fileset",
   "description": "Relevant groupings of Files. Also called a File Grouping.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "accessAndPermissions", "identification", "structural"],
+  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
-      "type": "string",
-      "format": "URI"
+      "type": "string"
     },
     "@type": {
       "description": "The content type of the Fileset.",
       "type": "string",
-      "format": "URI",
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
@@ -139,13 +137,11 @@
       "properties": {
         "isContainedBy": {
           "description": "Parent DRO that is represented by the files in this Fileset.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this Fileset.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         }
       }
     }

@@ -2,17 +2,15 @@
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "accessAndPermissions", "identification", "structural"],
+  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
-      "type": "string",
-      "format": "URI"
+      "type": "string"
     },
     "@type": {
       "description": "The content type of the DRO. Selected from an established set of values.",
       "type": "string",
-      "format": "URI",
       "enum": ["http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
@@ -94,8 +92,7 @@
         },
         "license": {
           "description": "The license governing reuse of the DRO. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "reuseAndReproductionStatement": {
           "description": "The human readable reuse and reproduction statement that applies to the DRO.",
@@ -131,8 +128,7 @@
         },
         "isDescribedBy": {
           "description": "Pointer to the PURL/XML file that is a traditional representation of the metadata for the DRO.",
-          "type": "string",
-          "format": "URL"
+          "type": "string"
         },
         "lastUpdated": {
           "description": "When the resource in SDR was last updated.",
@@ -238,27 +234,23 @@
           "description": "Filesets that contain the digital representations (Files) of the DRO.",
           "type": "array",
           "items": {
-            "type": "string",
-            "format": "URI"
+            "type": "string"
           }
         },
         "hasAgreement": {
           "description": "Agreement that covers the deposit of the DRO into SDR.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "hasMember": {
           "description": "Component or 'children' digital repository objects that are a part or portion of this 'parent' or aggregate DRO.",
           "type": "array",
           "items": [{
-            "type": "string",
-            "format": "URI"
+            "type": "string"
           }]
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the DRO.",
-          "type": "string",
-          "format": "URI"
+          "type": "string"
         },
         "hasMemberOrders": {
           "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
