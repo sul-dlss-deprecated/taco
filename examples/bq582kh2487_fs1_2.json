@@ -1,7 +1,7 @@
 {
   "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
   "@type": "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld",
-  "currentVersion": "TRUE",
+  "currentVersion": true,
   "depositor": {
     "name": "DOR",
     "sunetID": "DOR"
@@ -14,22 +14,21 @@
   "hasMimeType": "image/jp2",
   "label": "Image 1. JP2",
   "presentation": {
-    "height": "5050",
-    "width": "3936"
+    "height": 5050,
+    "width": 3936
   },
-  "size": "3740203",
+  "size": 3740203,
   "use": "http://pcdm.org/use#ServiceFile",
   "version": 1,
   "access": {
     "access": "world",
-    "download": "world",
+    "download": "world"
     },
   "administrative": {
     "created": "2012-10-28T04:13:43.639Z",
-    "deleted": "FALSE",
-    "isDescribedBy": "https://purl.stanford.edu/bq582kh2487.xml",
+    "deleted": false,
     "lastUpdated": "2014-02-19T21:02:26.550Z",
-    "sdrPreserve": "FALSE"
+    "sdrPreserve": false
   },
   "identification": {
     "filename": "00015682_0001.jp2",

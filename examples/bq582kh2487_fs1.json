@@ -1,7 +1,7 @@
 {
   "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
   "@type": "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld",
-  "currentVersion": "TRUE",
+  "currentVersion": true,
   "depositor": {
     "name": "DOR",
     "sunetID": "DOR"
@@ -10,14 +10,14 @@
   "version": 1,
   "access": {
     "access": "world",
-    "download": "world",
-    },
+    "download": "world"
+  },
   "administrative": {
     "created": "2012-10-28T04:13:43.639Z",
-    "deleted": "FALSE",
+    "deleted": false,
     "isDescribedBy": "https://purl.stanford.edu/bq582kh2487.xml",
     "lastUpdated": "2014-02-19T21:02:26.550Z",
-    "sdrPreserve": "TRUE"
+    "sdrPreserve": true
   },
   "identification": {
     "identifier": "druid:bq582kh2487_fs1",
