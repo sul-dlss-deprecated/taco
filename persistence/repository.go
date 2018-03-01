@@ -10,7 +10,9 @@ import (
 	"github.com/sul-dlss-labs/taco/config"
 )
 
-// NewDynamoRepository -- Creates a new repository
+// NewDynamoRepository -- Creates a new repository. This is an implentation of
+// an abstract "repository" concept that is backed by a single table
+// (config.ResourceTableName) in DynamoDB.
 func NewDynamoRepository(config *config.Config, db *dynamodb.DynamoDB) *DynamoRepository {
 	tableName := aws.String(config.ResourceTableName)
 	return &DynamoRepository{db: db,

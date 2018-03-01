@@ -4,6 +4,7 @@ import (
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/sessionbuilder"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
 )
@@ -11,9 +12,11 @@ import (
 // NewRuntime creates a new application level runtime that
 // encapsulates the shared services for this application
 func NewRuntime(config *config.Config) (*Runtime, error) {
-	repository := persistence.NewDynamoRepository(config, db.NewConnection(config))
-	storage := storage.NewS3Bucket(config)
-	stream := streaming.NewKinesisStream(config)
+	awsSession := sessionbuilder.NewAwsSession(config)
+	dbConn := db.NewConnection(config, awsSession)
+	repository := persistence.NewDynamoRepository(config, dbConn)
+	storage := storage.NewS3Bucket(config, awsSession)
+	stream := streaming.NewKinesisStream(config, awsSession)
 
 	return NewRuntimeWithServices(config, repository, storage, stream)
 }

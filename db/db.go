@@ -10,13 +10,7 @@ import (
 var db *dynamodb.DynamoDB
 
 // NewConnection creates a new connection to Dynamo using our config
-func NewConnection(config *config.Config) *dynamodb.DynamoDB {
-	sess, err := session.NewSession(&aws.Config{
-		Endpoint:   aws.String(config.DynamodbEndpoint),
-		DisableSSL: aws.Bool(config.DynamodbDisableSSL),
-	})
-	if err != nil {
-		panic(err)
-	}
-	return dynamodb.New(sess)
+func NewConnection(config *config.Config, sess *session.Session) *dynamodb.DynamoDB {
+	dynamoConfig := &aws.Config{Endpoint: aws.String(config.DynamodbEndpoint)}
+	return dynamodb.New(sess, dynamoConfig)
 }
