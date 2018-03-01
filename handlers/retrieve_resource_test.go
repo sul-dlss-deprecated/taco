@@ -6,12 +6,12 @@ import (
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
 func TestRetrieveHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := mockRepo(new(persistence.Resource))
+	repo := mockRepo(new(models.Resource))
 	r.GET("/v1/resource/99").
 		Run(setupFakeRuntime().WithRepository(repo).Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {

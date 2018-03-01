@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
@@ -22,23 +21,9 @@ type resourceEntry struct {
 func (d *resourceEntry) Handle(params operations.RetrieveResourceParams) middleware.Responder {
 	resource, err := d.repository.GetByID(params.ID)
 	if err == nil {
-		// TODO: expand this mapping
-		response := buildResponse(resource)
-		return operations.NewRetrieveResourceOK().WithPayload(response)
+		return operations.NewRetrieveResourceOK().WithPayload(resource)
 	} else if err.Error() == "not found" {
 		return operations.NewRetrieveResourceNotFound()
 	}
 	panic(err)
-}
-
-// TODO: expand this mapping
-func buildResponse(resource *persistence.Resource) *models.Resource {
-	return &models.Resource{
-		ID:        resource.ID,
-		Label:     &resource.Label,
-		AtContext: &resource.AtContext,
-		AtType:    &resource.AtType,
-		Access:    &resource.Access,
-		Preserve:  &resource.Preserve,
-		Publish:   &resource.Publish}
 }
