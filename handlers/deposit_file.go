@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco"
@@ -68,14 +69,19 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 	return d.rt.Repository().CreateItem(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	// TODO: Where should Access come from/default to?
-	resource.Access = "private"
-	resource.AtContext = atContext
-	resource.AtType = fileType
-	resource.Label = filename
-	resource.Preserve = false
-	resource.Publish = false
-	return resource
+func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) map[string]*dynamodb.AttributeValue {
+	row := map[string]*dynamodb.AttributeValue{}
+	ctx := atContext
+	typ := fileType
+	row["atContext"] = &dynamodb.AttributeValue{S: &ctx}
+	row["atType"] = &dynamodb.AttributeValue{S: &typ}
+	row["Label"] = &dynamodb.AttributeValue{S: &filename}
+	row[persistence.PrimaryKey] = &dynamodb.AttributeValue{S: &resourceID}
+
+	// TODO: Do we need any of these?
+	// resource.Access = "private"
+	// resource.Preserve = false
+	// resource.Publish = false
+
+	return row
 }
