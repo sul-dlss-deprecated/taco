@@ -43,6 +43,24 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			})
 }
 
+func TestCreateResourceSemanticallyValid(t *testing.T) {
+	r := gofight.New()
+	r.POST("/v1/resource").
+		SetJSON(gofight.D{
+			"id":       "oo000oo0001",
+			"@context": "http://example.com", // This is not a valid context
+			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+			"access":   "world",
+			"label":    "My work",
+			"preserve": true,
+			"publish":  true,
+			"sourceId": "bib12345678"}).
+		Run(setupFakeRuntime().Handler(),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
+			})
+}
+
 // TODO: Handle errors
 func TestCreateResourceFailure(t *testing.T) {
 	r := gofight.New()

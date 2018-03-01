@@ -9,6 +9,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
@@ -22,14 +23,19 @@ type updateResourceEntry struct {
 
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
+	validator := validators.NewUpdateResourceValidator(d.rt.Repository())
+	if err := validator.ValidateResource(params.Payload); err != nil {
+		return operations.NewUpdateResourceUnprocessableEntity()
+	}
+
 	resource, err := d.rt.Repository().GetByID(params.ID)
 
 	if err == nil {
-		if err := d.updateResource(resource.ID, params); err != nil {
+		if err = d.updateResource(resource.ID, params); err != nil {
 			panic(err)
 		}
 
-		if err := d.addToStream(&resource.ID); err != nil {
+		if err = d.addToStream(&resource.ID); err != nil {
 			panic(err)
 		}
 
