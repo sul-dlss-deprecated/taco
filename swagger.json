@@ -292,10 +292,41 @@
           },
           "description": "The parent resource(s) of this resource."
         },
-        "id": {
-          "type": "string",
-          "description": "The TACO identifier for the resource. Usually DRUID-derived.",
-          "example": "oo000oo0001"
+        "identification": {
+          "description": "Identifying information for the resource.",
+          "type": "object",
+          "properties": {
+            "catkey": {
+              "type": "string",
+               "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same resource being described by the bibliographic record."
+            },
+            "identifier": {
+              "type": "string",
+              "description": "The TACO identifier for the resource. Usually DRUID-derived.",
+              "example": "oo000oo0001"
+            },
+            "sourceId": {
+               "description": "For anything that cannot cleanly map into isRepresentationOf.",
+               "type": "string"
+            },
+            "DOI": {
+              "description": "Digital Object Identifier (DOI) for the resource within this repository.",
+              "type": "string"
+            },
+            "sameAs": {
+              "description": "Another object, either external or internal to the system (if duplication occurs) that is the same digital resource as this resource.",
+              "type": "string"
+            },
+            "sdrUUID": {
+              "type": "string",
+              "format": "uuid",
+              "description": "UUID for the resource within TACO."
+            },
+            "filename": {
+              "description": "Filename for the File from originating systems.",
+              "type": "string"
+            }
+          }
         },
         "label": {
           "type": "string",
