@@ -11,6 +11,7 @@ import (
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/uploaded"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
 const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
@@ -27,6 +28,11 @@ type depositFileEntry struct {
 
 // Handle the deposit file request
 func (d *depositFileEntry) Handle(params operations.DepositFileParams) middleware.Responder {
+	validator := validators.NewDepositFileValidator(d.rt.Repository())
+	if err := validator.ValidateResource(params.Upload.Header); err != nil {
+		return operations.NewDepositFileInternalServerError() // TODO: need a better error
+	}
+
 	id, err := identifier.NewService().Mint()
 	if err != nil {
 		panic(err)
@@ -64,6 +70,7 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 
 func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
+	// TODO: Where should Access come from/default to?
 	resource.Access = "private"
 	resource.AtContext = atContext
 	resource.AtType = fileType
