@@ -11,11 +11,19 @@ type Service interface {
 	Mint() (string, error)
 }
 
-func NewService(config *config.Config) Service {
-	if config.IdentifierServiceHost == "" {
+// NewService builds the identifier service
+func NewService(config *config.Config) *TypeAwareService {
+	externalService := externalServiceOrFallback(config.IdentifierServiceHost)
+	return &TypeAwareService{
+		UUIDService:       NewUUIDService(),
+		IdentifierService: externalService,
+	}
+}
+
+func externalServiceOrFallback(host string) Service {
+	if host == "" {
 		log.Println("IDENTIFIER_SERVICE_HOST is not set, so using UUID service")
 		return NewUUIDService()
-	} else {
-		return NewRemoteIdentifierService(config)
 	}
+	return NewRemoteIdentifierService(host)
 }

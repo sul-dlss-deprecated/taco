@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/sul-dlss-labs/identifier-service/generated/client"
-	"github.com/sul-dlss-labs/taco/config"
 )
 
 type remoteIdentifierService struct {
@@ -12,8 +11,7 @@ type remoteIdentifierService struct {
 }
 
 // NewRemoteIdentifierService creates a new instance of the identifier service
-func NewRemoteIdentifierService(config *config.Config) Service {
-	host := config.IdentifierServiceHost
+func NewRemoteIdentifierService(host string) Service {
 	return &remoteIdentifierService{
 		TransportConfig: client.DefaultTransportConfig().WithHost(host),
 	}

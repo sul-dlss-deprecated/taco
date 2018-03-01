@@ -34,7 +34,9 @@ func (d *resourceEntry) Handle(params operations.RetrieveResourceParams) middlew
 // TODO: expand this mapping
 func buildResponse(resource *persistence.Resource) *models.Resource {
 	return &models.Resource{
-		ID:        resource.ID,
+		ID: resource.Identifier,
+		// TODO: when we add sdrUUID to the swagger.json, uncomment this:
+		// sdrUUID:   &resource.SdrUUID,
 		Label:     &resource.Label,
 		AtContext: &resource.AtContext,
 		AtType:    &resource.AtType,

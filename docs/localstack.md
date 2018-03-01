@@ -21,8 +21,8 @@ Next we have to set up the services.
 #### Create the resources table in DynamoDB:
 ```shell
 $ awslocal dynamodb create-table --table-name resources \
-  --attribute-definitions "AttributeName=id,AttributeType=S" \
-  --key-schema "AttributeName=id,KeyType=HASH" \
+  --attribute-definitions "AttributeName=identifier,AttributeType=S" \
+  --key-schema "AttributeName=identifier,KeyType=HASH" \
   --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
 ```
 

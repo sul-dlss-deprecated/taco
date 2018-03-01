@@ -15,7 +15,7 @@ func TestSaveAndRetrieve(t *testing.T) {
 	}
 	id := "9999"
 	repo := initRepo()
-	resource := &Resource{ID: id, Label: "Hello world"}
+	resource := &Resource{Identifier: id, Label: "Hello world"}
 	err := repo.CreateItem(resource)
 	assert.Nil(t, err)
 	item, err := repo.GetByID(id)

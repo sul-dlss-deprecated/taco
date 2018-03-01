@@ -35,7 +35,7 @@ type Runtime struct {
 	repository  persistence.Repository
 	stream      streaming.Stream
 	fileStorage storage.Storage
-	ident       identifier.Service
+	ident       *identifier.TypeAwareService
 	config      *config.Config
 }
 
@@ -58,7 +58,7 @@ func (r *Runtime) WithStreaming(stream streaming.Stream) *Runtime {
 }
 
 // WithIdentifierService sets the passed in streaming on the runtime.
-func (r *Runtime) WithIdentifierService(idService identifier.Service) *Runtime {
+func (r *Runtime) WithIdentifierService(idService *identifier.TypeAwareService) *Runtime {
 	r.ident = idService
 	return r
 }
@@ -87,7 +87,7 @@ func (r *Runtime) FileStorage() storage.Storage {
 }
 
 // Identifier returns the identifier service
-func (r *Runtime) Identifier() identifier.Service {
+func (r *Runtime) Identifier() *identifier.TypeAwareService {
 	if r.ident == nil {
 		panic("Identifier service not initialized")
 	}

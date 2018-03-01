@@ -89,10 +89,16 @@ func (d *TestEnv) Handler() http.Handler {
 		d.storage = &fakeStorage{}
 	}
 
+	ident := &identifier.TypeAwareService{
+		UUIDService:       identifier.NewUUIDService(),
+		IdentifierService: identifier.NewUUIDService(),
+	}
+
 	rt, _ := taco.NewRuntime(nil)
-	rt = rt.WithRepository(d.repo).WithStorage(d.storage).
+	rt = rt.WithRepository(d.repo).
+		WithStorage(d.storage).
 		WithStreaming(mockStream()).
-		WithIdentifierService(identifier.NewUUIDService())
+		WithIdentifierService(ident)
 	return BuildAPI(rt).Serve(nil)
 }
 
