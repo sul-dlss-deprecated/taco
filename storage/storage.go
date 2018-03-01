@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/uploaded"
@@ -21,18 +22,16 @@ type S3BucketStorage struct {
 	uploader *s3manager.Uploader
 }
 
-// NewS3Bucket creates a new S3 bucket storage
-func NewS3Bucket(config *config.Config) Storage {
-	sess, err := session.NewSession(&aws.Config{
-		Endpoint:   aws.String(config.S3Endpoint),
-		DisableSSL: aws.Bool(config.S3DisableSSL),
+// NewS3Bucket creates a new storage adapter that uses S3 bucket storage to
+// actually store the files
+func NewS3Bucket(config *config.Config, sess *session.Session) Storage {
+	forcePath := true // This is required for localstack
+	s3Svc := s3.New(sess, &aws.Config{
+		Endpoint:         aws.String(config.S3Endpoint),
+		S3ForcePathStyle: &forcePath,
 	})
-	if err != nil {
-		panic(err)
-	}
-	// This is required for localstack:
-	sess.Config.WithS3ForcePathStyle(true)
-	uploader := s3manager.NewUploader(session.Must(sess, err))
+	uploader := s3manager.NewUploaderWithClient(s3Svc)
+
 	return &S3BucketStorage{config: config, uploader: uploader}
 }
 

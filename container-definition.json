@@ -18,12 +18,12 @@
           "value": "REPLACE_REGION"
         },
         {
-          "name": "DYNAMO_DB_ENDPOINT",
-          "value": "dynamodb.REPLACE_REGION.amazonaws.com"
+          "name": "AWS_DISABLE_SSL",
+          "value": "false"
         },
         {
-          "name": "DYNAMODB_DISABLE_SSL",
-          "value": "false"
+          "name": "DYNAMO_DB_ENDPOINT",
+          "value": "dynamodb.REPLACE_REGION.amazonaws.com"
         },
         {
           "name": "RESOURCE_TABLE_NAME",
@@ -34,20 +34,12 @@
           "value": "kinesis.REPLACE_REGION.amazonaws.com"
         },
         {
-          "name": "KINESIS_DISABLE_SSL",
-          "value": "false"
-        },
-        {
           "name": "DEPOSIT_STREAM_NAME",
           "value": "deposit-REPLACE_ENVIRONMENT"
         },
         {
           "name": "S3_ENDPOINT",
           "value": "s3.REPLACE_REGION.amazonaws.com"
-        },
-        {
-          "name": "S3_DISABLE_SSL",
-          "value": "false"
         },
         {
           "name": "S3_BUCKET_NAME",

@@ -9,16 +9,14 @@ import (
 
 // Config is configuration for the TACO application
 type Config struct {
-	DynamodbEndpoint   string `envVariable:"DYNAMO_DB_ENDPOINT" defaultValue:"localhost:4569"`
-	DynamodbDisableSSL bool   `envVariable:"DYNAMO_DISABLE_SSL" defaultValue:"true"`
-	KinesisEndpoint    string `envVariable:"KINESIS_ENDPOINT" defaultValue:"localhost:4568"`
-	KinesisDisableSSL  bool   `envVariable:"KINESIS_DISABLE_SSL" defaultValue:"true"`
-	ResourceTableName  string `envVariable:"RESOURCE_TABLE_NAME" defaultValue:"resources"`
-	DepositStreamName  string `envVariable:"DEPOSIT_STREAM_NAME" defaultValue:"deposit"`
-	S3Endpoint         string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
-	S3BucketName       string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
-	S3DisableSSL       bool   `envVariable:"S3_DISABLE_SSL" defaultValue:"true"`
-	Port               int    `envVariable:"TACO_PORT" defaultValue:"8080"`
+	DynamodbEndpoint  string `envVariable:"DYNAMO_DB_ENDPOINT" defaultValue:"localhost:4569"`
+	AwsDisableSSL     bool   `envVariable:"AWS_DISABLE_SSL" defaultValue:"true"`
+	KinesisEndpoint   string `envVariable:"KINESIS_ENDPOINT" defaultValue:"localhost:4568"`
+	ResourceTableName string `envVariable:"RESOURCE_TABLE_NAME" defaultValue:"resources"`
+	DepositStreamName string `envVariable:"DEPOSIT_STREAM_NAME" defaultValue:"deposit"`
+	S3Endpoint        string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
+	S3BucketName      string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
+	Port              int    `envVariable:"TACO_PORT" defaultValue:"8080"`
 }
 
 // NewConfig creates a new configuration with values from environment variables
