@@ -8,7 +8,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/config"
+	"github.com/sul-dlss-labs/taco/generated/models"
 )
+
+// PrimaryKey is the primary key of the table
+const PrimaryKey = "id"
 
 // NewDynamoRepository -- Creates a new repository
 func NewDynamoRepository(config *config.Config, db *dynamodb.DynamoDB) *DynamoRepository {
@@ -19,9 +23,9 @@ func NewDynamoRepository(config *config.Config, db *dynamodb.DynamoDB) *DynamoRe
 
 // Repository the interface for the metadata repository
 type Repository interface {
-	GetByID(string) (*Resource, error)
-	CreateItem(*Resource) error
-	UpdateItem(*Resource) error
+	GetByID(string) (*models.Resource, error)
+	CreateItem(map[string]*dynamodb.AttributeValue) error
+	UpdateItem(map[string]*dynamodb.AttributeValue) error
 }
 
 // DynamoRepository -- The fetching object
@@ -30,30 +34,25 @@ type DynamoRepository struct {
 	tableName *string
 }
 
-// SaveItem perist the resource in dynamo db
-func (h DynamoRepository) CreateItem(resource *Resource) error {
-	row, err := dynamodbattribute.MarshalMap(resource)
-
-	if err != nil {
-		return err
-	}
+// CreateItem perist the resource in dynamo db
+func (h DynamoRepository) CreateItem(row map[string]*dynamodb.AttributeValue) error {
 
 	input := &dynamodb.PutItemInput{
 		Item:      row,
 		TableName: h.tableName,
 	}
 
-	_, err = h.db.PutItem(input)
+	_, err := h.db.PutItem(input)
 
 	if err != nil {
 		return err
 	}
-	log.Printf("Saved %s to dynamodb", resource.ID)
+	log.Printf("Saved %s to dynamodb", row[PrimaryKey])
 	return nil
 }
 
 // GetByID -- given an identifier, find the resource
-func (h DynamoRepository) GetByID(id string) (*Resource, error) {
+func (h DynamoRepository) GetByID(id string) (*models.Resource, error) {
 	params := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
@@ -68,7 +67,7 @@ func (h DynamoRepository) GetByID(id string) (*Resource, error) {
 		log.Println(err)
 		return nil, err
 	}
-	var resource *Resource
+	var resource *models.Resource
 	if err := dynamodbattribute.UnmarshalMap(resp.Item, &resource); err != nil {
 		log.Println(err)
 		return nil, err
@@ -81,19 +80,13 @@ func (h DynamoRepository) GetByID(id string) (*Resource, error) {
 }
 
 // UpdateItem - Replaces an existing resource in the repository
-func (h DynamoRepository) UpdateItem(resource *Resource) error {
-	row, err := dynamodbattribute.MarshalMap(resource)
-
-	if err != nil {
-		return err
-	}
-
+func (h DynamoRepository) UpdateItem(row map[string]*dynamodb.AttributeValue) error {
 	input := &dynamodb.PutItemInput{
 		Item:      row,
 		TableName: h.tableName,
 	}
 
-	_, err = h.db.PutItem(input)
+	_, err := h.db.PutItem(input)
 
 	if err != nil {
 		return err

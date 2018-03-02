@@ -6,12 +6,12 @@ import (
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
 func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := mockRepo(new(persistence.Resource))
+	repo := mockRepo(new(models.Resource))
 
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).

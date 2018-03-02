@@ -8,7 +8,7 @@ import (
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/persistence"
+	"github.com/sul-dlss-labs/taco/serializers"
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
@@ -42,20 +42,8 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 }
 
 func (d *updateResourceEntry) updateResource(resourceID string, params operations.UpdateResourceParams) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
+	resource := serializers.ToPersistable(resourceID, params.Payload)
 	return d.rt.Repository().UpdateItem(resource)
-}
-
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, params operations.UpdateResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Payload.Access
-	resource.AtContext = *params.Payload.AtContext
-	resource.AtType = *params.Payload.AtType
-	resource.Label = *params.Payload.Label
-	resource.Preserve = *params.Payload.Preserve
-	resource.Publish = *params.Payload.Publish
-	resource.SourceID = params.Payload.SourceID
-	return resource
 }
 
 func (d *updateResourceEntry) addToStream(id *string) error {
