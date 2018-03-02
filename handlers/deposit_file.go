@@ -10,7 +10,6 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
-	"github.com/sul-dlss-labs/taco/serializers"
 	"github.com/sul-dlss-labs/taco/uploaded"
 	"github.com/sul-dlss-labs/taco/validators"
 )
@@ -69,17 +68,12 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 	return d.rt.Repository().CreateItem(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *serializers.Resource {
-	resource := serializers.NewResource()
+func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *persistence.Resource {
+	resource := persistence.NewResource()
 	resource.PutS("atContext", atContext)
 	resource.PutS("atType", fileType)
 	resource.PutS("Label", filename)
 	resource.PutS(persistence.PrimaryKey, resourceID)
-
-	// TODO: Do we need any of these?
-	// resource.Access = "private"
-	// resource.Preserve = false
-	// resource.Publish = false
 
 	return resource
 }

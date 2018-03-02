@@ -8,7 +8,7 @@ import (
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/serializers"
+	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
@@ -48,7 +48,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 }
 
 func (d *updateResourceEntry) updateResource(resourceID string, params operations.UpdateResourceParams) error {
-	resource := serializers.NewResourceWithId(resourceID, params.Payload)
+	resource := persistence.ToPersistable(resourceID, params.Payload)
 	return d.rt.Repository().UpdateItem(resource)
 }
 

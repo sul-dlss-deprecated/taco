@@ -9,7 +9,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/serializers"
+	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
@@ -48,7 +48,7 @@ func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) m
 }
 
 func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositResourceParams) error {
-	resource := serializers.NewResourceWithId(resourceID, params.Payload)
+	resource := persistence.ToPersistable(resourceID, params.Payload)
 	return d.rt.Repository().CreateItem(resource)
 }
 

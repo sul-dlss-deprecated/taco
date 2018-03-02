@@ -1,4 +1,4 @@
-package serializers
+package persistence
 
 import (
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -49,4 +49,12 @@ func (d *Resource) MarshalMap(request interface{}) {
 // Map return the data as a map of string -> dynamodb.AttributeValue
 func (d *Resource) Map() map[string]*dynamodb.AttributeValue {
 	return d.data
+}
+
+// ToPersistable converts the model Resource into a persisable object
+func ToPersistable(resourceID string, request *models.Resource) *Resource {
+	resource := NewResource()
+	resource.MarshalMap(request)
+	resource.PutS(PrimaryKey, resourceID)
+	return resource
 }

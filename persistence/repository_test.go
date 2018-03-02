@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/serializers"
 	"github.com/sul-dlss-labs/taco/sessionbuilder"
 )
 
@@ -17,7 +16,7 @@ func TestSaveAndRetrieve(t *testing.T) {
 	id := "9999"
 	repo := initRepo()
 
-	resource := serializers.NewResource()
+	resource := NewResource()
 	resource.PutS(PrimaryKey, id)
 	label := "Hello world"
 	resource.PutS("Label", label)
