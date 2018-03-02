@@ -48,7 +48,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 }
 
 func (d *updateResourceEntry) updateResource(resourceID string, params operations.UpdateResourceParams) error {
-	resource := serializers.ToPersistable(resourceID, params.Payload)
+	resource := serializers.NewResourceWithId(resourceID, params.Payload)
 	return d.rt.Repository().UpdateItem(resource)
 }
 

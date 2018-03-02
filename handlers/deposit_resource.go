@@ -48,7 +48,7 @@ func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) m
 }
 
 func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositResourceParams) error {
-	resource := serializers.ToPersistable(resourceID, params.Payload)
+	resource := serializers.NewResourceWithId(resourceID, params.Payload)
 	return d.rt.Repository().CreateItem(resource)
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco/serializers"
 )
 
 // PrimaryKey is the primary key of the table
@@ -26,8 +27,8 @@ func NewDynamoRepository(config *config.Config, db *dynamodb.DynamoDB) *DynamoRe
 // Repository the interface for the metadata repository
 type Repository interface {
 	GetByID(string) (*models.Resource, error)
-	CreateItem(map[string]*dynamodb.AttributeValue) error
-	UpdateItem(map[string]*dynamodb.AttributeValue) error
+	CreateItem(*serializers.Resource) error
+	UpdateItem(*serializers.Resource) error
 }
 
 // DynamoRepository -- The fetching object
@@ -37,10 +38,10 @@ type DynamoRepository struct {
 }
 
 // CreateItem perist the resource in dynamo db
-func (h DynamoRepository) CreateItem(row map[string]*dynamodb.AttributeValue) error {
+func (h DynamoRepository) CreateItem(row *serializers.Resource) error {
 
 	input := &dynamodb.PutItemInput{
-		Item:      row,
+		Item:      row.Map(),
 		TableName: h.tableName,
 	}
 
@@ -49,7 +50,7 @@ func (h DynamoRepository) CreateItem(row map[string]*dynamodb.AttributeValue) er
 	if err != nil {
 		return err
 	}
-	log.Printf("Saved %s to dynamodb", row[PrimaryKey])
+	log.Printf("Saved %s to dynamodb", row.GetS(PrimaryKey))
 	return nil
 }
 
@@ -82,9 +83,9 @@ func (h DynamoRepository) GetByID(id string) (*models.Resource, error) {
 }
 
 // UpdateItem - Replaces an existing resource in the repository
-func (h DynamoRepository) UpdateItem(row map[string]*dynamodb.AttributeValue) error {
+func (h DynamoRepository) UpdateItem(row *serializers.Resource) error {
 	input := &dynamodb.PutItemInput{
-		Item:      row,
+		Item:      row.Map(),
 		TableName: h.tableName,
 	}
 

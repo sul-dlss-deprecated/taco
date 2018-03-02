@@ -3,10 +3,10 @@ package persistence
 import (
 	"testing"
 
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/serializers"
 	"github.com/sul-dlss-labs/taco/sessionbuilder"
 )
 
@@ -17,10 +17,10 @@ func TestSaveAndRetrieve(t *testing.T) {
 	id := "9999"
 	repo := initRepo()
 
-	resource := map[string]*dynamodb.AttributeValue{}
-	resource[PrimaryKey] = &dynamodb.AttributeValue{S: &id}
+	resource := serializers.NewResource()
+	resource.PutS(PrimaryKey, id)
 	label := "Hello world"
-	resource["Label"] = &dynamodb.AttributeValue{S: &label}
+	resource.PutS("Label", label)
 
 	err := repo.CreateItem(resource)
 	assert.Nil(t, err)
