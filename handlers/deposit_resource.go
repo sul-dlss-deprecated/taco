@@ -48,20 +48,8 @@ func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) m
 }
 
 func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositResourceParams) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
+	resource := persistence.NewResource(resourceID, params.Payload)
 	return d.rt.Repository().CreateItem(resource)
-}
-
-func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Payload.Access
-	resource.AtContext = *params.Payload.AtContext
-	resource.AtType = *params.Payload.AtType
-	resource.Label = *params.Payload.Label
-	resource.Preserve = *params.Payload.Preserve
-	resource.Publish = *params.Payload.Publish
-	resource.SourceID = params.Payload.SourceID
-	return resource
 }
 
 func (d *depositResourceEntry) addToStream(id *string) error {
