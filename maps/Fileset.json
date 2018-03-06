@@ -1,8 +1,9 @@
 {
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Fileset",
   "description": "Relevant groupings of Files. Also called a File Grouping.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -11,7 +12,8 @@
     "@type": {
       "description": "The content type of the Fileset.",
       "type": "string",
-      "enum": ["http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
+      "enum": [
+        "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
     "currentVersion": {
@@ -20,20 +22,14 @@
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Primary label or name for an Agent.",
-          "type": "string"
-        },
-        "sunetID": {
-          "description": "Stanford University NetID for the Agent.",
-          "type": "string"
-        }
-      }
+      "ref": "Agent.json"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a Fileset.",
+      "type": "string"
+    },
+    "id": {
+      "description": "Identifier for the resource within TACO (should, but may not, overlap with `identification.identifier`, which is the SDR3 Identifier).",
       "type": "string"
     },
     "version": {
@@ -41,11 +37,11 @@
       "type": "integer"
     },
     "precedingVersion": {
-      "description": "Preceding version for the Collection within SDR.",
+      "description": "Preceding version for the Fileset within SDR.",
       "type": "string"
     },
     "followingVersion": {
-      "description": "Following version for the Collection within SDR.",
+      "description": "Following version for the Fileset within SDR.",
       "type": "string"
     },
     "access": {
@@ -100,17 +96,7 @@
           "description": "The Agent (User, Group, Application, Department, other) that remediated a Fileset in SDR.",
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Primary label or name for an Agent.",
-                "type": "string"
-              },
-              "sunetID": {
-                "description": "Stanford University NetID for the Agent.",
-                "type": "string"
-              }
-            }
+            "ref": "Agent.json"
           }
         }
       }
@@ -126,7 +112,6 @@
         },
         "sdrUUID": {
           "type": "string",
-          "format": "uuid",
           "description": "UUID for the Fileset within TACO."
         }
       }

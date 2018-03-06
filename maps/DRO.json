@@ -1,8 +1,9 @@
 {
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -11,7 +12,8 @@
     "@type": {
       "description": "The content type of the DRO. Selected from an established set of values.",
       "type": "string",
-      "enum": ["http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+      "enum": [
+        "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
@@ -38,17 +40,11 @@
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Primary label or name for an Agent.",
-          "type": "string"
-        },
-        "sunetID": {
-          "description": "Stanford University NetID for the Agent.",
-          "type": "string"
-        }
-      }
+      "ref": "Agent.json"
+    },
+    "id": {
+      "description": "Identifier for the resource within TACO (should, but may not, overlap with `identification.identifier`, which is the SDR3 Identifier).",
+      "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a DRO.",
@@ -59,11 +55,11 @@
       "type": "integer"
     },
     "precedingVersion": {
-      "description": "Preceding version for the Collection within SDR.",
+      "description": "Preceding version for the Object within SDR.",
       "type": "string"
     },
     "followingVersion": {
-      "description": "Following version for the Collection within SDR.",
+      "description": "Following version for the Object within SDR.",
       "type": "string"
     },
     "access": {
@@ -147,17 +143,7 @@
           "description": "The Agent (User, Group, Application, Department, other) that remediated a DRO in SDR.",
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Primary label or name for an Agent.",
-                "type": "string"
-              },
-              "sunetID": {
-                "description": "Stanford University NetID for the Agent.",
-                "type": "string"
-              }
-            }
+            "ref": "Agent.json"
           }
         }
       }
@@ -193,7 +179,6 @@
         },
         "sdrUUID": {
           "type": "string",
-          "format": "uuid",
           "description": "UUID for the DRO within TACO."
         }
       }
@@ -210,16 +195,7 @@
           "description": "Agents who are required to approve deposit or management of this resource in SDR.",
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Primary label or name for an Agent.",
-                "type": "string"
-              },
-              "sunetID": {
-                "description": "Stanford University NetID for the Agent.",
-                "type": "string"
-              }
+            "ref": "Agent.json"
             }
           }
         }

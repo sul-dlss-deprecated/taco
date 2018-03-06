@@ -33,7 +33,7 @@ func NewDeleteResource(ctx *middleware.Context, handler DeleteResourceHandler) *
 
 Delete a TACO Resource.
 
-Deletes a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those).
+Deletes a TACO resource (Collection, Digital Repository Object, File resource (metadata) and File binary, or subclass of those).
 
 */
 type DeleteResource struct {

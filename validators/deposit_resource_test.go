@@ -7,6 +7,6 @@ import (
 )
 
 func TestDepositResourceIsValid(t *testing.T) {
-	err := NewDepositResourceValidator(newMockRepository()).ValidateResource(testResource())
+	err := NewDepositResourceValidator(newMockRepository()).ValidateResource(testDepositResource())
 	assert.Nil(t, err)
 }

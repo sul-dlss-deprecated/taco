@@ -1,9 +1,14 @@
 {
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Resource Sequence",
   "description": "A sequence or ordering of resources within a Collection or Object.",
   "type": "object",
   "required": ["@type", "label", "startMember", "members"],
   "properties": {
+    "@context": {
+      "description": "URI for the JSON-LD context definitions.",
+      "type": "string"
+    },
     "@type": {
       "description": "The type of Sequence.",
       "type": "string",

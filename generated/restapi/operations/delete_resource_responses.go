@@ -105,7 +105,7 @@ func (o *DeleteResourceUnauthorized) WriteResponse(rw http.ResponseWriter, produ
 // DeleteResourceInternalServerErrorCode is the HTTP code returned for type DeleteResourceInternalServerError
 const DeleteResourceInternalServerErrorCode int = 500
 
-/*DeleteResourceInternalServerError This resource could be updated at this time by TACO.
+/*DeleteResourceInternalServerError This resource could not be deleted at this time by TACO.
 
 swagger:response deleteResourceInternalServerError
 */

@@ -58,9 +58,9 @@ func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, p
 	resource.AtContext = *params.Payload.AtContext
 	resource.AtType = *params.Payload.AtType
 	resource.Label = *params.Payload.Label
-	resource.Preserve = *params.Payload.Preserve
-	resource.Publish = *params.Payload.Publish
-	resource.SourceID = params.Payload.SourceID
+	resource.Administrative = *params.Payload.Administrative
+	resource.Identification = *params.Payload.Identification
+	// resource.Publish = *params.Payload.Publish
 	return resource
 }
 

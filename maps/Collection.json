@@ -1,8 +1,9 @@
 {
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -29,17 +30,11 @@
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Collection into SDR.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Primary label or name for an Agent.",
-          "type": "string"
-        },
-        "sunetID": {
-          "description": "Stanford University NetID for the Agent.",
-          "type": "string"
-        }
-      }
+      "ref": "Agent.json"
+    },
+    "id": {
+      "description": "Identifier for the resource within TACO (should, but may not, overlap with `identification.identifier`, which is the SDR3 Identifier).",
+      "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a Collection.",
@@ -134,17 +129,7 @@
           "description": "The Agent (User, Group, Application, Department, other) that remediated a Collection in SDR.",
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Primary label or name for an Agent.",
-                "type": "string"
-              },
-              "sunetID": {
-                "description": "Stanford University NetID for the Agent.",
-                "type": "string"
-              }
-            }
+            "ref": "Agent.json"
           }
         }
       }
@@ -176,7 +161,6 @@
         },
         "sdrUUID": {
           "type": "string",
-          "format": "uuid",
           "description": "UUID for the Collection within TACO."
         }
       }
@@ -206,7 +190,7 @@
           "type": "array",
           "items": [
             {
-              "$ref": "Sequence.json"
+              "$ref": "maps/Sequence.json"
             }
           ]
         }
