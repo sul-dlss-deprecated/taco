@@ -27,8 +27,9 @@ func (d *retrieveResourceEntry) Handle(c *gin.Context) {
 		c.JSON(200, response)
 	} else if err.Error() == "not found" {
 		c.AbortWithError(404, err)
+	} else {
+		panic(err)
 	}
-	panic(err)
 }
 
 // TODO: expand this mapping

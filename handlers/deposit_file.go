@@ -30,6 +30,9 @@ type depositFileEntry struct {
 
 // Handle the deposit file request
 func (d *depositFileEntry) Handle(c *gin.Context) {
+	if c.ContentType() != "multipart/form-data" {
+		c.AbortWithStatusJSON(422, "You must attach file as multipart/form-data")
+	}
 	validator := validators.NewDepositFileValidator(d.rt.Repository())
 	fileHeader, _ := c.FormFile("upload")
 	if err := validator.ValidateResource(fileHeader); err != nil {

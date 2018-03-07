@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
+	"path"
+	"runtime"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
@@ -13,14 +15,19 @@ import (
 
 // NewUpdateResource -- Accepts requests to update a resource.
 func NewUpdateResource(rt *taco.Runtime) func(*gin.Context) {
+	_, filename, _, _ := runtime.Caller(0)
+	schemaPath := path.Join(path.Dir(filename), "../maps/Resource.json")
+	validator := validators.NewUpdateResourceValidator(rt.Repository(), schemaPath)
+
 	return func(c *gin.Context) {
-		entry := &updateResourceEntry{rt: rt}
+		entry := &updateResourceEntry{rt: rt, validator: validator}
 		entry.Handle(c)
 	}
 }
 
 type updateResourceEntry struct {
-	rt *taco.Runtime
+	rt        *taco.Runtime
+	validator *validators.UpdateResourceValidator
 }
 
 // Handle the update resource request
@@ -29,30 +36,36 @@ func (d *updateResourceEntry) Handle(c *gin.Context) {
 	buff.ReadFrom(c.Request.Body)
 	s := buff.String()
 
-	validator := validators.NewUpdateResourceValidator(d.rt.Repository())
-	if err := validator.ValidateResource(s); err != nil {
+	if err := d.validator.ValidateResource(s); err != nil {
 		c.AbortWithError(422, err)
+		return
 	}
 
-	resource, err := d.rt.Repository().GetByID(c.Param("id"))
+	id := c.Param("id")
+	resource, err := d.rt.Repository().GetByID(id)
 
-	if err == nil {
-		var data gin.H
-		err := json.Unmarshal(buff.Bytes(), &data)
-
-		if err = d.updateResource(resource.ID(), data); err != nil {
-			panic(err)
+	if err != nil {
+		if err.Error() == "not found" {
+			c.AbortWithError(404, err)
+			return
 		}
-
-		if err = d.addToStream(resource.ID()); err != nil {
-			panic(err)
-		}
-
-		c.JSON(200, resource)
-	} else if err.Error() == "not found" {
-		c.AbortWithError(404, err)
+		panic(err)
 	}
-	panic(err)
+	var data gin.H
+
+	if err = json.Unmarshal(buff.Bytes(), &data); err != nil {
+		panic(err)
+	}
+
+	if err = d.updateResource(id, data); err != nil {
+		panic(err)
+	}
+
+	if err = d.addToStream(id); err != nil {
+		panic(err)
+	}
+
+	c.JSON(200, resource)
 }
 
 func (d *updateResourceEntry) updateResource(resourceID string, data gin.H) error {

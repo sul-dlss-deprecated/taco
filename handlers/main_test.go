@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/sul-dlss-labs/taco"
+	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
@@ -88,8 +89,9 @@ func (d *TestEnv) Handler() http.Handler {
 		d.storage = &fakeStorage{}
 	}
 
-	rt, _ := taco.NewRuntimeWithServices(nil, d.repo, d.storage, mockStream())
-	return BuildAPI(rt).Serve(nil)
+	config := config.NewConfig()
+	rt, _ := taco.NewRuntimeWithServices(config, d.repo, d.storage, mockStream())
+	return BuildAPI(rt).Engine()
 }
 
 func mockErrorRepo() persistence.Repository {
