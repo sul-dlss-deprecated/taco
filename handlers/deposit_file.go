@@ -1,13 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
+	"mime/multipart"
 
-	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
+	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/uploaded"
@@ -18,8 +17,11 @@ const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
 const fileType = "http://sdr.sul.stanford.edu/contexts/sdr3-file.jsonld"
 
 // NewDepositFile -- Accepts requests to create a file and pushes it to s3.
-func NewDepositFile(rt *taco.Runtime) operations.DepositFileHandler {
-	return &depositFileEntry{rt: rt}
+func NewDepositFile(rt *taco.Runtime) func(*gin.Context) {
+	return func(c *gin.Context) {
+		entry := &depositFileEntry{rt: rt}
+		entry.Handle(c)
+	}
 }
 
 type depositFileEntry struct {
@@ -27,10 +29,11 @@ type depositFileEntry struct {
 }
 
 // Handle the deposit file request
-func (d *depositFileEntry) Handle(params operations.DepositFileParams) middleware.Responder {
+func (d *depositFileEntry) Handle(c *gin.Context) {
 	validator := validators.NewDepositFileValidator(d.rt.Repository())
-	if err := validator.ValidateResource(params.Upload.Header); err != nil {
-		return operations.NewDepositFileInternalServerError() // TODO: need a better error
+	fileHeader, _ := c.FormFile("upload")
+	if err := validator.ValidateResource(fileHeader); err != nil {
+		c.AbortWithError(422, err)
 	}
 
 	id, err := identifier.NewService().Mint()
@@ -38,28 +41,30 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 		panic(err)
 	}
 
-	location, err := d.copyFileToStorage(id, params.Upload)
+	_, err = d.copyFileToStorage(id, fileHeader)
 	if err != nil {
-		log.Printf("[ERROR] %s", err)
-		return operations.NewDepositFileInternalServerError()
+		panic(err)
 	}
 
-	log.Printf("The location of the file is: %s", *location)
-
-	if err := d.createFileResource(id, params.Upload.Header.Filename); err != nil {
-		log.Printf("[ERROR] %s", err)
-		return operations.NewDepositFileInternalServerError()
+	if err := d.createFileResource(id, fileHeader.Filename); err != nil {
+		panic(err)
 	}
-	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
-	return operations.NewDepositResourceCreated().WithPayload(&models.ResourceResponse{ID: id})
+
+	location := fmt.Sprintf("/v1/resource/%s", id)
+	c.Header("Location", location)
+	c.JSON(201, map[string]string{"id": id})
 }
 
-func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*string, error) {
-	filename := file.Header.Filename
-	contentType := file.Header.Header.Get("Content-Type")
+func (d *depositFileEntry) copyFileToStorage(id string, file *multipart.FileHeader) (*string, error) {
+	filename := file.Filename
+	contentType := file.Header.Get("Content-Type")
 	log.Printf("Saving file \"%s\" with content-type: %s", filename, contentType)
 
-	upload := uploaded.NewFile(filename, contentType, file.Data)
+	data, err := file.Open()
+	if err != nil {
+		return nil, err
+	}
+	upload := uploaded.NewFile(filename, contentType, data)
 	return d.rt.FileStorage().UploadFile(id, upload)
 }
 
@@ -68,16 +73,16 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 	return d.rt.Repository().CreateItem(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
+func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) persistence.Resource {
+	resource := persistence.Resource{"id": resourceID}
 	// TODO: Where should Access come from/default to?
-	access := "private"
-	preserve := false
-	resource.Access = models.ResourceAccess{Access: &access}
-	resource.AtContext = atContext
-	resource.AtType = fileType
-	resource.Label = filename
-	resource.Administrative = models.ResourceAdministrative{SdrPreserve: &preserve}
+	// access := "private"
+	// preserve := false
+	// resource.Access = models.ResourceAccess{Access: &access}
+	// resource.AtContext = atContext
+	// resource.AtType = fileType
+	// resource.Label = filename
+	// resource.Administrative = models.ResourceAdministrative{SdrPreserve: &preserve}
 	// resource.Publish = false
 	return resource
 }

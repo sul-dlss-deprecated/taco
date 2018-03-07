@@ -7,7 +7,7 @@ jobs:
           AWS_REGION: us-west-2
           AWS_ACCESS_KEY_ID: 999
           AWS_SECRET_ACCESS_KEY: 999
-          TACO_PORT: 3000
+          PORT: 3000
       - image: localstack/localstack:latest
         environment:
           DEBUG: 1

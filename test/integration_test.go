@@ -7,17 +7,20 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 
 	"github.com/buger/jsonparser"
-	"github.com/sul-dlss-labs/taco/config"
 	baloo "gopkg.in/h2non/baloo.v3"
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
 func setupTest() *baloo.Client {
-	port := config.NewConfig().Port
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	return baloo.New(fmt.Sprintf("http://localhost:%v", port))
 }
 
@@ -77,7 +80,7 @@ func TestUpdateResource(t *testing.T) {
 	}
 	var postData map[string]interface{}
 
-	if err := json.Unmarshal(byt, &postData); err != nil {
+	if err = json.Unmarshal(byt, &postData); err != nil {
 		panic(err)
 	}
 

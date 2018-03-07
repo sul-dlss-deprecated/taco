@@ -1,20 +1,22 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 
-	"github.com/go-openapi/runtime/middleware"
+	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(rt *taco.Runtime) operations.UpdateResourceHandler {
-	return &updateResourceEntry{rt: rt}
+func NewUpdateResource(rt *taco.Runtime) func(*gin.Context) {
+	return func(c *gin.Context) {
+		entry := &updateResourceEntry{rt: rt}
+		entry.Handle(c)
+	}
 }
 
 type updateResourceEntry struct {
@@ -22,49 +24,57 @@ type updateResourceEntry struct {
 }
 
 // Handle the update resource request
-func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
+func (d *updateResourceEntry) Handle(c *gin.Context) {
+	buff := new(bytes.Buffer)
+	buff.ReadFrom(c.Request.Body)
+	s := buff.String()
+
 	validator := validators.NewUpdateResourceValidator(d.rt.Repository())
-	if err := validator.ValidateResource(params.Payload); err != nil {
-		return operations.NewUpdateResourceUnprocessableEntity()
+	if err := validator.ValidateResource(s); err != nil {
+		c.AbortWithError(422, err)
 	}
 
-	resource, err := d.rt.Repository().GetByID(params.ID)
+	resource, err := d.rt.Repository().GetByID(c.Param("id"))
 
 	if err == nil {
-		if err = d.updateResource(resource.ID, params); err != nil {
+		var data gin.H
+		err := json.Unmarshal(buff.Bytes(), &data)
+
+		if err = d.updateResource(resource.ID(), data); err != nil {
 			panic(err)
 		}
 
-		if err = d.addToStream(&resource.ID); err != nil {
+		if err = d.addToStream(resource.ID()); err != nil {
 			panic(err)
 		}
 
-		response := &models.ResourceResponse{ID: params.ID}
-		return operations.NewUpdateResourceOK().WithPayload(response)
+		c.JSON(200, resource)
 	} else if err.Error() == "not found" {
-		return operations.NewRetrieveResourceNotFound()
+		c.AbortWithError(404, err)
 	}
 	panic(err)
 }
 
-func (d *updateResourceEntry) updateResource(resourceID string, params operations.UpdateResourceParams) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
+func (d *updateResourceEntry) updateResource(resourceID string, data gin.H) error {
+	resource := d.persistableResourceFromParams(resourceID, data)
 	return d.rt.Repository().UpdateItem(resource)
 }
 
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, params operations.UpdateResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Payload.Access
-	resource.AtContext = *params.Payload.AtContext
-	resource.AtType = *params.Payload.AtType
-	resource.Label = *params.Payload.Label
-	resource.Administrative = *params.Payload.Administrative
-	resource.Identification = *params.Payload.Identification
+func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data gin.H) persistence.Resource {
+	resource := persistence.NewResource(data)
+	resource["id"] = resourceID
+	// TODO: expand this mapping
+	// resource.Access = *params.Payload.Access
+	// resource.AtContext = *params.Payload.AtContext
+	// resource.AtType = *params.Payload.AtType
+	// resource.Label = *params.Payload.Label
+	// resource.Administrative = *params.Payload.Administrative
+	// resource.Identification = *params.Payload.Identification
 	// resource.Publish = *params.Payload.Publish
 	return resource
 }
 
-func (d *updateResourceEntry) addToStream(id *string) error {
+func (d *updateResourceEntry) addToStream(id string) error {
 	message, err := json.Marshal(id)
 	if err != nil {
 		return err

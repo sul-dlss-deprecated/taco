@@ -1,21 +1,23 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 
-	"github.com/go-openapi/runtime/middleware"
+	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(rt *taco.Runtime) operations.DepositResourceHandler {
-	return &depositResourceEntry{rt: rt}
+func NewDepositResource(rt *taco.Runtime) func(*gin.Context) {
+	return func(c *gin.Context) {
+		entry := &depositResourceEntry{rt: rt}
+		entry.Handle(c)
+	}
 }
 
 type depositResourceEntry struct {
@@ -23,17 +25,23 @@ type depositResourceEntry struct {
 }
 
 // Handle the delete entry request
-func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) middleware.Responder {
+func (d *depositResourceEntry) Handle(c *gin.Context) {
+	buff := new(bytes.Buffer)
+	buff.ReadFrom(c.Request.Body)
+
 	validator := validators.NewDepositResourceValidator(d.rt.Repository())
-	if err := validator.ValidateResource(params.Payload); err != nil {
-		return operations.NewDepositResourceUnprocessableEntity()
+	if err := validator.ValidateResource(buff.String()); err != nil {
+		c.AbortWithError(422, err)
 	}
+
+	var data gin.H
+	err := json.Unmarshal(buff.Bytes(), &data)
 
 	resourceID, err := identifier.NewService().Mint()
 	if err != nil {
 		panic(err)
 	}
-	if err := d.persistResource(resourceID, params); err != nil {
+	if err := d.persistResource(resourceID, data); err != nil {
 		// TODO: handle this with an error response
 		panic(err)
 	}
@@ -42,22 +50,23 @@ func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) m
 		// TODO: handle this with an error response
 		panic(err)
 	}
+	c.JSON(201, map[string]string{"id": resourceID})
 
-	response := &models.ResourceResponse{ID: resourceID}
-	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositResourceParams) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
+func (d *depositResourceEntry) persistResource(resourceID string, data gin.H) error {
+	resource := d.persistableResourceFromParams(resourceID, data)
 	return d.rt.Repository().CreateItem(resource)
 }
 
-func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = models.ResourceAccess{Access: params.Payload.Access.Access}
-	resource.AtContext = *params.Payload.AtContext
-	resource.AtType = *params.Payload.AtType
-	resource.Label = *params.Payload.Label
+func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, data gin.H) persistence.Resource {
+	resource := persistence.NewResource(data)
+	resource["id"] = resourceID
+
+	//resource.Access = map["Access"] : params.Payload.Access.Access}
+	// resource.AtContext = *params.Payload.AtContext
+	// resource.AtType = *params.Payload.AtType
+	// resource.Label = *params.Payload.Label
 	// TODO: ResourceIdentification has no SourceID?
 	//resource.Identification = models.ResourceIdentification{SourceID: params.Payload.Identification.SourceID}
 	return resource

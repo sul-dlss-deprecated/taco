@@ -3,16 +3,15 @@ package validators
 import (
 	"errors"
 
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
-func testResource() *models.Resource {
-	return &models.Resource{}
+func testResource() string {
+	return ""
 }
 
-func testDepositResource() *models.DepositResource {
-	return &models.DepositResource{}
+func testDepositResource() string {
+	return ""
 }
 
 func newMockRepository() persistence.Repository {

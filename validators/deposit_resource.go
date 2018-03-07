@@ -1,7 +1,6 @@
 package validators
 
 import (
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
@@ -16,7 +15,7 @@ func NewDepositResourceValidator(repository persistence.Repository) *DepositReso
 }
 
 // ValidateResource validates that a Resource models is semantically acceptable
-func (d *DepositResourceValidator) ValidateResource(resource *models.DepositResource) error {
+func (d *DepositResourceValidator) ValidateResource(body string) error {
 	// TODO: Add checks here
 	return nil
 }

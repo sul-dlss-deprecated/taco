@@ -16,7 +16,6 @@ type Config struct {
 	DepositStreamName string `envVariable:"DEPOSIT_STREAM_NAME" defaultValue:"deposit"`
 	S3Endpoint        string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
 	S3BucketName      string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
-	Port              int    `envVariable:"TACO_PORT" defaultValue:"8080"`
 }
 
 // NewConfig creates a new configuration with values from environment variables
