@@ -2,13 +2,12 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
 // NewHealthCheck will return the service health
-func NewHealthCheck(rt *taco.Runtime) operations.HealthCheckHandler {
+func NewHealthCheck() operations.HealthCheckHandler {
 	return &healthCheck{}
 }
 

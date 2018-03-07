@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
@@ -14,17 +14,18 @@ import (
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(rt *taco.Runtime) operations.DepositResourceHandler {
-	return &depositResourceEntry{rt: rt}
+func NewDepositResource() operations.DepositResourceHandler {
+	// return &depositResourceEntry{rt: rt}
 }
 
 type depositResourceEntry struct {
-	rt *taco.Runtime
+	// rt *taco.Runtime
 }
 
 // Handle the delete entry request
 func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) middleware.Responder {
-	validator := validators.NewDepositResourceValidator(d.rt.Repository())
+	fmt.Printf("%+v", params)
+	validator := validators.NewDepositResourceValidator(repository)
 	if err := validator.ValidateResource(params.Payload); err != nil {
 		return operations.NewDepositResourceUnprocessableEntity()
 	}

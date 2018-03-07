@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/persistence"
@@ -13,17 +12,17 @@ import (
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(rt *taco.Runtime) operations.UpdateResourceHandler {
-	return &updateResourceEntry{rt: rt}
+func NewUpdateResource() operations.UpdateResourceHandler {
+	// return &updateResourceEntry{rt: rt}
 }
 
 type updateResourceEntry struct {
-	rt *taco.Runtime
+	// rt *taco.Runtime
 }
 
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
-	validator := validators.NewUpdateResourceValidator(d.rt.Repository())
+	validator := validators.NewUpdateResourceValidator(repository)
 	if err := validator.ValidateResource(params.Payload); err != nil {
 		return operations.NewUpdateResourceUnprocessableEntity()
 	}

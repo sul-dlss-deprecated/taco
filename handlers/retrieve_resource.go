@@ -2,15 +2,14 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
 // NewRetrieveResource will query DynamoDB with ID for Resource JSON
-func NewRetrieveResource(rt *taco.Runtime) operations.RetrieveResourceHandler {
-	return &resourceEntry{repository: rt.Repository()}
+func NewRetrieveResource() operations.RetrieveResourceHandler {
+	return &resourceEntry{repository: repository}
 }
 
 // resourceEntry handles a request for finding & returning an entry
