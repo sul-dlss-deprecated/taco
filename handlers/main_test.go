@@ -4,7 +4,6 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"

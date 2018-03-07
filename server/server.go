@@ -1,4 +1,4 @@
-package handlers
+package server
 
 import (
 	"log"
@@ -6,20 +6,20 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/justinas/alice"
-	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/handlers"
 	"github.com/sul-dlss-labs/taco/middleware"
 )
 
 // BuildAPI create new service API
-func BuildAPI(rt *taco.Runtime) *operations.TacoAPI {
+func BuildAPI() *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
-	api.RetrieveResourceHandler = NewRetrieveResource(rt)
-	api.DepositResourceHandler = NewDepositResource(rt)
-	api.UpdateResourceHandler = NewUpdateResource(rt)
-	api.DepositFileHandler = NewDepositFile(rt)
-	api.HealthCheckHandler = NewHealthCheck(rt)
+	api.RetrieveResourceHandler = handlers.NewRetrieveResource()
+	api.DepositResourceHandler = handlers.NewDepositResource()
+	api.UpdateResourceHandler = handlers.NewUpdateResource()
+	api.DepositFileHandler = handlers.NewDepositFile()
+	api.HealthCheckHandler = handlers.NewHealthCheck()
 	return api
 }
 
