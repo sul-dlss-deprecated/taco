@@ -1,4 +1,4 @@
-package server
+package handlers
 
 import (
 	"log"
@@ -8,23 +8,11 @@ import (
 	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/handlers"
 	"github.com/sul-dlss-labs/taco/middleware"
 )
 
-// BuildAPI create new service API
-func BuildAPI() *operations.TacoAPI {
-	api := operations.NewTacoAPI(swaggerSpec())
-	api.RetrieveResourceHandler = handlers.NewRetrieveResource()
-	api.DepositResourceHandler = handlers.NewDepositResource()
-	api.UpdateResourceHandler = handlers.NewUpdateResource()
-	api.DepositFileHandler = handlers.NewDepositFile()
-	api.HealthCheckHandler = handlers.NewHealthCheck()
-	return api
-}
-
 // BuildHandler sets up the middleware that wraps the API
-func BuildHandler(api *operations.TacoAPI) http.Handler {
+func Setup(api *operations.TacoAPI) http.Handler {
 	return alice.New(
 		middleware.NewHoneyBadgerMW(),
 		middleware.NewRecoveryMW(),
