@@ -8,19 +8,20 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
+	"github.com/sul-dlss-labs/taco/resource"
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
 func NewDepositResource(database *dynamodb.DynamoDB) operations.DepositResourceHandler {
-	return &resource{database: database}
+	return &db{connection: database}
 }
 
-type resource struct {
-	database *dynamodb.DynamoDB
+type db struct {
+	connection *dynamodb.DynamoDB
 }
 
 // Handle the delete entry request
-func (r *resource) Handle(params operations.DepositResourceParams) middleware.Responder {
+func (database *db) Handle(params operations.DepositResourceParams) middleware.Responder {
 	fmt.Printf("%+v\n", params)
 	/*
 		validator := validators.NewDepositResourceValidator(repository)
@@ -34,12 +35,14 @@ func (r *resource) Handle(params operations.DepositResourceParams) middleware.Re
 	if err != nil {
 		panic(err)
 	}
-	/*
-		if err := d.persistResource(resourceID, params); err != nil {
-			// TODO: handle this with an error response
-			panic(err)
-		}
 
+	err = resource.Create(database.connection, resourceID, params)
+	if err != nil { //database.persistResource(resourceID, params); err != nil {
+		// TODO: handle this with an error response
+		panic(err)
+	}
+
+	/*
 		if err := d.addToStream(&resourceID); err != nil {
 			// TODO: handle this with an error response
 			panic(err)
@@ -48,37 +51,3 @@ func (r *resource) Handle(params operations.DepositResourceParams) middleware.Re
 	response := &models.ResourceResponse{ID: resourceID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
-
-/*
-func (d *resource) persistResource(resourceID string, params operations.DepositResourceParams) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
-	return db.Create(resource, d.database)
-}
-
-func (d *resource) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Payload.Access
-	resource.AtContext = *params.Payload.AtContext
-	resource.AtType = *params.Payload.AtType
-	resource.Label = *params.Payload.Label
-	resource.Preserve = *params.Payload.Preserve
-	resource.Publish = *params.Payload.Publish
-	resource.SourceID = params.Payload.SourceID
-	return resource
-}
-*/
-/*
-func (d *depositResourceEntry) addToStream(id *string) error {
-	message, err := json.Marshal(id)
-	if err != nil {
-		return err
-	}
-	if d.rt.Stream() == nil {
-		log.Printf("Stream is nil")
-	}
-	if err := d.rt.Stream().SendMessage(string(message)); err != nil {
-		return err
-	}
-	return nil
-}
-*/
