@@ -7,7 +7,7 @@ import (
 )
 
 // Insert create a row in dynamodb
-func (database *DynamodbDatabase) Insert(params interface{}) error {
+func (database *DynamodbDatabase) Insert(params Resource) error {
 	row, err := dynamodbattribute.MarshalMap(params)
 
 	if err != nil {
@@ -20,11 +20,5 @@ func (database *DynamodbDatabase) Insert(params interface{}) error {
 	}
 
 	_, err = database.Connection.PutItem(input)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-
+	return err
 }

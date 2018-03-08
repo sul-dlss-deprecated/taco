@@ -26,8 +26,13 @@ func TestCreateResourceHappyPath(t *testing.T) {
 		Run(handler(repo, stream, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
+<<<<<<< HEAD
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
 				assert.Equal(t, "bib12345678", repo.(*MockDatabase).CreatedResources[0].(map[string]interface{})["sourceid"])
+=======
+				assert.Equal(t, 1, len(repo.(*fakeRepository).CreatedResources))
+				// assert.Equal(t, "bib12345678", repo.(*fakeRepository).CreatedResources[0].SourceID)
+>>>>>>> Validate using json schema
 			})
 }
 
