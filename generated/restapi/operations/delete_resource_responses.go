@@ -25,7 +25,7 @@ type DeleteResourceOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.ResourceResponse `json:"body,omitempty"`
+	Payload models.ResourceResponse `json:"body,omitempty"`
 }
 
 // NewDeleteResourceOK creates DeleteResourceOK with default headers values
@@ -34,13 +34,13 @@ func NewDeleteResourceOK() *DeleteResourceOK {
 }
 
 // WithPayload adds the payload to the delete resource o k response
-func (o *DeleteResourceOK) WithPayload(payload *models.ResourceResponse) *DeleteResourceOK {
+func (o *DeleteResourceOK) WithPayload(payload models.ResourceResponse) *DeleteResourceOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the delete resource o k response
-func (o *DeleteResourceOK) SetPayload(payload *models.ResourceResponse) {
+func (o *DeleteResourceOK) SetPayload(payload models.ResourceResponse) {
 	o.Payload = payload
 }
 
@@ -48,12 +48,11 @@ func (o *DeleteResourceOK) SetPayload(payload *models.ResourceResponse) {
 func (o *DeleteResourceOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
+
 }
 
 // DeleteResourceBadRequestCode is the HTTP code returned for type DeleteResourceBadRequest
@@ -105,7 +104,7 @@ func (o *DeleteResourceUnauthorized) WriteResponse(rw http.ResponseWriter, produ
 // DeleteResourceInternalServerErrorCode is the HTTP code returned for type DeleteResourceInternalServerError
 const DeleteResourceInternalServerErrorCode int = 500
 
-/*DeleteResourceInternalServerError This resource could be updated at this time by TACO.
+/*DeleteResourceInternalServerError This resource could not be deleted at this time by TACO.
 
 swagger:response deleteResourceInternalServerError
 */

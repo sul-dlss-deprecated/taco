@@ -253,91 +253,10 @@
   },
   "definitions": {
     "Resource": {
-      "type": "object",
-      "required": ["@context", "@type", "access", "label", "preserve", "publish"],
-      "properties": {
-        "@context": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI for the JSON-LD context definitions",
-          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-          "pattern": "http://sdr\\.sul\\.stanford\\.edu/contexts/taco-base\\.jsonld"
-        },
-        "@type": {
-          "type": "string",
-          "format": "uri",
-          "description": "URI for the resource type",
-          "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-          "pattern": "http://sdr\\.sul\\.stanford\\.edu/models/sdr3-(object|collection|file)\\.jsonld"
-
-        },
-        "access": {
-          "type": "string",
-          "description": "What groups should be able to access (view) the resource in Access environments",
-          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
-        },
-        "contains": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          },
-          "description": "The child resource(s) of this resource."
-        },
-        "contained-by": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          },
-          "description": "The parent resource(s) of this resource."
-        },
-        "id": {
-          "type": "string",
-          "description": "The TACO identifier for the resource. Usually DRUID-derived.",
-          "example": "oo000oo0001"
-        },
-        "label": {
-          "type": "string",
-          "description": "The label or processing title for the resource.",
-          "example": "Label for this resource"
-        },
-        "preserve": {
-          "type": "boolean",
-          "description": "Should the resource be released to Preservation environments"
-        },
-        "publish": {
-          "type": "boolean",
-          "description": "Should the resource's metadata be released to Access environments"
-        },
-        "sourceId": {
-          "type": "string",
-          "description": "The source identifier (bib id, archival id) for the resource that was digitized or derived from to create the TACO resource.",
-          "example": "bib12345678"
-        }
-      },
-      "example": {
-        "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-        "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-        "access": "world",
-        "id": "oo000oo0001",
-        "label": "My SDR3 resource",
-        "preserve": true,
-        "publish": true,
-        "sourceId": "bib12345678"
-      }
+      "type": "object"
     },
     "ResourceResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "example": "oo000oo0001"
-        }
-      },
-      "example": {
-        "id": "oo000oo0001"
-      }
+      "type": "object"
     },
     "ProcessResponse": {
       "type": "object",

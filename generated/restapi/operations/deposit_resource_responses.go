@@ -25,7 +25,7 @@ type DepositResourceCreated struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.ResourceResponse `json:"body,omitempty"`
+	Payload models.ResourceResponse `json:"body,omitempty"`
 }
 
 // NewDepositResourceCreated creates DepositResourceCreated with default headers values
@@ -34,13 +34,13 @@ func NewDepositResourceCreated() *DepositResourceCreated {
 }
 
 // WithPayload adds the payload to the deposit resource created response
-func (o *DepositResourceCreated) WithPayload(payload *models.ResourceResponse) *DepositResourceCreated {
+func (o *DepositResourceCreated) WithPayload(payload models.ResourceResponse) *DepositResourceCreated {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the deposit resource created response
-func (o *DepositResourceCreated) SetPayload(payload *models.ResourceResponse) {
+func (o *DepositResourceCreated) SetPayload(payload models.ResourceResponse) {
 	o.Payload = payload
 }
 
@@ -48,12 +48,11 @@ func (o *DepositResourceCreated) SetPayload(payload *models.ResourceResponse) {
 func (o *DepositResourceCreated) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(201)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
+
 }
 
 // DepositResourceUnauthorizedCode is the HTTP code returned for type DepositResourceUnauthorized

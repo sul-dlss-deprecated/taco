@@ -25,7 +25,7 @@ type RetrieveResourceOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.Resource `json:"body,omitempty"`
+	Payload models.Resource `json:"body,omitempty"`
 }
 
 // NewRetrieveResourceOK creates RetrieveResourceOK with default headers values
@@ -34,13 +34,13 @@ func NewRetrieveResourceOK() *RetrieveResourceOK {
 }
 
 // WithPayload adds the payload to the retrieve resource o k response
-func (o *RetrieveResourceOK) WithPayload(payload *models.Resource) *RetrieveResourceOK {
+func (o *RetrieveResourceOK) WithPayload(payload models.Resource) *RetrieveResourceOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the retrieve resource o k response
-func (o *RetrieveResourceOK) SetPayload(payload *models.Resource) {
+func (o *RetrieveResourceOK) SetPayload(payload models.Resource) {
 	o.Payload = payload
 }
 
@@ -48,12 +48,11 @@ func (o *RetrieveResourceOK) SetPayload(payload *models.Resource) {
 func (o *RetrieveResourceOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
+
 }
 
 // RetrieveResourceUnauthorizedCode is the HTTP code returned for type RetrieveResourceUnauthorized

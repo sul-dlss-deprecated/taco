@@ -25,7 +25,7 @@ type UpdateResourceOK struct {
 	/*
 	  In: Body
 	*/
-	Payload *models.ResourceResponse `json:"body,omitempty"`
+	Payload models.ResourceResponse `json:"body,omitempty"`
 }
 
 // NewUpdateResourceOK creates UpdateResourceOK with default headers values
@@ -34,13 +34,13 @@ func NewUpdateResourceOK() *UpdateResourceOK {
 }
 
 // WithPayload adds the payload to the update resource o k response
-func (o *UpdateResourceOK) WithPayload(payload *models.ResourceResponse) *UpdateResourceOK {
+func (o *UpdateResourceOK) WithPayload(payload models.ResourceResponse) *UpdateResourceOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the update resource o k response
-func (o *UpdateResourceOK) SetPayload(payload *models.ResourceResponse) {
+func (o *UpdateResourceOK) SetPayload(payload models.ResourceResponse) {
 	o.Payload = payload
 }
 
@@ -48,12 +48,11 @@ func (o *UpdateResourceOK) SetPayload(payload *models.ResourceResponse) {
 func (o *UpdateResourceOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.WriteHeader(200)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
+	payload := o.Payload
+	if err := producer.Produce(rw, payload); err != nil {
+		panic(err) // let the recovery middleware deal with this
 	}
+
 }
 
 // UpdateResourceBadRequestCode is the HTTP code returned for type UpdateResourceBadRequest

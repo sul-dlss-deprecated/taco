@@ -174,7 +174,7 @@ func init() {
         }
       },
       "delete": {
-        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those).",
+        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File resource (metadata) and File binary, or subclass of those).",
         "produces": [
           "application/json"
         ],
@@ -203,7 +203,7 @@ func init() {
             "description": "You are not authorized to delete a resource in TACO."
           },
           "500": {
-            "description": "This resource could be updated at this time by TACO."
+            "description": "This resource could not be deleted at this time by TACO."
           }
         }
       },
@@ -362,103 +362,10 @@ func init() {
       }
     },
     "Resource": {
-      "type": "object",
-      "required": [
-        "@context",
-        "@type",
-        "access",
-        "label",
-        "preserve",
-        "publish"
-      ],
-      "properties": {
-        "@context": {
-          "description": "URI for the JSON-LD context definitions",
-          "type": "string",
-          "format": "uri",
-          "pattern": "http://sdr\\.sul\\.stanford\\.edu/contexts/taco-base\\.jsonld",
-          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
-        },
-        "@type": {
-          "description": "URI for the resource type",
-          "type": "string",
-          "format": "uri",
-          "pattern": "http://sdr\\.sul\\.stanford\\.edu/models/sdr3-(object|collection|file)\\.jsonld",
-          "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
-        },
-        "access": {
-          "description": "What groups should be able to access (view) the resource in Access environments",
-          "type": "string",
-          "enum": [
-            "world",
-            "stanford",
-            "location-based",
-            "citation-only",
-            "dark"
-          ]
-        },
-        "contained-by": {
-          "description": "The parent resource(s) of this resource.",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          }
-        },
-        "contains": {
-          "description": "The child resource(s) of this resource.",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
-          }
-        },
-        "id": {
-          "description": "The TACO identifier for the resource. Usually DRUID-derived.",
-          "type": "string",
-          "example": "oo000oo0001"
-        },
-        "label": {
-          "description": "The label or processing title for the resource.",
-          "type": "string",
-          "example": "Label for this resource"
-        },
-        "preserve": {
-          "description": "Should the resource be released to Preservation environments",
-          "type": "boolean"
-        },
-        "publish": {
-          "description": "Should the resource's metadata be released to Access environments",
-          "type": "boolean"
-        },
-        "sourceId": {
-          "description": "The source identifier (bib id, archival id) for the resource that was digitized or derived from to create the TACO resource.",
-          "type": "string",
-          "example": "bib12345678"
-        }
-      },
-      "example": {
-        "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-        "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-        "access": "world",
-        "id": "oo000oo0001",
-        "label": "My SDR3 resource",
-        "preserve": true,
-        "publish": true,
-        "sourceId": "bib12345678"
-      }
+      "type": "object"
     },
     "ResourceResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "example": "oo000oo0001"
-        }
-      },
-      "example": {
-        "id": "oo000oo0001"
-      }
+      "type": "object"
     }
   }
 }`))
