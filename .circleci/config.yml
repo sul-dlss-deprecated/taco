@@ -32,8 +32,8 @@ jobs:
           command: aws dynamodb create-table
             --endpoint-url=http://localhost:4569 --table-name resources
             --region localstack
-            --attribute-definitions "AttributeName=id,AttributeType=S"
-            --key-schema "AttributeName=id,KeyType=HASH"
+            --attribute-definitions "AttributeName=identifier,AttributeType=S"
+            --key-schema "AttributeName=identifier,KeyType=HASH"
             --provisioned-throughput=ReadCapacityUnits=10,WriteCapacityUnits=10
       - run:
           name: Create bucket

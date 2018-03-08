@@ -32,7 +32,7 @@ type DynamoRepository struct {
 	tableName *string
 }
 
-// SaveItem perist the resource in dynamo db
+// CreateItem perist the resource in dynamo db
 func (h DynamoRepository) CreateItem(resource *Resource) error {
 	row, err := dynamodbattribute.MarshalMap(resource)
 
@@ -50,7 +50,7 @@ func (h DynamoRepository) CreateItem(resource *Resource) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("Saved %s to dynamodb", resource.ID)
+	log.Printf("Saved %s to dynamodb", resource.Identifier)
 	return nil
 }
 
@@ -58,7 +58,7 @@ func (h DynamoRepository) CreateItem(resource *Resource) error {
 func (h DynamoRepository) GetByID(id string) (*Resource, error) {
 	params := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
-			"id": {
+			"identifier": {
 				S: aws.String(id),
 			},
 		},
@@ -76,7 +76,7 @@ func (h DynamoRepository) GetByID(id string) (*Resource, error) {
 		return nil, err
 	}
 
-	if resource.ID == "" {
+	if resource.Identifier == "" {
 		return nil, errors.New("not found")
 	}
 	return resource, nil

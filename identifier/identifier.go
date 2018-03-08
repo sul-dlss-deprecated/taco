@@ -1,23 +1,29 @@
 package identifier
 
-import "github.com/google/uuid"
+import (
+	"log"
+
+	"github.com/sul-dlss-labs/taco/config"
+)
 
 // Service the interface for a service that mints identifiers
 type Service interface {
 	Mint() (string, error)
 }
-type uuidIdentifierService struct{}
 
-// NewService creates a new instance of the identifier service
-// TODO: This should create a DRUID service
-func NewService() Service {
-	return &uuidIdentifierService{}
+// NewService builds the identifier service
+func NewService(config *config.Config) *TypeAwareService {
+	externalService := externalServiceOrFallback(config.IdentifierServiceHost)
+	return &TypeAwareService{
+		UUIDService:       NewUUIDService(),
+		IdentifierService: externalService,
+	}
 }
 
-func (d *uuidIdentifierService) Mint() (string, error) {
-	resourceID, err := uuid.NewRandom()
-	if err != nil {
-		return "", err
+func externalServiceOrFallback(host string) Service {
+	if host == "" {
+		log.Println("IDENTIFIER_SERVICE_HOST is not set, so using UUID service")
+		return NewUUIDService()
 	}
-	return resourceID.String(), nil
+	return NewRemoteIdentifierService(host)
 }

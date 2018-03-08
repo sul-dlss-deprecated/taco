@@ -22,6 +22,8 @@ type updateResourceEntry struct {
 }
 
 // Handle the update resource request
+// TODO: If version is provided, we need to create a new sdrUUID, if not, we
+// need to do a lookup by the existing sdrUUID.
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
 	validator := validators.NewUpdateResourceValidator(d.rt.Repository())
 	if err := validator.ValidateResource(params.Payload); err != nil {
@@ -31,11 +33,11 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	resource, err := d.rt.Repository().GetByID(params.ID)
 
 	if err == nil {
-		if err = d.updateResource(resource.ID, params); err != nil {
+		if err := d.updateResource(resource.Identifier, params); err != nil {
 			panic(err)
 		}
 
-		if err = d.addToStream(&resource.ID); err != nil {
+		if err := d.addToStream(&resource.Identifier); err != nil {
 			panic(err)
 		}
 
@@ -52,8 +54,9 @@ func (d *updateResourceEntry) updateResource(resourceID string, params operation
 	return d.rt.Repository().UpdateItem(resource)
 }
 
+// FIXME: this resource is not going to have a sdrUUID because none is passed in.
 func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, params operations.UpdateResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
+	resource := &persistence.Resource{Identifier: resourceID}
 	resource.Access = *params.Payload.Access
 	resource.AtContext = *params.Payload.AtContext
 	resource.AtType = *params.Payload.AtType
