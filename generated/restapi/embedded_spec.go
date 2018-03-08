@@ -437,6 +437,7 @@ func init() {
           "example": "bib12345678"
         }
       },
+      "additionalProperties": false,
       "example": {
         "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
         "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
