@@ -36,7 +36,7 @@ type DepositResourceParams struct {
 	  Required: true
 	  In: body
 	*/
-	Payload *models.Resource
+	Payload models.Resource
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -56,12 +56,9 @@ func (o *DepositResourceParams) BindRequest(r *http.Request, route *middleware.M
 			}
 
 		} else {
-			if err := body.Validate(route.Formats); err != nil {
-				res = append(res, err)
-			}
 
 			if len(res) == 0 {
-				o.Payload = &body
+				o.Payload = body
 			}
 		}
 
