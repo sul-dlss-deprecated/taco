@@ -42,12 +42,23 @@ $ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run cmd/
 
 Note: we explain the AWS keys usage below.
 
-## Building to TACO Binary
+## Building the TACO Binary
 
-### Building for Docker
+### Building just the TACO Docker container
+Start external services using [Localstack](docs/localstack.md) then run:
 ```shell
-$ docker build -t taco  .
-$ docker run -p 8080:8080 taco
+$ docker build -t taco .
+$ docker run -e AWS_REGION=localstack -e AWS_ACCESS_KEY_ID=999999 -e AWS_SECRET_KEY=1231 -p 8080:8080 taco
+```
+
+### Building TACO Docker container along with the Localstack services
+Running `docker-compose up` will build and run TACO in the foreground with the localstack services in the background. It will also create a directory on your local machine at `/tmp/localstack/data` that stores persistent data for dynamodb, kinesis, and S3. It is safe to remove that directory and rerun `docker-compose up` to reset for testing with new data.
+```shell
+$ docker-compose up
+```
+To stop and remove containers, networks, images, and volumes created by `docker-compose up` run:
+```shell
+$ docker-compose down
 ```
 
 ### Build for the local OS
