@@ -1,4 +1,4 @@
-package persistence
+package resource
 
 import (
 	"github.com/go-openapi/strfmt"
