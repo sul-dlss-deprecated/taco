@@ -1,59 +1,61 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/persistence"
-	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource() operations.DepositResourceHandler {
-	// return &depositResourceEntry{rt: rt}
+func NewDepositResource(database *dynamodb.DynamoDB) operations.DepositResourceHandler {
+	return &resource{database: database}
 }
 
-type depositResourceEntry struct {
-	// rt *taco.Runtime
+type resource struct {
+	database *dynamodb.DynamoDB
 }
 
 // Handle the delete entry request
-func (d *depositResourceEntry) Handle(params operations.DepositResourceParams) middleware.Responder {
-	fmt.Printf("%+v", params)
-	validator := validators.NewDepositResourceValidator(repository)
-	if err := validator.ValidateResource(params.Payload); err != nil {
-		return operations.NewDepositResourceUnprocessableEntity()
-	}
+func (r *resource) Handle(params operations.DepositResourceParams) middleware.Responder {
+	fmt.Printf("%+v\n", params)
+	/*
+		validator := validators.NewDepositResourceValidator(repository)
+		if err := validator.ValidateResource(params.Payload); err != nil {
+			return operations.NewDepositResourceUnprocessableEntity()
+		}
+	*/
 
 	resourceID, err := identifier.NewService().Mint()
+	fmt.Printf("resourceID: %s\n", resourceID)
 	if err != nil {
 		panic(err)
 	}
-	if err := d.persistResource(resourceID, params); err != nil {
-		// TODO: handle this with an error response
-		panic(err)
-	}
+	/*
+		if err := d.persistResource(resourceID, params); err != nil {
+			// TODO: handle this with an error response
+			panic(err)
+		}
 
-	if err := d.addToStream(&resourceID); err != nil {
-		// TODO: handle this with an error response
-		panic(err)
-	}
-
+		if err := d.addToStream(&resourceID); err != nil {
+			// TODO: handle this with an error response
+			panic(err)
+		}
+	*/
 	response := &models.ResourceResponse{ID: resourceID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResourceEntry) persistResource(resourceID string, params operations.DepositResourceParams) error {
+/*
+func (d *resource) persistResource(resourceID string, params operations.DepositResourceParams) error {
 	resource := d.persistableResourceFromParams(resourceID, params)
-	return d.rt.Repository().CreateItem(resource)
+	return db.Create(resource, d.database)
 }
 
-func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
+func (d *resource) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
 	resource.Access = *params.Payload.Access
 	resource.AtContext = *params.Payload.AtContext
@@ -64,7 +66,8 @@ func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, 
 	resource.SourceID = params.Payload.SourceID
 	return resource
 }
-
+*/
+/*
 func (d *depositResourceEntry) addToStream(id *string) error {
 	message, err := json.Marshal(id)
 	if err != nil {
@@ -78,3 +81,4 @@ func (d *depositResourceEntry) addToStream(id *string) error {
 	}
 	return nil
 }
+*/

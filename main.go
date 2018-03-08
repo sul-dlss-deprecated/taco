@@ -1,91 +1,110 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/go-openapi/loads"
+	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco/config"
-	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
-	"github.com/sul-dlss-labs/taco/persistence"
-	"github.com/sul-dlss-labs/taco/server"
-	"github.com/sul-dlss-labs/taco/sessionbuilder"
-	"github.com/sul-dlss-labs/taco/storage"
-	"github.com/sul-dlss-labs/taco/streaming"
+	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/handlers"
+	"github.com/sul-dlss-labs/taco/middleware"
 )
 
-// Taco encapsulates the shared services for this application
 type Taco struct {
-	repository  persistence.Repository
-	stream      streaming.Stream
-	fileStorage storage.Storage
-	config      *config.Config
+	config     *config.Config
+	server     *restapi.Server
+	database   *dynamodb.DynamoDB
+	awsSession *session.Session
+	api        *operations.TacoAPI
 }
+
+var tacoServer Taco
 
 func main() {
 
-	rt := Taco{}
+	// Initialize our global struct
+	tacoServer.config = config.NewConfig()
+	tacoServer.awsSession = newAwsSession()
+	// tacoServer.database = db.NewConnection(tacoServer.config.DynamodbEndpoint, tacoServer.awsSession)
+	tacoServer.database = connectToDatabase()
+	tacoServer.api = buildAPI()
+	tacoServer.server = createServer()
 
-	awsSession := sessionbuilder.NewAwsSession(config)
-	dbConn := db.NewConnection(config, awsSession)
-	repository := persistence.NewDynamoRepository(config, dbConn)
-	storage := storage.NewS3Bucket(config, awsSession)
-	stream := streaming.NewKinesisStream(config, awsSession)
+	// repository := persistence.NewDynamoRepository()
+	//	storage := storage.NewS3Bucket(config, awsSession)
+	//	stream := streaming.NewKinesisStream(config, awsSession)
 
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	server := createServer()
 	// serve API
-	if err := server.Serve(); err != nil {
+	if err := tacoServer.server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func connectToDatabase() *dynamodb.DynamoDB {
+	dynamoConfig := &aws.Config{Endpoint: aws.String(tacoServer.config.DynamodbEndpoint)}
+	return dynamodb.New(tacoServer.awsSession, dynamoConfig)
 }
 
 func createServer() *restapi.Server {
-	api := server.BuildAPI()
-	server := restapi.NewServer(api)
-	server.SetHandler(server.BuildHandler(api))
+	server := restapi.NewServer(tacoServer.api)
+	server.SetHandler(addMiddleware())
 	defer server.Shutdown()
 
 	// set the port this service will be run on
-	server.Port = rt.Config().Port
+	server.Port = tacoServer.config.Port
 	return server
 }
 
-// NewRuntime creates a new application level runtime that
-// encapsulates the shared services for this application
-func NewRuntime(config *config.Config) (*Runtime, error) {
-
-	return NewRuntimeWithServices(config, repository, storage, stream)
+func Database() {
+	fmt.Printf("DATABASE")
 }
 
-// NewRuntimeWithServices creates a new application level runtime that encapsulates the shared services for this application
-func NewRuntimeWithServices(config *config.Config, repository persistence.Repository, fileStorage storage.Storage, stream streaming.Stream) (*Runtime, error) {
-	return &Runtime{
-		repository:  repository,
-		stream:      stream,
-		config:      config,
-		fileStorage: fileStorage,
-	}, nil
+// BuildAPI create new service API
+func buildAPI() *operations.TacoAPI {
+	api := operations.NewTacoAPI(swaggerSpec())
+	// api.RetrieveResourceHandler = handlers.NewRetrieveResource()
+	api.DepositResourceHandler = handlers.NewDepositResource(tacoServer.database)
+	//	api.UpdateResourceHandler = handlers.NewUpdateResource()
+	//	api.DepositFileHandler = handlers.NewDepositFile()
+	//	api.HealthCheckHandler = handlers.NewHealthCheck()
+	return api
 }
 
-// Repository returns the metadata store
-func (r *Runtime) Repository() persistence.Repository {
-	return r.repository
+func addMiddleware() http.Handler {
+	return alice.New(
+		middleware.NewHoneyBadgerMW(),
+		middleware.NewRecoveryMW(),
+		middleware.NewRequestLoggerMW(),
+	).Then(tacoServer.api.Serve(nil))
 }
 
-// Stream returns the kinesis stream
-func (r *Runtime) Stream() streaming.Stream {
-	return r.stream
+func swaggerSpec() *loads.Document {
+	// load embedded swagger file
+	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return swaggerSpec
 }
 
-// Config returns the config for this application
-func (r *Runtime) Config() *config.Config {
-	return r.config
+func newAwsSession() *session.Session {
+	return session.Must(session.NewSession(&aws.Config{
+		DisableSSL: aws.Bool(tacoServer.config.AwsDisableSSL),
+	}))
 }
 
-// FileStorage returns the file store
-func (r *Runtime) FileStorage() storage.Storage {
-	return r.fileStorage
+// BuildHandler sets up the middleware that wraps the API
+func BuildHandler(api *operations.TacoAPI) http.Handler {
+	return alice.New(
+		middleware.NewHoneyBadgerMW(),
+		middleware.NewRecoveryMW(),
+		middleware.NewRequestLoggerMW(),
+	).Then(api.Serve(nil))
 }
