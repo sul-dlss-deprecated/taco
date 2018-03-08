@@ -109,7 +109,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Resource"
+              "$ref": "#/definitions/DepositResource"
             }
           }
         ],
@@ -174,7 +174,7 @@ func init() {
         }
       },
       "delete": {
-        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those).",
+        "description": "Deletes a TACO resource (Collection, Digital Repository Object, File resource (metadata) and File binary, or subclass of those).",
         "produces": [
           "application/json"
         ],
@@ -203,7 +203,7 @@ func init() {
             "description": "You are not authorized to delete a resource in TACO."
           },
           "500": {
-            "description": "This resource could be updated at this time by TACO."
+            "description": "This resource could not be deleted at this time by TACO."
           }
         }
       },
@@ -302,6 +302,128 @@ func init() {
     }
   },
   "definitions": {
+    "DepositResource": {
+      "description": "Create Request Domain Resource (Collection, Object, Fileset, or File or any subclass of those) Request Body. For TACO API high-level validation of incoming resources.",
+      "type": "object",
+      "title": "Deposit Resource",
+      "required": [
+        "@context",
+        "@type",
+        "label",
+        "administrative",
+        "access",
+        "structural"
+      ],
+      "properties": {
+        "@context": {
+          "description": "URI for the JSON-LD context definitions.",
+          "type": "string"
+        },
+        "@type": {
+          "description": "The content type of the domain resource.",
+          "type": "string",
+          "enum": [
+            "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-user-collection.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-exhibit.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-series.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-image.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-page.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-photograph.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-manuscript.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-map.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-media.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-track.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-webarchive-binary.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-webarchive-seed.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
+          ]
+        },
+        "access": {
+          "description": "Access Metadata for the Resource.",
+          "type": "object",
+          "required": [
+            "access",
+            "download"
+          ],
+          "properties": {
+            "access": {
+              "description": "Access level for the resource.",
+              "type": "string",
+              "enum": [
+                "world",
+                "stanford",
+                "location-based",
+                "citation-only",
+                "dark"
+              ]
+            },
+            "download": {
+              "description": "Download level for the resource metadata.",
+              "type": "string",
+              "enum": [
+                "world",
+                "stanford",
+                "location-based",
+                "citation-only",
+                "dark"
+              ]
+            }
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "administrative": {
+          "description": "Administrative metadata for the SDR resource.",
+          "type": "object",
+          "required": [
+            "sdrPreserve"
+          ],
+          "properties": {
+            "sdrPreserve": {
+              "description": "If this resource should be sent to Preservation.",
+              "type": "boolean"
+            }
+          }
+        },
+        "identification": {
+          "description": "Identifying information for the resource.",
+          "type": "object",
+          "properties": {
+            "sourceId": {
+              "description": "For anything that cannot cleanly map into is representation of.",
+              "type": "string"
+            }
+          }
+        },
+        "label": {
+          "description": "Primary processing label (can be same as title) for a resource.",
+          "type": "string"
+        },
+        "structural": {
+          "description": "Structural metadata for the Resource.",
+          "type": "object",
+          "required": [
+            "hasAgreement"
+          ],
+          "properties": {
+            "hasAgreement": {
+              "description": "Agreement that covers the deposit of the resource into SDR.",
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "Error": {
       "type": "object",
       "properties": {
@@ -362,90 +484,174 @@ func init() {
       }
     },
     "Resource": {
+      "description": "Update / Retrieve Request Domain Resource (Collection, Object, Fileset, or File or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.",
       "type": "object",
       "required": [
         "@context",
         "@type",
-        "access",
+        "currentVersion",
+        "depositor",
+        "id",
         "label",
-        "preserve",
-        "publish"
+        "version",
+        "administrative",
+        "access",
+        "identification",
+        "structural"
       ],
       "properties": {
         "@context": {
-          "description": "URI for the JSON-LD context definitions",
-          "type": "string",
-          "format": "uri",
-          "pattern": "http://sdr\\.sul\\.stanford\\.edu/contexts/taco-base\\.jsonld",
-          "example": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
+          "description": "URI for the JSON-LD context definitions.",
+          "type": "string"
         },
         "@type": {
-          "description": "URI for the resource type",
-          "type": "string",
-          "format": "uri",
-          "pattern": "http://sdr\\.sul\\.stanford\\.edu/models/sdr3-(object|collection|file)\\.jsonld",
-          "example": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
-        },
-        "access": {
-          "description": "What groups should be able to access (view) the resource in Access environments",
+          "description": "The content type of the domain resource.",
           "type": "string",
           "enum": [
-            "world",
-            "stanford",
-            "location-based",
-            "citation-only",
-            "dark"
+            "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-user-collection.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-exhibit.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-series.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-image.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-page.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-photograph.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-manuscript.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-map.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-media.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-track.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-webarchive-binary.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-webarchive-seed.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld",
+            "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
           ]
         },
-        "contained-by": {
-          "description": "The parent resource(s) of this resource.",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
+        "access": {
+          "description": "Access Metadata for the Resource.",
+          "type": "object",
+          "required": [
+            "access",
+            "download"
+          ],
+          "properties": {
+            "access": {
+              "description": "Access level for the resource.",
+              "type": "string",
+              "enum": [
+                "world",
+                "stanford",
+                "location-based",
+                "citation-only",
+                "dark"
+              ]
+            },
+            "download": {
+              "description": "Download level for the resource metadata.",
+              "type": "string",
+              "enum": [
+                "world",
+                "stanford",
+                "location-based",
+                "citation-only",
+                "dark"
+              ]
+            }
           }
         },
-        "contains": {
-          "description": "The child resource(s) of this resource.",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uri"
+        "administrative": {
+          "description": "Administrative metadata for the SDR resource.",
+          "type": "object",
+          "required": [
+            "created",
+            "isDescribedBy",
+            "sdrPreserve"
+          ],
+          "properties": {
+            "created": {
+              "description": "When the resource in SDR was created.",
+              "type": "string",
+              "format": "date-time"
+            },
+            "isDescribedBy": {
+              "description": "Pointer to the PURL/XML file that is a traditional representation of the metadata for the resource.",
+              "type": "string"
+            },
+            "sdrPreserve": {
+              "description": "If this resource should be sent to Preservation.",
+              "type": "boolean"
+            }
+          }
+        },
+        "currentVersion": {
+          "description": "If this is the current version (most recent version) for the resource.",
+          "type": "boolean"
+        },
+        "depositor": {
+          "description": "The Agent who deposited the resource",
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "description": "Primary label or name for an Agent.",
+              "type": "string"
+            },
+            "sunetID": {
+              "description": "Stanford University NetID for the Agent.",
+              "type": "string"
+            }
           }
         },
         "id": {
-          "description": "The TACO identifier for the resource. Usually DRUID-derived.",
-          "type": "string",
-          "example": "oo000oo0001"
+          "description": "Identifier for the resource within TACO (should, but may not, overlap with ` + "`" + `identification.identifier` + "`" + `, which is the SDR3 Identifier).",
+          "type": "string"
+        },
+        "identification": {
+          "description": "Identifying information for the resource.",
+          "type": "object",
+          "required": [
+            "identifier",
+            "sdrUUID"
+          ],
+          "properties": {
+            "identifier": {
+              "description": "Identifier for the Collection within SDR.",
+              "type": "string"
+            },
+            "sdrUUID": {
+              "description": "UUID for the Collection within TACO.",
+              "type": "string"
+            }
+          }
         },
         "label": {
-          "description": "The label or processing title for the resource.",
-          "type": "string",
-          "example": "Label for this resource"
+          "description": "Primary processing label (can be same as title) for a resource.",
+          "type": "string"
         },
-        "preserve": {
-          "description": "Should the resource be released to Preservation environments",
-          "type": "boolean"
+        "structural": {
+          "description": "Structural metadata for the Resource.",
+          "type": "object",
+          "required": [
+            "hasAgreement"
+          ],
+          "properties": {
+            "hasAgreement": {
+              "description": "Agreement that covers the deposit of the resource into SDR.",
+              "type": "string"
+            }
+          }
         },
-        "publish": {
-          "description": "Should the resource's metadata be released to Access environments",
-          "type": "boolean"
-        },
-        "sourceId": {
-          "description": "The source identifier (bib id, archival id) for the resource that was digitized or derived from to create the TACO resource.",
-          "type": "string",
-          "example": "bib12345678"
+        "version": {
+          "description": "Version for the Collection within SDR.",
+          "type": "integer"
         }
-      },
-      "example": {
-        "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-        "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-        "access": "world",
-        "id": "oo000oo0001",
-        "label": "My SDR3 resource",
-        "preserve": true,
-        "publish": true,
-        "sourceId": "bib12345678"
       }
     },
     "ResourceResponse": {

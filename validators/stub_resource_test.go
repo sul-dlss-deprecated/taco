@@ -11,6 +11,10 @@ func testResource() *models.Resource {
 	return &models.Resource{}
 }
 
+func testDepositResource() *models.DepositResource {
+	return &models.DepositResource{}
+}
+
 func newMockRepository() persistence.Repository {
 	return &fakeRepository{}
 }

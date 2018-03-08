@@ -16,7 +16,7 @@ func NewDepositResourceValidator(repository persistence.Repository) *DepositReso
 }
 
 // ValidateResource validates that a Resource models is semantically acceptable
-func (d *DepositResourceValidator) ValidateResource(resource *models.Resource) error {
+func (d *DepositResourceValidator) ValidateResource(resource *models.DepositResource) error {
 	// TODO: Add checks here
 	return nil
 }

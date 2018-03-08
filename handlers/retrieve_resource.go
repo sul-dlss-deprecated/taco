@@ -34,11 +34,11 @@ func (d *resourceEntry) Handle(params operations.RetrieveResourceParams) middlew
 // TODO: expand this mapping
 func buildResponse(resource *persistence.Resource) *models.Resource {
 	return &models.Resource{
-		ID:        resource.ID,
+		ID:        &resource.ID,
 		Label:     &resource.Label,
 		AtContext: &resource.AtContext,
 		AtType:    &resource.AtType,
 		Access:    &resource.Access,
-		Preserve:  &resource.Preserve,
-		Publish:   &resource.Publish}
+		// Publish:   &resource.Publish
+		Administrative: &resource.Administrative}
 }

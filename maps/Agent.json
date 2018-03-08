@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Agent",
+  "description": "An Agent - Person, Group, Organization, or other Acting body.",
+  "type": "object",
+  "required": ["name"],
+  "properties": {
+    "name": {
+      "description": "Primary label or name for an Agent.",
+      "type": "string"
+    },
+    "sunetID": {
+      "description": "Stanford University NetID for the Agent.",
+      "type": "string"
+    }
+  }
+}

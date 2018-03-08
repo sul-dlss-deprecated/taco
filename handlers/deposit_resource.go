@@ -54,13 +54,12 @@ func (d *depositResourceEntry) persistResource(resourceID string, params operati
 
 func (d *depositResourceEntry) persistableResourceFromParams(resourceID string, params operations.DepositResourceParams) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Payload.Access
+	resource.Access = models.ResourceAccess{Access: params.Payload.Access.Access}
 	resource.AtContext = *params.Payload.AtContext
 	resource.AtType = *params.Payload.AtType
 	resource.Label = *params.Payload.Label
-	resource.Preserve = *params.Payload.Preserve
-	resource.Publish = *params.Payload.Publish
-	resource.SourceID = params.Payload.SourceID
+	// TODO: ResourceIdentification has no SourceID?
+	//resource.Identification = models.ResourceIdentification{SourceID: params.Payload.Identification.SourceID}
 	return resource
 }
 

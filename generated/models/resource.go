@@ -15,47 +15,53 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Resource resource
+// Resource Update / Retrieve Request Domain Resource (Collection, Object, Fileset, or File or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.
 // swagger:model Resource
 type Resource struct {
 
-	// URI for the JSON-LD context definitions
+	// URI for the JSON-LD context definitions.
 	// Required: true
-	// Pattern: http://sdr\.sul\.stanford\.edu/contexts/taco-base\.jsonld
-	AtContext *strfmt.URI `json:"@context"`
+	AtContext *string `json:"@context"`
 
-	// URI for the resource type
+	// The content type of the domain resource.
 	// Required: true
-	// Pattern: http://sdr\.sul\.stanford\.edu/models/sdr3-(object|collection|file)\.jsonld
-	AtType *strfmt.URI `json:"@type"`
+	AtType *string `json:"@type"`
 
-	// What groups should be able to access (view) the resource in Access environments
+	// access
 	// Required: true
-	Access *string `json:"access"`
+	Access *ResourceAccess `json:"access"`
 
-	// The parent resource(s) of this resource.
-	ContainedBy []strfmt.URI `json:"contained-by"`
+	// administrative
+	// Required: true
+	Administrative *ResourceAdministrative `json:"administrative"`
 
-	// The child resource(s) of this resource.
-	Contains []strfmt.URI `json:"contains"`
+	// If this is the current version (most recent version) for the resource.
+	// Required: true
+	CurrentVersion *bool `json:"currentVersion"`
 
-	// The TACO identifier for the resource. Usually DRUID-derived.
-	ID string `json:"id,omitempty"`
+	// depositor
+	// Required: true
+	Depositor *ResourceDepositor `json:"depositor"`
 
-	// The label or processing title for the resource.
+	// Identifier for the resource within TACO (should, but may not, overlap with `identification.identifier`, which is the SDR3 Identifier).
+	// Required: true
+	ID *string `json:"id"`
+
+	// identification
+	// Required: true
+	Identification *ResourceIdentification `json:"identification"`
+
+	// Primary processing label (can be same as title) for a resource.
 	// Required: true
 	Label *string `json:"label"`
 
-	// Should the resource be released to Preservation environments
+	// structural
 	// Required: true
-	Preserve *bool `json:"preserve"`
+	Structural *ResourceStructural `json:"structural"`
 
-	// Should the resource's metadata be released to Access environments
+	// Version for the Collection within SDR.
 	// Required: true
-	Publish *bool `json:"publish"`
-
-	// The source identifier (bib id, archival id) for the resource that was digitized or derived from to create the TACO resource.
-	SourceID string `json:"sourceId,omitempty"`
+	Version *int64 `json:"version"`
 }
 
 // Validate validates this resource
@@ -77,12 +83,27 @@ func (m *Resource) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateContainedBy(formats); err != nil {
+	if err := m.validateAdministrative(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
 
-	if err := m.validateContains(formats); err != nil {
+	if err := m.validateCurrentVersion(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateDepositor(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateID(formats); err != nil {
+		// prop
+		res = append(res, err)
+	}
+
+	if err := m.validateIdentification(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -92,12 +113,12 @@ func (m *Resource) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validatePreserve(formats); err != nil {
+	if err := m.validateStructural(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
 
-	if err := m.validatePublish(formats); err != nil {
+	if err := m.validateVersion(formats); err != nil {
 		// prop
 		res = append(res, err)
 	}
@@ -114,14 +135,73 @@ func (m *Resource) validateAtContext(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("@context", "body", string(*m.AtContext), `http://sdr\.sul\.stanford\.edu/contexts/taco-base\.jsonld`); err != nil {
+	return nil
+}
+
+var resourceTypeAtTypePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld","http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld","http://sdr.sul.stanford.edu/models/sdr3-user-collection.jsonld","http://sdr.sul.stanford.edu/models/sdr3-exhibit.jsonld","http://sdr.sul.stanford.edu/models/sdr3-series.jsonld","http://sdr.sul.stanford.edu/models/sdr3-object.jsonld","http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld","http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld","http://sdr.sul.stanford.edu/models/sdr3-book.jsonld","http://sdr.sul.stanford.edu/models/sdr3-document.jsonld","http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld","http://sdr.sul.stanford.edu/models/sdr3-image.jsonld","http://sdr.sul.stanford.edu/models/sdr3-page.jsonld","http://sdr.sul.stanford.edu/models/sdr3-photograph.jsonld","http://sdr.sul.stanford.edu/models/sdr3-manuscript.jsonld","http://sdr.sul.stanford.edu/models/sdr3-map.jsonld","http://sdr.sul.stanford.edu/models/sdr3-media.jsonld","http://sdr.sul.stanford.edu/models/sdr3-track.jsonld","http://sdr.sul.stanford.edu/models/sdr3-webarchive-binary.jsonld","http://sdr.sul.stanford.edu/models/sdr3-webarchive-seed.jsonld","http://sdr.sul.stanford.edu/models/sdr3-file.jsonld","http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		resourceTypeAtTypePropEnum = append(resourceTypeAtTypePropEnum, v)
+	}
+}
+
+const (
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3CollectionJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3CollectionJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3CuratedCollectionJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3CuratedCollectionJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-curated-collection.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3UserCollectionJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-user-collection.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3UserCollectionJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-user-collection.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ExhibitJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-exhibit.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ExhibitJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-exhibit.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3SeriesJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-series.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3SeriesJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-series.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ObjectJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ObjectJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr33dJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr33dJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3AgreementJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3AgreementJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3BookJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3BookJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3DocumentJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3DocumentJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3GeoJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3GeoJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ImageJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-image.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ImageJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-image.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3PageJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-page.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3PageJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-page.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3PhotographJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-photograph.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3PhotographJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-photograph.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ManuscriptJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-manuscript.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3ManuscriptJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-manuscript.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3MapJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-map.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3MapJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-map.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3MediaJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-media.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3MediaJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-media.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3TrackJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-track.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3TrackJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-track.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3WebarchiveBinaryJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-webarchive-binary.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3WebarchiveBinaryJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-webarchive-binary.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3WebarchiveSeedJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-webarchive-seed.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3WebarchiveSeedJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-webarchive-seed.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3FileJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3FileJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
+	// ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3FilesetJSONLD captures enum value "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
+	ResourceAtTypeHTTPSdrSulStanfordEduModelsSdr3FilesetJSONLD string = "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
+)
+
+// prop value enum
+func (m *Resource) validateAtTypeEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, resourceTypeAtTypePropEnum); err != nil {
 		return err
 	}
-
-	if err := validate.FormatOf("@context", "body", "uri", m.AtContext.String(), formats); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -131,47 +211,11 @@ func (m *Resource) validateAtType(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("@type", "body", string(*m.AtType), `http://sdr\.sul\.stanford\.edu/models/sdr3-(object|collection|file)\.jsonld`); err != nil {
+	// value enum
+	if err := m.validateAtTypeEnum("@type", "body", *m.AtType); err != nil {
 		return err
 	}
 
-	if err := validate.FormatOf("@type", "body", "uri", m.AtType.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var resourceTypeAccessPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["world","stanford","location-based","citation-only","dark"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		resourceTypeAccessPropEnum = append(resourceTypeAccessPropEnum, v)
-	}
-}
-
-const (
-	// ResourceAccessWorld captures enum value "world"
-	ResourceAccessWorld string = "world"
-	// ResourceAccessStanford captures enum value "stanford"
-	ResourceAccessStanford string = "stanford"
-	// ResourceAccessLocationBased captures enum value "location-based"
-	ResourceAccessLocationBased string = "location-based"
-	// ResourceAccessCitationOnly captures enum value "citation-only"
-	ResourceAccessCitationOnly string = "citation-only"
-	// ResourceAccessDark captures enum value "dark"
-	ResourceAccessDark string = "dark"
-)
-
-// prop value enum
-func (m *Resource) validateAccessEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, resourceTypeAccessPropEnum); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -181,27 +225,89 @@ func (m *Resource) validateAccess(formats strfmt.Registry) error {
 		return err
 	}
 
-	// value enum
-	if err := m.validateAccessEnum("access", "body", *m.Access); err != nil {
+	if m.Access != nil {
+
+		if err := m.Access.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("access")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Resource) validateAdministrative(formats strfmt.Registry) error {
+
+	if err := validate.Required("administrative", "body", m.Administrative); err != nil {
+		return err
+	}
+
+	if m.Administrative != nil {
+
+		if err := m.Administrative.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("administrative")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Resource) validateCurrentVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("currentVersion", "body", m.CurrentVersion); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Resource) validateContainedBy(formats strfmt.Registry) error {
+func (m *Resource) validateDepositor(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.ContainedBy) { // not required
-		return nil
+	if err := validate.Required("depositor", "body", m.Depositor); err != nil {
+		return err
+	}
+
+	if m.Depositor != nil {
+
+		if err := m.Depositor.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("depositor")
+			}
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (m *Resource) validateContains(formats strfmt.Registry) error {
+func (m *Resource) validateID(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Contains) { // not required
-		return nil
+	if err := validate.Required("id", "body", m.ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Resource) validateIdentification(formats strfmt.Registry) error {
+
+	if err := validate.Required("identification", "body", m.Identification); err != nil {
+		return err
+	}
+
+	if m.Identification != nil {
+
+		if err := m.Identification.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("identification")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -216,18 +322,28 @@ func (m *Resource) validateLabel(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Resource) validatePreserve(formats strfmt.Registry) error {
+func (m *Resource) validateStructural(formats strfmt.Registry) error {
 
-	if err := validate.Required("preserve", "body", m.Preserve); err != nil {
+	if err := validate.Required("structural", "body", m.Structural); err != nil {
 		return err
+	}
+
+	if m.Structural != nil {
+
+		if err := m.Structural.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("structural")
+			}
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (m *Resource) validatePublish(formats strfmt.Registry) error {
+func (m *Resource) validateVersion(formats strfmt.Registry) error {
 
-	if err := validate.Required("publish", "body", m.Publish); err != nil {
+	if err := validate.Required("version", "body", m.Version); err != nil {
 		return err
 	}
 

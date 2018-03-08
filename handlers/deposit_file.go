@@ -71,11 +71,13 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) *persistence.Resource {
 	resource := &persistence.Resource{ID: resourceID}
 	// TODO: Where should Access come from/default to?
-	resource.Access = "private"
+	access := "private"
+	preserve := false
+	resource.Access = models.ResourceAccess{Access: &access}
 	resource.AtContext = atContext
 	resource.AtType = fileType
 	resource.Label = filename
-	resource.Preserve = false
-	resource.Publish = false
+	resource.Administrative = models.ResourceAdministrative{SdrPreserve: &preserve}
+	// resource.Publish = false
 	return resource
 }
