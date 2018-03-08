@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const path = "/v1/file"
+const filePath = "/v1/file"
 const contentType = "multipart/form-data; boundary=------------------------a31e2ddd4b2c0d92"
 const body = `--------------------------a31e2ddd4b2c0d92
 Content-Disposition: form-data; name="upload"; filename="foo.txt"
@@ -24,7 +24,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 	repo := NewMockDatabase(nil)
 	handler := handler(repo, nil, storage)
 
-	r.POST(path).
+	r.POST(filePath).
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).
@@ -39,7 +39,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 
 func TestCreateFileWrongContentType(t *testing.T) {
 	r := gofight.New()
-	r.POST(path).
+	r.POST(filePath).
 		SetHeader(gofight.H{
 			"Content-Type": "application/xml",
 		}).
@@ -53,7 +53,7 @@ func TestCreateFileWrongContentType(t *testing.T) {
 // TODO: https://github.com/go-swagger/go-swagger/issues/1400
 // func TestCreateFileMissingFile(t *testing.T) {
 // 	r := gofight.New()
-// 	r.POST(path).
+// 	r.POST(filePath).
 // 		SetHeader(gofight.H{
 // 			"Content-Type": contentType,
 // 		}).
@@ -66,8 +66,13 @@ func TestCreateFileWrongContentType(t *testing.T) {
 
 func TestCreateFileFailure(t *testing.T) {
 	r := gofight.New()
+<<<<<<< HEAD
 	storage := NewMockErrorStorage()
 	r.POST(path).
+=======
+	storage := mockErrorStorage()
+	r.POST(filePath).
+>>>>>>> Validate using json schema
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).
@@ -80,8 +85,13 @@ func TestCreateFileFailure(t *testing.T) {
 
 func TestCreateFileResourceFailure(t *testing.T) {
 	r := gofight.New()
+<<<<<<< HEAD
 	repo := NewMockErrorDatabase()
 	r.POST(path).
+=======
+	repo := mockErrorRepo()
+	r.POST(filePath).
+>>>>>>> Validate using json schema
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).

@@ -5,6 +5,7 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/persistence"
 )
 
 // NewRetrieveResource will query DynamoDB with ID for Resource JSON
@@ -31,13 +32,6 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams) midd
 }
 
 // TODO: expand this mapping
-func buildResponse(resource *models.Resource) *models.Resource {
-	return &models.Resource{
-		ID:        resource.ID,
-		Label:     resource.Label,
-		AtContext: resource.AtContext,
-		AtType:    resource.AtType,
-		Access:    resource.Access,
-		Preserve:  resource.Preserve,
-		Publish:   resource.Publish}
+func buildResponse(resource *persistence.Resource) models.Resource {
+	return resource
 }

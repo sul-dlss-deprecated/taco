@@ -7,7 +7,7 @@ import (
 )
 
 // Update - Replaces an existing resource in the repository
-func (h DynamodbDatabase) Update(resource interface{}) error {
+func (h DynamodbDatabase) Update(resource Resource) error {
 	row, err := dynamodbattribute.MarshalMap(resource)
 
 	if err != nil {

@@ -6,9 +6,9 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
+	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/uploaded"
 	"github.com/sul-dlss-labs/taco/validators"
@@ -52,7 +52,8 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 		return operations.NewDepositFileInternalServerError()
 	}
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
-	return operations.NewDepositResourceCreated().WithPayload(&models.ResourceResponse{ID: id})
+	response := map[string]interface{}{"id": id}
+	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
 func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*string, error) {
@@ -69,15 +70,14 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 	return d.database.Insert(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) interface{} {
-	return map[string]interface{}{
-		"id": resourceID,
-		// TODO: Where should Access come from/default to?
-		"access":    "private",
-		"atcontext": atContext,
-		"attype":    fileType,
-		"label":     filename,
-		"preserve":  false,
-		"publish":   false,
-	}
+func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) persistence.Resource {
+	resource := persistence.Resource{"id": resourceID}
+	// TODO: Where should Access come from/default to?
+	// resource.Access = "private"
+	// resource.AtContext = atContext
+	// resource.AtType = fileType
+	// resource.Label = filename
+	// resource.Preserve = false
+	// resource.Publish = false
+	return resource
 }

@@ -1,29 +1,36 @@
 package handlers
 
 import (
+	"encoding/json"
+	"log"
+	"path"
+	"runtime"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
+	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
 func NewDepositResource(database db.Database, stream streaming.Stream) operations.DepositResourceHandler {
-	return &depositResource{database: database, stream: stream}
+	_, filename, _, _ := runtime.Caller(0)
+	schemaPath := path.Join(path.Dir(filename), "../maps/DepositResource.json")
+	validator := validators.NewDepositResourceValidator(database, schemaPath)
+	return &depositResource{database: database, stream: stream, validator: validator}
 }
 
 type depositResource struct {
-	database db.Database
-	stream   streaming.Stream
-	// validators
+	database  db.Database
+	stream    streaming.Stream
+	validator *validators.DepositResourceValidator
 }
 
 // Handle the delete entry request
 func (d *depositResource) Handle(params operations.DepositResourceParams) middleware.Responder {
-	validator := validators.NewDepositResourceValidator(d.database)
 	if err := validator.ValidateResource(params.Payload); err != nil {
 		return operations.NewDepositResourceUnprocessableEntity()
 	}
@@ -44,20 +51,24 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 		panic(err)
 	}
 
-	response := &models.ResourceResponse{ID: resourceID}
+	response := map[string]interface{}{"id": resourceID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResource) loadParams(id string, params operations.DepositResourceParams) interface{} {
-	// NOTE: This section will be replaced by DataUtils
-	return map[string]interface{}{
-		"id":        id,
-		"attype":    params.Payload.AtType,
-		"atcontext": params.Payload.AtContext,
-		"access":    params.Payload.Access,
-		"label":     params.Payload.Label,
-		"preserve":  params.Payload.Preserve,
-		"publish":   params.Payload.Publish,
-		"sourceid":  params.Payload.SourceID,
+func (d *depositResourceEntry) loadParams(resourceID string, params operations.DepositResourceParams) persistence.Resource {
+	resource := persistence.Resource{"id": resourceID}
+	return resource
+}
+
+func (d *depositResourceEntry) addToStream(id *string) error {
+	message, err := json.Marshal(id)
+	if err != nil {
+		return err
+	}
+	if d.rt.Stream() == nil {
+		log.Printf("Stream is nil")
+	}
+	if err := d.rt.Stream().SendMessage(string(message)); err != nil {
+		return err
 	}
 }

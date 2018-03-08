@@ -14,7 +14,7 @@ func TestSaveAndRetrieve(t *testing.T) {
 	}
 	id := "9999"
 	database := initDatabase()
-	resource := map[string]interface{}{
+	resource := Resource{
 		"id":    id,
 		"label": "Hello world",
 	}
