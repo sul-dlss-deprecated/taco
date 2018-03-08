@@ -5,22 +5,23 @@ import (
 	"net/http"
 
 	"github.com/sul-dlss-labs/taco"
+	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/uploaded"
 )
 
-func mockRepo(record *persistence.Resource) persistence.Repository {
-	return &fakeRepository{record: record, CreatedResources: []persistence.Resource{}}
+func mockRepo(record *models.Resource) persistence.Repository {
+	return &fakeRepository{record: record, CreatedResources: []*persistence.Resource{}}
 }
 
 type fakeRepository struct {
-	record           *persistence.Resource
-	CreatedResources []persistence.Resource
+	record           *models.Resource
+	CreatedResources []*persistence.Resource
 }
 
-func (f *fakeRepository) GetByID(id string) (*persistence.Resource, error) {
+func (f *fakeRepository) GetByID(id string) (*models.Resource, error) {
 
 	if f.record != nil {
 		return f.record, nil
@@ -28,12 +29,12 @@ func (f *fakeRepository) GetByID(id string) (*persistence.Resource, error) {
 	return nil, errors.New("not found")
 }
 
-func (f *fakeRepository) CreateItem(resource *persistence.Resource) error {
-	f.CreatedResources = append(f.CreatedResources, *resource)
+func (f *fakeRepository) CreateItem(row *persistence.Resource) error {
+	f.CreatedResources = append(f.CreatedResources, row)
 	return nil
 }
 
-func (f *fakeRepository) UpdateItem(resource *persistence.Resource) error {
+func (f *fakeRepository) UpdateItem(row *persistence.Resource) error {
 	return nil
 }
 
@@ -98,15 +99,15 @@ func mockErrorRepo() persistence.Repository {
 
 type fakeErroringRepository struct{}
 
-func (f *fakeErroringRepository) GetByID(id string) (*persistence.Resource, error) {
+func (f *fakeErroringRepository) GetByID(id string) (*models.Resource, error) {
 	return nil, errors.New("broken")
 }
 
-func (f *fakeErroringRepository) CreateItem(resource *persistence.Resource) error {
+func (f *fakeErroringRepository) CreateItem(row *persistence.Resource) error {
 	return errors.New("broken")
 }
 
-func (f *fakeErroringRepository) UpdateItem(resource *persistence.Resource) error {
+func (f *fakeErroringRepository) UpdateItem(row *persistence.Resource) error {
 	return errors.New("broken")
 }
 

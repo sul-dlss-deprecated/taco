@@ -48,20 +48,8 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 }
 
 func (d *updateResourceEntry) updateResource(resourceID string, params operations.UpdateResourceParams) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
+	resource := persistence.ToPersistable(resourceID, params.Payload)
 	return d.rt.Repository().UpdateItem(resource)
-}
-
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, params operations.UpdateResourceParams) *persistence.Resource {
-	resource := &persistence.Resource{ID: resourceID}
-	resource.Access = *params.Payload.Access
-	resource.AtContext = *params.Payload.AtContext
-	resource.AtType = *params.Payload.AtType
-	resource.Label = *params.Payload.Label
-	resource.Preserve = *params.Payload.Preserve
-	resource.Publish = *params.Payload.Publish
-	resource.SourceID = params.Payload.SourceID
-	return resource
 }
 
 func (d *updateResourceEntry) addToStream(id *string) error {

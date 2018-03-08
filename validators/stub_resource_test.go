@@ -17,7 +17,7 @@ func newMockRepository() persistence.Repository {
 
 type fakeRepository struct{}
 
-func (f *fakeRepository) GetByID(id string) (*persistence.Resource, error) {
+func (f *fakeRepository) GetByID(id string) (*models.Resource, error) {
 	return nil, errors.New("not implemented")
 }
 
