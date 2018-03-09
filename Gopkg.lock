@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/PuerkitoBio/purell"
+  packages = ["."]
+  revision = "0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4"
+  version = "v1.1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/PuerkitoBio/urlesc"
+  packages = ["."]
+  revision = "de5bf2ad457846296e2031421a34e2568e304e35"
+
+[[projects]]
   branch = "master"
   name = "github.com/StackExchange/wmi"
   packages = ["."]
@@ -12,6 +24,12 @@
   packages = ["."]
   revision = "beadc315fb676177c07a89c34159b9ca4e1aafd9"
   version = "v2.0.0"
+
+[[projects]]
+  name = "github.com/asaskevich/govalidator"
+  packages = ["."]
+  revision = "521b25f4b05fd26bec69d9dedeb8f9c9a83939a8"
+  version = "v8"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -97,6 +115,54 @@
   version = "v1.2.1"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/analysis"
+  packages = ["."]
+  revision = "f59a71f0ece6f9dfb438be7f45148f006cbad88e"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/errors"
+  packages = ["."]
+  revision = "7bcb96a367bac6b76e6e42fa84155bb5581dcff8"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/jsonpointer"
+  packages = ["."]
+  revision = "779f45308c19820f1a69e9a4cd965f496e0da10f"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/jsonreference"
+  packages = ["."]
+  revision = "36d33bfe519efae5632669801b180bf1a245da3b"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/loads"
+  packages = ["."]
+  revision = "2a2b323bab96e6b1fdee110e57d959322446e9c9"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/spec"
+  packages = ["."]
+  revision = "d8000b5bfbd1147255710505a27c735b6b2ae2ac"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/strfmt"
+  packages = ["."]
+  revision = "6d1a47fad79c81e8cd732889cb80e91123951860"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/go-openapi/swag"
+  packages = ["."]
+  revision = "ceb469cb0fdf2d792f28d771bc05da6c606f55e5"
+
+[[projects]]
   name = "github.com/golang/protobuf"
   packages = ["proto"]
   revision = "925541529c1fa6821df4e44ce2723319eb2be768"
@@ -126,10 +192,26 @@
   revision = "03f45bd4b7dad4734bc4620e46a35789349abb20"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/mailru/easyjson"
+  packages = [
+    "buffer",
+    "jlexer",
+    "jwriter"
+  ]
+  revision = "4a8a4c12c4d1b0c0a7de630426ce6dcb07141b17"
+
+[[projects]]
   name = "github.com/mattn/go-isatty"
   packages = ["."]
   revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
   version = "v0.0.3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/mitchellh/mapstructure"
+  packages = ["."]
+  revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
 
 [[projects]]
   name = "github.com/pborman/uuid"
@@ -228,7 +310,8 @@
     "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
-    "unicode/rangetable"
+    "unicode/rangetable",
+    "width"
   ]
   revision = "e19ae1496984b1c655b8044a65c0300a3c878dd3"
 
@@ -269,6 +352,15 @@
 
 [[projects]]
   branch = "v2"
+  name = "gopkg.in/mgo.v2"
+  packages = [
+    "bson",
+    "internal/json"
+  ]
+  revision = "3f83fa5005286a7fe593b055f0d7771a7dce4655"
+
+[[projects]]
+  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
@@ -276,6 +368,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a7d106e16016a0ad35cc1a433b257d494ec849d78f18680247bdef1c1fe14855"
+  inputs-digest = "667d3d8496ac564cfcb38a5d4816462f53ace5b306c34a335c129acc50653fd2"
   solver-name = "gps-cdcl"
   solver-version = 1

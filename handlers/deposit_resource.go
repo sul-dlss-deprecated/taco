@@ -38,6 +38,7 @@ func (d *depositResourceEntry) Handle(c *gin.Context) {
 
 	if err := d.validator.ValidateResource(buff.String()); err != nil {
 		c.AbortWithError(422, err)
+		return
 	}
 
 	var data gin.H
