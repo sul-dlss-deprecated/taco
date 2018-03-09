@@ -20,10 +20,10 @@ type retrieveResource struct {
 
 // Handle the delete entry request
 func (d *retrieveResource) Handle(params operations.RetrieveResourceParams) middleware.Responder {
-	resource, err := resource.GetByID(params.ID)
+	item, err := resource.Read(d.database, params.ID)
 	if err == nil {
 		// TODO: expand this mapping
-		// response := buildResponse(resource)
+		response := buildResponse(item)
 		return operations.NewRetrieveResourceOK().WithPayload(response)
 	} else if err.Error() == "not found" {
 		return operations.NewRetrieveResourceNotFound()
@@ -32,27 +32,13 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams) midd
 }
 
 // TODO: expand this mapping
-func buildResponse(resource *persistence.Resource) *models.Resource {
+func buildResponse(resource *models.Resource) *models.Resource {
 	return &models.Resource{
 		ID:        resource.ID,
-		Label:     &resource.Label,
-		AtContext: &resource.AtContext,
-		AtType:    &resource.AtType,
-		Access:    &resource.Access,
-		Preserve:  &resource.Preserve,
-		Publish:   &resource.Publish}
-}
-
-func loadParams(id string, params operations.DepositResourceParams) interface{} {
-	// NOTE: This section will be replaced by DataUtils
-	return map[string]interface{}{
-		"id":        id,
-		"attype":    params.Payload.AtType,
-		"atcontext": params.Payload.AtContext,
-		"access":    params.Payload.Access,
-		"label":     params.Payload.Label,
-		"preserve":  params.Payload.Preserve,
-		"publish":   params.Payload.Publish,
-		"sourceid":  params.Payload.SourceID,
-	}
+		Label:     resource.Label,
+		AtContext: resource.AtContext,
+		AtType:    resource.AtType,
+		Access:    resource.Access,
+		Preserve:  resource.Preserve,
+		Publish:   resource.Publish}
 }
