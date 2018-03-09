@@ -70,7 +70,7 @@ func buildAPI() *operations.TacoAPI {
 	api.DepositResourceHandler = handlers.NewDepositResource(tacoServer.database)
 	//	api.UpdateResourceHandler = handlers.NewUpdateResource()
 	//	api.DepositFileHandler = handlers.NewDepositFile()
-	//	api.HealthCheckHandler = handlers.NewHealthCheck()
+	api.HealthCheckHandler = handlers.NewHealthCheck()
 	return api
 }
 
