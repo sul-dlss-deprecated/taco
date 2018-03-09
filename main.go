@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -37,7 +36,6 @@ func main() {
 	tacoServer.api = buildAPI()
 	tacoServer.server = createServer()
 
-	// repository := persistence.NewDynamoRepository()
 	//	storage := storage.NewS3Bucket(config, awsSession)
 	//	stream := streaming.NewKinesisStream(config, awsSession)
 
@@ -60,10 +58,6 @@ func createServer() *restapi.Server {
 	// set the port this service will be run on
 	server.Port = tacoServer.config.Port
 	return server
-}
-
-func Database() {
-	fmt.Printf("DATABASE")
 }
 
 // BuildAPI create new service API

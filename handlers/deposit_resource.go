@@ -37,7 +37,7 @@ func (database *db) Handle(params operations.DepositResourceParams) middleware.R
 	}
 
 	err = resource.Create(database.connection, resourceID, params)
-	if err != nil { //database.persistResource(resourceID, params); err != nil {
+	if err != nil {
 		// TODO: handle this with an error response
 		panic(err)
 	}
