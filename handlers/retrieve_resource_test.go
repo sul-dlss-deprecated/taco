@@ -6,12 +6,12 @@ import (
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco/db"
 )
 
 func TestRetrieveHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(new(models.Resource))
+	repo := NewMockDatabase(&db.Resource{})
 	r.GET("/v1/resource/99").
 		Run(handler(repo, NewMockStream(""), nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {

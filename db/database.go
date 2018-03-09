@@ -2,7 +2,6 @@ package db
 
 import (
 	"errors"
-	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -41,12 +40,10 @@ func (database DynamodbDatabase) Read(id string) (*Resource, error) {
 	}
 	resp, err := database.Connection.GetItem(params)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	var resource *Resource
 	if err := dynamodbattribute.UnmarshalMap(resp.Item, &resource); err != nil {
-		log.Println(err)
 		return nil, err
 	}
 

@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/uploaded"
@@ -25,12 +24,12 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 }
 
 type MockDatabase struct {
-	record           *models.Resource
-	CreatedResources []interface{}
+	record           *db.Resource
+	CreatedResources []db.Resource
 }
 
-func NewMockDatabase(record *models.Resource) db.Database {
-	return &MockDatabase{CreatedResources: []interface{}{}, record: record}
+func NewMockDatabase(record *db.Resource) db.Database {
+	return &MockDatabase{CreatedResources: []db.Resource{}, record: record}
 }
 
 type MockStream struct {
@@ -49,19 +48,19 @@ func NewMockStorage() storage.Storage {
 	return &MockStorage{CreatedFiles: []*uploaded.File{}}
 }
 
-func (d *MockDatabase) Insert(params interface{}) error {
+func (d *MockDatabase) Insert(params db.Resource) error {
 	d.CreatedResources = append(d.CreatedResources, params)
 	return nil
 }
 
-func (d *MockDatabase) Read(id string) (*models.Resource, error) {
+func (d *MockDatabase) Read(id string) (*db.Resource, error) {
 	if d.record != nil {
 		return d.record, nil
 	}
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) Update(params interface{}) error {
+func (d *MockDatabase) Update(params db.Resource) error {
 	return nil
 }
 
@@ -82,15 +81,15 @@ func NewMockErrorDatabase() db.Database {
 	return &MockErrorDatabase{}
 }
 
-func (d *MockErrorDatabase) Insert(params interface{}) error {
+func (d *MockErrorDatabase) Insert(params db.Resource) error {
 	return errors.New("Broken")
 }
 
-func (d *MockErrorDatabase) Update(params interface{}) error {
+func (d *MockErrorDatabase) Update(params db.Resource) error {
 	return nil
 }
 
-func (d *MockErrorDatabase) Read(id string) (*models.Resource, error) {
+func (d *MockErrorDatabase) Read(id string) (*db.Resource, error) {
 	return nil, errors.New("Broken")
 }
 
