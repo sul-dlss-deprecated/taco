@@ -8,7 +8,6 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/uploaded"
 	"github.com/sul-dlss-labs/taco/validators"
@@ -70,14 +69,8 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 	return d.database.Insert(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) persistence.Resource {
-	resource := persistence.Resource{"id": resourceID}
-	// TODO: Where should Access come from/default to?
-	// resource.Access = "private"
-	// resource.AtContext = atContext
-	// resource.AtType = fileType
-	// resource.Label = filename
-	// resource.Preserve = false
-	// resource.Publish = false
-	return resource
+func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) db.Resource {
+	// TODO: Expand here if we need to set any default properties on the file
+	identification := map[string]interface{}{"filename": filename, "identifier": resourceID, "sdrUUID": resourceID}
+	return db.Resource{"id": resourceID, "identification": identification}
 }

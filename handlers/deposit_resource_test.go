@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"testing"
 
@@ -8,31 +10,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func postData() map[string]interface{} {
+	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+	if err != nil {
+		panic(err)
+	}
+	var postData map[string]interface{}
+
+	if err := json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
+	return postData
+}
+
 func TestCreateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(nil)
 	stream := NewMockStream("")
 
 	r.POST("/v1/resource").
-		SetJSON(gofight.D{
-			"id":       "oo000oo0001",
-			"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"access":   "world",
-			"label":    "My work",
-			"preserve": true,
-			"publish":  true,
-			"sourceId": "bib12345678"}).
+		SetJSON(postData()).
 		Run(handler(repo, stream, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
-<<<<<<< HEAD
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
-				assert.Equal(t, "bib12345678", repo.(*MockDatabase).CreatedResources[0].(map[string]interface{})["sourceid"])
-=======
-				assert.Equal(t, 1, len(repo.(*fakeRepository).CreatedResources))
-				// assert.Equal(t, "bib12345678", repo.(*fakeRepository).CreatedResources[0].SourceID)
->>>>>>> Validate using json schema
+				// assert.Equal(t, "bib12345678", repo.(*MockDatabase).CreatedResources[0].(map[string]interface{})["sourceid"])
 			})
 }
 
@@ -72,15 +74,7 @@ func TestCreateResourceFailure(t *testing.T) {
 	assert.Panics(t,
 		func() {
 			r.POST("/v1/resource").
-				SetJSON(gofight.D{
-					"id":       "oo000oo0001",
-					"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-					"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-					"access":   "world",
-					"label":    "My work",
-					"preserve": true,
-					"publish":  true,
-					"sourceId": "bib12345678"}).
+				SetJSON(postData()).
 				Run(handler(NewMockErrorDatabase(), NewMockStream(""), nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})

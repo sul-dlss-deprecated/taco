@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 
 	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/persistence"
 )
 
 func testResource() string {
@@ -31,14 +29,14 @@ func newMockRepository() db.Database {
 
 type fakeRepository struct{}
 
-func (f *fakeRepository) Read(id string) (*models.Resource, error) {
+func (f *fakeRepository) Read(id string) (*db.Resource, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (f *fakeRepository) Insert(resource persistence.Resource) error {
+func (f *fakeRepository) Insert(resource db.Resource) error {
 	return errors.New("not implemented")
 }
 
-func (f *fakeRepository) Update(resource persistence.Resource) error {
+func (f *fakeRepository) Update(resource db.Resource) error {
 	return errors.New("not implemented")
 }

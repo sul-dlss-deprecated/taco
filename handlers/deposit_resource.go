@@ -8,9 +8,10 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+
 	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
 )
@@ -31,7 +32,12 @@ type depositResource struct {
 
 // Handle the delete entry request
 func (d *depositResource) Handle(params operations.DepositResourceParams) middleware.Responder {
-	if err := validator.ValidateResource(params.Payload); err != nil {
+	json, err := json.Marshal(params.Payload)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := d.validator.ValidateResource(string(json[:])); err != nil {
 		return operations.NewDepositResourceUnprocessableEntity()
 	}
 
@@ -40,14 +46,11 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 		panic(err)
 	}
 
-	err = d.database.Insert(d.loadParams(resourceID, params))
-	if err != nil {
-		// TODO: handle this with an error response
+	if err = d.database.Insert(d.loadParams(resourceID, params.Payload)); err != nil {
 		panic(err)
 	}
 
 	if err := d.stream.SendMessage(resourceID); err != nil {
-		// TODO: handle this with an error response
 		panic(err)
 	}
 
@@ -55,20 +58,19 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResourceEntry) loadParams(resourceID string, params operations.DepositResourceParams) persistence.Resource {
-	resource := persistence.Resource{"id": resourceID}
+func (d *depositResource) loadParams(resourceID string, data models.Resource) db.Resource {
+	resource := db.NewResource(data.(map[string]interface{}))
+	resource["id"] = resourceID
 	return resource
 }
 
-func (d *depositResourceEntry) addToStream(id *string) error {
+func (d *depositResource) addToStream(id *string) error {
 	message, err := json.Marshal(id)
 	if err != nil {
 		return err
 	}
-	if d.rt.Stream() == nil {
+	if d.stream == nil {
 		log.Printf("Stream is nil")
 	}
-	if err := d.rt.Stream().SendMessage(string(message)); err != nil {
-		return err
-	}
+	return d.stream.SendMessage(string(message))
 }

@@ -8,8 +8,8 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
 )
@@ -31,43 +31,44 @@ type updateResourceEntry struct {
 
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
-	if err := d.validator.ValidateResource(params.Payload); err != nil {
+	json, err := json.Marshal(params.Payload)
+	if err != nil {
+		panic(err)
+	}
+	if err := d.validator.ValidateResource(string(json[:])); err != nil {
 		return operations.NewUpdateResourceUnprocessableEntity()
 	}
 
-	resource, err := d.database.Read(params.ID)
-
-	if err == nil {
-		if err = d.updateResource(resource.ID(), params); err != nil {
-			panic(err)
+	id := params.ID
+	_, err = d.database.Read(id)
+	if err != nil {
+		if err.Error() == "not found" {
+			return operations.NewRetrieveResourceNotFound()
 		}
-
-		if err = d.addToStream(id); err != nil {
-			panic(err)
-		}
-
-		response := map[string]interface{}{"id": id}
-		return operations.NewUpdateResourceOK().WithPayload(response)
-	} else if err.Error() == "not found" {
-		return operations.NewRetrieveResourceNotFound()
+		panic(err)
 	}
-	panic(err)
+
+	if err = d.updateResource(id, params.Payload); err != nil {
+		panic(err)
+	}
+
+	if err = d.addToStream(id); err != nil {
+		panic(err)
+	}
+
+	response := map[string]interface{}{"id": id}
+	return operations.NewUpdateResourceOK().WithPayload(response)
 }
 
-func (d *updateResourceEntry) updateResource(resourceID string, params operations.UpdateResourceParams) error {
+func (d *updateResourceEntry) updateResource(resourceID string, params models.Resource) error {
 	resource := d.persistableResourceFromParams(resourceID, params)
-	return d.database.UpdateItem(resource)
+	return d.database.Update(resource)
 }
 
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, params operations.UpdateResourceParams) persistence.Resource {
-	resource := persistence.Resource{"id": resourceID}
-	// resource.Access = *params.Payload.Access
-	// resource.AtContext = *params.Payload.AtContext
-	// resource.AtType = *params.Payload.AtType
-	// resource.Label = *params.Payload.Label
-	// resource.Preserve = *params.Payload.Preserve
-	// resource.Publish = *params.Payload.Publish
-	// resource.SourceID = params.Payload.SourceID
+func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) db.Resource {
+	resource := db.NewResource(data.(map[string]interface{}))
+	// This ensures they have the same id in the document as in the query param
+	resource["id"] = resourceID
 	return resource
 }
 
@@ -79,7 +80,5 @@ func (d *updateResourceEntry) addToStream(id string) error {
 	if d.stream == nil {
 		log.Printf("Stream is nil")
 	}
-	if err := d.stream.SendMessage(string(message)); err != nil {
-		return err
-	}
+	return d.stream.SendMessage(string(message))
 }

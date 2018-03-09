@@ -1,6 +1,8 @@
 package db
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Resource represents the resource as it exists in the persistence layer
 // this is very similar to models.Resource, but COULD vary, so we should
@@ -19,7 +21,11 @@ func (d *Resource) ID() string {
 
 // GetS returns the string value at key
 func (d *Resource) GetS(key string) string {
-	return (*d)[key].(string)
+	if (*d)[key] == nil {
+		panic(fmt.Errorf("No key found for %s", key))
+	}
+	val := (*d)[key].(string)
+	return val
 }
 
 func (d *Resource) String() string {

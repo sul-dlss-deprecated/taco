@@ -4,16 +4,17 @@ import (
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema"
+	"github.com/sul-dlss-labs/taco/db"
 )
 
 // DepositResourceValidator validates the deposit resource request
 type DepositResourceValidator struct {
-	repository db.Repository
+	repository db.Database
 	schema     *jsonschema.Schema
 }
 
 // NewDepositResourceValidator creates a new instance of DepositResourceValidator
-func NewDepositResourceValidator(repository db.Repository, schemaPath string) *DepositResourceValidator {
+func NewDepositResourceValidator(repository db.Database, schemaPath string) *DepositResourceValidator {
 	schema, err := jsonschema.Compile(schemaPath)
 	if err != nil {
 		panic(err)

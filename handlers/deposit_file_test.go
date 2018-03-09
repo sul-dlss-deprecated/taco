@@ -34,6 +34,9 @@ func TestCreateFileHappyPath(t *testing.T) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(storage.(*MockStorage).CreatedFiles))
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
+				fileResource := repo.(*MockDatabase).CreatedResources[0]
+				fileName := fileResource["identification"].(map[string]interface{})["filename"]
+				assert.Equal(t, fileName, "foo.txt")
 			})
 }
 
@@ -66,13 +69,8 @@ func TestCreateFileWrongContentType(t *testing.T) {
 
 func TestCreateFileFailure(t *testing.T) {
 	r := gofight.New()
-<<<<<<< HEAD
 	storage := NewMockErrorStorage()
-	r.POST(path).
-=======
-	storage := mockErrorStorage()
 	r.POST(filePath).
->>>>>>> Validate using json schema
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).
@@ -85,13 +83,8 @@ func TestCreateFileFailure(t *testing.T) {
 
 func TestCreateFileResourceFailure(t *testing.T) {
 	r := gofight.New()
-<<<<<<< HEAD
 	repo := NewMockErrorDatabase()
-	r.POST(path).
-=======
-	repo := mockErrorRepo()
 	r.POST(filePath).
->>>>>>> Validate using json schema
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).
