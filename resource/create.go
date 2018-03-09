@@ -4,10 +4,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
-func Create(database *dynamodb.DynamoDB, id string, params operations.DepositResourceParams) error {
+func Create(database *db.Database, id string, params operations.DepositResourceParams) error {
 	row, err := dynamodbattribute.MarshalMap(loadParams(id, params))
 
 	if err != nil {
@@ -16,10 +17,10 @@ func Create(database *dynamodb.DynamoDB, id string, params operations.DepositRes
 
 	input := &dynamodb.PutItemInput{
 		Item:      row,
-		TableName: aws.String("resources"),
+		TableName: aws.String(database.Table),
 	}
 
-	_, err = database.PutItem(input)
+	_, err = database.Connection.PutItem(input)
 
 	if err != nil {
 		return err

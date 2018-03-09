@@ -3,8 +3,8 @@ package handlers
 import (
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
@@ -12,16 +12,16 @@ import (
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(database *dynamodb.DynamoDB) operations.DepositResourceHandler {
-	return &db{connection: database}
+func NewDepositResource(database *db.Database) operations.DepositResourceHandler {
+	return &depositResource{database: database}
 }
 
-type db struct {
-	connection *dynamodb.DynamoDB
+type depositResource struct {
+	database *db.Database
 }
 
 // Handle the delete entry request
-func (database *db) Handle(params operations.DepositResourceParams) middleware.Responder {
+func (database *depositResource) Handle(params operations.DepositResourceParams) middleware.Responder {
 	fmt.Printf("%+v\n", params)
 	/*
 		validator := validators.NewDepositResourceValidator(repository)
@@ -36,7 +36,7 @@ func (database *db) Handle(params operations.DepositResourceParams) middleware.R
 		panic(err)
 	}
 
-	err = resource.Create(database.connection, resourceID, params)
+	err = resource.Create(database.database, resourceID, params)
 	if err != nil {
 		// TODO: handle this with an error response
 		panic(err)

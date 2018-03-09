@@ -10,6 +10,7 @@ import (
 	"github.com/go-openapi/loads"
 	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco/config"
+	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/handlers"
@@ -19,7 +20,7 @@ import (
 type Taco struct {
 	config     *config.Config
 	server     *restapi.Server
-	database   *dynamodb.DynamoDB
+	database   *db.Database
 	awsSession *session.Session
 	api        *operations.TacoAPI
 }
@@ -31,8 +32,10 @@ func main() {
 	// Initialize our global struct
 	tacoServer.config = config.NewConfig()
 	tacoServer.awsSession = newAwsSession()
-	// tacoServer.database = db.NewConnection(tacoServer.config.DynamodbEndpoint, tacoServer.awsSession)
-	tacoServer.database = connectToDatabase()
+	tacoServer.database = &db.Database{
+		Connection: connectToDatabase(),
+		Table:      tacoServer.config.ResourceTableName,
+	}
 	tacoServer.api = buildAPI()
 	tacoServer.server = createServer()
 
