@@ -1,20 +1,21 @@
 package handlers
 
 import (
-	"github.com/go-openapi/runtime/middleware"
+	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
 // NewHealthCheck will return the service health
-func NewHealthCheck(rt *taco.Runtime) operations.HealthCheckHandler {
-	return &healthCheck{}
+func NewHealthCheck(rt *taco.Runtime) func(*gin.Context) {
+	return func(c *gin.Context) {
+		entry := &healthCheck{}
+		entry.Handle(c)
+	}
 }
 
 type healthCheck struct{}
 
 // Handle the health check request
-func (d *healthCheck) Handle(params operations.HealthCheckParams) middleware.Responder {
-	return operations.NewHealthCheckOK().WithPayload(&models.HealthCheckResponse{Status: "OK"})
+func (d *healthCheck) Handle(c *gin.Context) {
+	c.JSON(200, map[string]string{"status": "OK"})
 }

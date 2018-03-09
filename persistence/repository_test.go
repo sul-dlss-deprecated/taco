@@ -15,12 +15,12 @@ func TestSaveAndRetrieve(t *testing.T) {
 	}
 	id := "9999"
 	repo := initRepo()
-	resource := &Resource{ID: id, Label: "Hello world"}
+	resource := Resource{"id": id, "label": "Hello world"}
 	err := repo.CreateItem(resource)
 	assert.Nil(t, err)
 	item, err := repo.GetByID(id)
 	assert.Nil(t, err)
-	assert.Equal(t, item.Label, "Hello world")
+	assert.Equal(t, item.GetS("label"), "Hello world")
 }
 
 func initRepo() *DynamoRepository {

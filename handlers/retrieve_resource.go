@@ -1,44 +1,42 @@
 package handlers
 
 import (
-	"github.com/go-openapi/runtime/middleware"
+	"log"
+
+	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
-	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/persistence"
 )
 
 // NewRetrieveResource will query DynamoDB with ID for Resource JSON
-func NewRetrieveResource(rt *taco.Runtime) operations.RetrieveResourceHandler {
-	return &resourceEntry{repository: rt.Repository()}
+func NewRetrieveResource(rt *taco.Runtime) func(*gin.Context) {
+	return func(c *gin.Context) {
+		log.Println("*** GOT STUFF *** ")
+		entry := &retrieveResourceEntry{repository: rt.Repository()}
+		entry.Handle(c)
+	}
 }
 
-// resourceEntry handles a request for finding & returning an entry
-type resourceEntry struct {
+// retrieveResourceEntry handles a request for finding & returning an entry
+type retrieveResourceEntry struct {
 	repository persistence.Repository
 }
 
 // Handle the delete entry request
-func (d *resourceEntry) Handle(params operations.RetrieveResourceParams) middleware.Responder {
-	resource, err := d.repository.GetByID(params.ID)
+func (d *retrieveResourceEntry) Handle(c *gin.Context) {
+	log.Printf("*** HERE WE ARE (%s) ***", c.Param("id"))
+	resource, err := d.repository.GetByID(c.Param("id"))
 	if err == nil {
-		// TODO: expand this mapping
 		response := buildResponse(resource)
-		return operations.NewRetrieveResourceOK().WithPayload(response)
+		c.JSON(200, response)
 	} else if err.Error() == "not found" {
-		return operations.NewRetrieveResourceNotFound()
+		c.AbortWithError(404, err)
+	} else {
+		panic(err)
 	}
-	panic(err)
 }
 
 // TODO: expand this mapping
-func buildResponse(resource *persistence.Resource) *models.Resource {
-	return &models.Resource{
-		ID:        resource.ID,
-		Label:     &resource.Label,
-		AtContext: &resource.AtContext,
-		AtType:    &resource.AtType,
-		Access:    &resource.Access,
-		Preserve:  &resource.Preserve,
-		Publish:   &resource.Publish}
+func buildResponse(resource *persistence.Resource) *persistence.Resource {
+	return resource
 }

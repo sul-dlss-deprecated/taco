@@ -19,11 +19,29 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 			"id":       "99",
 			"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
 			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"access":   "world",
-			"label":    "My updated work",
-			"preserve": true,
-			"publish":  true,
-			"sourceId": "bib12345678"}).
+			"access": gofight.D{
+				"access":   "world",
+				"download": "world",
+			},
+			"administrative": gofight.D{
+				"sdrPreserve":   false,
+				"isDescribedBy": "the_mods.xml",
+				"created":       "2012-10-28T04:13:43.639Z",
+			},
+			"currentVersion": true,
+			"version":        5,
+			"depositor": gofight.D{
+				"name":    "Lynn",
+				"sunetID": "lmcray",
+			},
+			"identification": gofight.D{
+				"identifier": "1234abc",
+				"sdrUUID":    "123888019239",
+			},
+			"structural": gofight.D{
+				"hasAgreement": "yes",
+			},
+			"label": "My updated work"}).
 		Run(setupFakeRuntime().WithRepository(repo).Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
@@ -38,11 +56,29 @@ func TestUpdateResourceNotFound(t *testing.T) {
 			"id":       "99",
 			"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
 			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"access":   "world",
-			"label":    "My updated work",
-			"preserve": true,
-			"publish":  true,
-			"sourceId": "bib12345678"}).
+			"access": gofight.D{
+				"access":   "world",
+				"download": "world",
+			},
+			"administrative": gofight.D{
+				"sdrPreserve":   false,
+				"isDescribedBy": "the_mods.xml",
+				"created":       "2012-10-28T04:13:43.639Z",
+			},
+			"currentVersion": true,
+			"version":        5,
+			"depositor": gofight.D{
+				"name":    "Lynn",
+				"sunetID": "lmcray",
+			},
+			"identification": gofight.D{
+				"identifier": "1234abc",
+				"sdrUUID":    "123888019239",
+			},
+			"structural": gofight.D{
+				"hasAgreement": "yes",
+			},
+			"label": "My updated work"}).
 		Run(setupFakeRuntime().WithRepository(mockRepo(nil)).Handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)

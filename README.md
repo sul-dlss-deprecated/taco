@@ -115,53 +115,6 @@ The integration test depends on the taco binary and [Localstack](docs/localstack
 $ go test test/integration_test.go
 ```
 
-
-## API Code Structure
-
-We use `go-swagger` to generate the API code within the `generated/` directory.
-
-We connect the specification-generated API code to our own handlers defined with `handlers/`. Handlers are where we add our own logic for processing requests.
-
-Our handlers and the generated API code is connected within `main.go`, which is the file to start the API.
-
-### Install Go-Swagger
-
-The API code is generated from `swagger.yml` using `go-swagger` library. As this is not used in the existing codebase anywhere currently, you'll need to install the `go-swagger` library before running these commands (commands for those using Mac OSX):
-
-```shell
-$ brew tap go-swagger/go-swagger
-$ brew install go-swagger
-$ brew upgrade go-swagger
-```
-
-This should give you the `swagger` binary command in your $GOPATH and allow you to manage versions better (TBD write this up). The version of your go-swagger binary is **0.13.0** (run `swagger version` to check this).
-
-### Nota Bene on go-swagger install from source
-
-If instead of brew, you decide to install go-swagger from source (i.e. `go get -u github.com/go-swagger/go-swagger/cmd/swagger`), you will be running the library at its Github `dev` branch. You will need to change into that library (`cd $GOPATH/src/github.com/go-swagger/go-swagger`) and checkout from Github the latest release (`git checkout tags/0.13.0`). Then you will need to run `go install github.com/go-swagger/go-swagger/cmd/swagger` to generate the go-swagger binary in your `$GOPATH/bin`.
-
-### To generate the API code
-
-There appears to be no best way to handle specification-based re-generation of the `generated/` API code, so the following steps are recommended:
-
-```shell
-$ git rm -rf generated/
-$ mkdir generated
-$ swagger generate server -t generated --exclude-main
-```
-
-### Non-generated code
-
-Anything outside of `generated/` is our own code and should not be touched by a regeneration of the API code from the Swagger specification.
-
 ## SWAGGER Generated Documentation
 
 To see the SWAGGER generated documentation, go to https://sul-dlss-labs.github.io/taco/. This is automatically generated off of the Swagger spec in this repository on the `master` branch.
-
-If you want to generate this documentation locally, you can run the following:
-
-```shell
-$ swagger serve swagger.yml
-```
-
-This should prompt you to your web browser for the HTML generated docs.

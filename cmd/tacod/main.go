@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"github.com/sul-dlss-labs/taco"
 	"github.com/sul-dlss-labs/taco/config"
-	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/handlers"
 )
 
@@ -16,19 +16,13 @@ func main() {
 	}
 
 	server := createServer(rt)
+
 	// serve API
-	if err := server.Serve(); err != nil {
+	if err := server.Run(); err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func createServer(rt *taco.Runtime) *restapi.Server {
-	api := handlers.BuildAPI(rt)
-	server := restapi.NewServer(api)
-	server.SetHandler(handlers.BuildHandler(api))
-	defer server.Shutdown()
-
-	// set the port this service will be run on
-	server.Port = rt.Config().Port
-	return server
+func createServer(rt *taco.Runtime) *gin.Engine {
+	return handlers.BuildAPI(rt).Engine()
 }

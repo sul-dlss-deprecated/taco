@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/sul-dlss-labs/taco"
+	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/persistence"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
@@ -28,12 +29,12 @@ func (f *fakeRepository) GetByID(id string) (*persistence.Resource, error) {
 	return nil, errors.New("not found")
 }
 
-func (f *fakeRepository) CreateItem(resource *persistence.Resource) error {
-	f.CreatedResources = append(f.CreatedResources, *resource)
+func (f *fakeRepository) CreateItem(resource persistence.Resource) error {
+	f.CreatedResources = append(f.CreatedResources, resource)
 	return nil
 }
 
-func (f *fakeRepository) UpdateItem(resource *persistence.Resource) error {
+func (f *fakeRepository) UpdateItem(resource persistence.Resource) error {
 	return nil
 }
 
@@ -88,8 +89,9 @@ func (d *TestEnv) Handler() http.Handler {
 		d.storage = &fakeStorage{}
 	}
 
-	rt, _ := taco.NewRuntimeWithServices(nil, d.repo, d.storage, mockStream())
-	return BuildAPI(rt).Serve(nil)
+	config := config.NewConfig()
+	rt, _ := taco.NewRuntimeWithServices(config, d.repo, d.storage, mockStream())
+	return BuildAPI(rt).Engine()
 }
 
 func mockErrorRepo() persistence.Repository {
@@ -102,11 +104,11 @@ func (f *fakeErroringRepository) GetByID(id string) (*persistence.Resource, erro
 	return nil, errors.New("broken")
 }
 
-func (f *fakeErroringRepository) CreateItem(resource *persistence.Resource) error {
+func (f *fakeErroringRepository) CreateItem(resource persistence.Resource) error {
 	return errors.New("broken")
 }
 
-func (f *fakeErroringRepository) UpdateItem(resource *persistence.Resource) error {
+func (f *fakeErroringRepository) UpdateItem(resource persistence.Resource) error {
 	return errors.New("broken")
 }
 
