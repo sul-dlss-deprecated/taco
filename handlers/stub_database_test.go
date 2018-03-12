@@ -2,17 +2,26 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 )
 
+func handler(database db.Database) http.Handler {
+	if database == nil {
+		database = NewMockDatabase(nil)
+	}
+	return BuildAPI(database).Serve(nil)
+}
+
 type MockDatabase struct {
+	record           *models.Resource
 	CreatedResources []interface{}
 }
 
-func NewMockDatabase() db.Database {
-	return &MockDatabase{CreatedResources: []interface{}{}}
+func NewMockDatabase(record *models.Resource) db.Database {
+	return &MockDatabase{CreatedResources: []interface{}{}, record: record}
 }
 
 func (d *MockDatabase) Insert(params interface{}) error {
@@ -21,14 +30,17 @@ func (d *MockDatabase) Insert(params interface{}) error {
 }
 
 func (d *MockDatabase) Read(id string) (*models.Resource, error) {
-	return nil, nil
+	if d.record != nil {
+		return d.record, nil
+	}
+	return nil, errors.New("not found")
 }
 
 type MockErrorDatabase struct {
 }
 
 func NewMockErrorDatabase() db.Database {
-	return &MockDatabase{}
+	return &MockErrorDatabase{}
 }
 
 func (d *MockErrorDatabase) Insert(params interface{}) error {
