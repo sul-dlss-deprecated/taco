@@ -12,8 +12,8 @@ import (
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(database db.Database) operations.UpdateResourceHandler {
-	return &updateResourceEntry{database: database}
+func NewUpdateResource(database db.Database, stream streaming.Stream) operations.UpdateResourceHandler {
+	return &updateResourceEntry{database: database, stream: stream}
 }
 
 type updateResourceEntry struct {
@@ -35,9 +35,9 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 			panic(err)
 		}
 
-		// if err = d.addToStream(&resource.ID); err != nil {
-		// 	panic(err)
-		// }
+		if err = d.stream.SendMessage(resource.ID); err != nil {
+			panic(err)
+		}
 
 		response := &models.ResourceResponse{ID: params.ID}
 		return operations.NewUpdateResourceOK().WithPayload(response)

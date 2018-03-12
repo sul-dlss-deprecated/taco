@@ -4,9 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
-	"github.com/sul-dlss-labs/taco/config"
 )
 
 // Stream the interface for streaming pipeline
@@ -14,30 +12,21 @@ type Stream interface {
 	SendMessage(string) error
 }
 
-type kinesisStream struct {
-	streamName *string
-	connection *kinesis.Kinesis
+type KinesisStream struct {
+	StreamName string
+	Connection *kinesis.Kinesis
 }
 
-// NewKinesisStream create a new kinesis stream
-func NewKinesisStream(config *config.Config, sess *session.Session) Stream {
-	kc := kinesis.New(sess, &aws.Config{Endpoint: aws.String(config.KinesisEndpoint)})
-
-	streamName := aws.String(config.DepositStreamName)
-
-	return &kinesisStream{streamName: streamName, connection: kc}
-}
-
-func (d kinesisStream) SendMessage(message string) error {
-	streams, err := d.connection.DescribeStream(&kinesis.DescribeStreamInput{StreamName: d.streamName})
+func (d KinesisStream) SendMessage(message string) error {
+	streams, err := d.Connection.DescribeStream(&kinesis.DescribeStreamInput{StreamName: &d.StreamName})
 	if err != nil {
 		return err
 	}
 	fmt.Printf("%v\n", streams)
 
-	putOutput, err := d.connection.PutRecord(&kinesis.PutRecordInput{
+	putOutput, err := d.Connection.PutRecord(&kinesis.PutRecordInput{
 		Data:         []byte(message),
-		StreamName:   d.streamName,
+		StreamName:   &d.StreamName,
 		PartitionKey: aws.String("key1"),
 	})
 	if err != nil {

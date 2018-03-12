@@ -6,13 +6,17 @@ import (
 
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco/streaming"
 )
 
-func handler(database db.Database) http.Handler {
+func handler(database db.Database, stream streaming.Stream) http.Handler {
 	if database == nil {
 		database = NewMockDatabase(nil)
 	}
-	return BuildAPI(database).Serve(nil)
+	if stream == nil {
+		stream = NewMockStream("")
+	}
+	return BuildAPI(database, stream).Serve(nil)
 }
 
 type MockDatabase struct {
@@ -22,6 +26,14 @@ type MockDatabase struct {
 
 func NewMockDatabase(record *models.Resource) db.Database {
 	return &MockDatabase{CreatedResources: []interface{}{}, record: record}
+}
+
+type MockStream struct {
+	message string
+}
+
+func NewMockStream(message string) streaming.Stream {
+	return &MockStream{message: message}
 }
 
 func (d *MockDatabase) Insert(params interface{}) error {
@@ -37,6 +49,10 @@ func (d *MockDatabase) Read(id string) (*models.Resource, error) {
 }
 
 func (d *MockDatabase) Update(params interface{}) error {
+	return nil
+}
+
+func (s *MockStream) SendMessage(message string) error {
 	return nil
 }
 
