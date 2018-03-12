@@ -13,6 +13,7 @@ import (
 // Database is a generic connection to a database.
 type Database interface {
 	Insert(interface{}) error
+	Update(interface{}) error
 	Read(id string) (*models.Resource, error)
 }
 

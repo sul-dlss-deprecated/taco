@@ -1,17 +1,17 @@
 package validators
 
 import (
+	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
-	"github.com/sul-dlss-labs/taco/persistence"
 )
 
 // UpdateResourceValidator validates the update resource request
 type UpdateResourceValidator struct {
-	repository persistence.Repository
+	repository db.Database
 }
 
 // NewUpdateResourceValidator creates a new instance of UpdateResourceValidator
-func NewUpdateResourceValidator(repository persistence.Repository) *UpdateResourceValidator {
+func NewUpdateResourceValidator(repository db.Database) *UpdateResourceValidator {
 	return &UpdateResourceValidator{repository: repository}
 }
 

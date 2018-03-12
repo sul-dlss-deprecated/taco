@@ -14,7 +14,7 @@ func BuildAPI(database db.Database) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
 	api.DepositResourceHandler = NewDepositResource(database)
-	// api.UpdateResourceHandler = NewUpdateResource(rt)
+	api.UpdateResourceHandler = NewUpdateResource(database)
 	// api.DepositFileHandler = NewDepositFile(rt)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api
