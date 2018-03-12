@@ -36,6 +36,10 @@ func (d *MockDatabase) Read(id string) (*models.Resource, error) {
 	return nil, errors.New("not found")
 }
 
+func (d *MockDatabase) Update(params interface{}) error {
+	return nil
+}
+
 type MockErrorDatabase struct {
 }
 
@@ -45,6 +49,10 @@ func NewMockErrorDatabase() db.Database {
 
 func (d *MockErrorDatabase) Insert(params interface{}) error {
 	return errors.New("Broken")
+}
+
+func (d *MockErrorDatabase) Update(params interface{}) error {
+	return nil
 }
 
 func (d *MockErrorDatabase) Read(id string) (*models.Resource, error) {
