@@ -6,17 +6,22 @@ import (
 
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
+	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
+	"github.com/sul-dlss-labs/taco/uploaded"
 )
 
-func handler(database db.Database, stream streaming.Stream) http.Handler {
+func handler(database db.Database, stream streaming.Stream, storage storage.Storage) http.Handler {
 	if database == nil {
 		database = NewMockDatabase(nil)
 	}
 	if stream == nil {
 		stream = NewMockStream("")
 	}
-	return BuildAPI(database, stream).Serve(nil)
+	if storage == nil {
+		storage = NewMockStorage()
+	}
+	return BuildAPI(database, stream, storage).Serve(nil)
 }
 
 type MockDatabase struct {
@@ -34,6 +39,14 @@ type MockStream struct {
 
 func NewMockStream(message string) streaming.Stream {
 	return &MockStream{message: message}
+}
+
+type MockStorage struct {
+	CreatedFiles []*uploaded.File
+}
+
+func NewMockStorage() storage.Storage {
+	return &MockStorage{CreatedFiles: []*uploaded.File{}}
 }
 
 func (d *MockDatabase) Insert(params interface{}) error {
@@ -56,6 +69,10 @@ func (s *MockStream) SendMessage(message string) error {
 	return nil
 }
 
+func (s *MockStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
+	return nil, nil
+}
+
 type MockErrorDatabase struct {
 }
 
@@ -72,5 +89,15 @@ func (d *MockErrorDatabase) Update(params interface{}) error {
 }
 
 func (d *MockErrorDatabase) Read(id string) (*models.Resource, error) {
+	return nil, errors.New("Broken")
+}
+
+type MockErrorStorage struct{}
+
+func NewMockErrorStorage() storage.Storage {
+	return &MockErrorStorage{}
+}
+
+func (d *MockErrorStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
 	return nil, errors.New("Broken")
 }
