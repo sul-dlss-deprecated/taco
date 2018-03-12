@@ -1,16 +1,10 @@
 package resource
 
 import (
-	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
-func Create(database *db.Database, id string, params operations.DepositResourceParams) error {
-	err := db.Insert(database, loadParams(id, params))
-	return err
-}
-
-func loadParams(id string, params operations.DepositResourceParams) interface{} {
+func LoadParams(id string, params operations.DepositResourceParams) interface{} {
 	// NOTE: This section will be replaced by DataUtils
 	return map[string]interface{}{
 		"id":        id,
