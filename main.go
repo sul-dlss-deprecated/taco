@@ -8,6 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/kinesis"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
@@ -15,6 +17,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/handlers"
 	"github.com/sul-dlss-labs/taco/middleware"
+	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
 )
 
@@ -39,8 +42,11 @@ func main() {
 		Connection: connectToStream(),
 		StreamName: tacoServer.config.DepositStreamName,
 	}
-
-	tacoServer.server = createServer(database, stream)
+	storage := &storage.S3BucketStorage{
+		Uploader:     connectToStorage(),
+		S3BucketName: tacoServer.config.S3BucketName,
+	}
+	tacoServer.server = createServer(database, stream, storage)
 
 	//	storage := storage.NewS3Bucket(config, awsSession)
 	//	stream := streaming.NewKinesisStream(config, awsSession)
@@ -60,8 +66,21 @@ func connectToStream() *kinesis.Kinesis {
 	return kinesis.New(tacoServer.awsSession, &aws.Config{Endpoint: aws.String(tacoServer.config.KinesisEndpoint)})
 }
 
-func createServer(database db.Database, stream streaming.Stream) *restapi.Server {
-	api := handlers.BuildAPI(database, stream)
+// NewS3Bucket creates a new storage adapter that uses S3 bucket storage to
+// actually store the files
+func connectToStorage() *s3manager.Uploader {
+	forcePath := true // This is required for localstack
+	s3Svc := s3.New(tacoServer.awsSession, &aws.Config{
+		Endpoint:         aws.String(tacoServer.config.S3Endpoint),
+		S3ForcePathStyle: &forcePath,
+	})
+	return s3manager.NewUploaderWithClient(s3Svc)
+
+	// return &S3BucketStorage{config: config, uploader: uploader}
+}
+
+func createServer(database db.Database, stream streaming.Stream, storage storage.Storage) *restapi.Server {
+	api := handlers.BuildAPI(database, stream, storage)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 	defer server.Shutdown()
