@@ -5,22 +5,21 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/resource"
 )
 
 // NewRetrieveResource will query DynamoDB with ID for Resource JSON
-func NewRetrieveResource(database *db.Database) operations.RetrieveResourceHandler {
+func NewRetrieveResource(database db.Database) operations.RetrieveResourceHandler {
 	return &retrieveResource{database: database}
 }
 
 // resourceEntry handles a request for finding & returning an entry
 type retrieveResource struct {
-	database *db.Database
+	database db.Database
 }
 
 // Handle the delete entry request
 func (d *retrieveResource) Handle(params operations.RetrieveResourceParams) middleware.Responder {
-	item, err := resource.Read(d.database, params.ID)
+	item, err := d.database.Read(params.ID)
 	if err == nil {
 		// TODO: expand this mapping
 		response := buildResponse(item)

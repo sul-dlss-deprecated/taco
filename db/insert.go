@@ -6,7 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-func Insert(database *Database, params interface{}) error {
+// Insert create a row in dynamodb
+func (database *DynamodbDatabase) Insert(params interface{}) error {
 	row, err := dynamodbattribute.MarshalMap(params)
 
 	if err != nil {

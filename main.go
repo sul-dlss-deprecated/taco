@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/go-openapi/loads"
 	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
@@ -20,7 +19,6 @@ import (
 type Taco struct {
 	config     *config.Config
 	server     *restapi.Server
-	database   *db.Database
 	awsSession *session.Session
 	api        *operations.TacoAPI
 }
@@ -32,11 +30,11 @@ func main() {
 	// Initialize our global struct
 	tacoServer.config = config.NewConfig()
 	tacoServer.awsSession = newAwsSession()
-	tacoServer.database = &db.Database{
+	database := &db.DynamodbDatabase{
 		Connection: connectToDatabase(),
 		Table:      tacoServer.config.ResourceTableName,
 	}
-	tacoServer.api = buildAPI()
+	tacoServer.api = handlers.BuildAPI(database)
 	tacoServer.server = createServer()
 
 	//	storage := storage.NewS3Bucket(config, awsSession)
@@ -63,32 +61,12 @@ func createServer() *restapi.Server {
 	return server
 }
 
-// BuildAPI create new service API
-func buildAPI() *operations.TacoAPI {
-	api := operations.NewTacoAPI(swaggerSpec())
-	api.RetrieveResourceHandler = handlers.NewRetrieveResource(tacoServer.database)
-	api.DepositResourceHandler = handlers.NewDepositResource(tacoServer.database)
-	//	api.UpdateResourceHandler = handlers.NewUpdateResource()
-	//	api.DepositFileHandler = handlers.NewDepositFile()
-	api.HealthCheckHandler = handlers.NewHealthCheck()
-	return api
-}
-
 func addMiddleware() http.Handler {
 	return alice.New(
 		middleware.NewHoneyBadgerMW(),
 		middleware.NewRecoveryMW(),
 		middleware.NewRequestLoggerMW(),
 	).Then(tacoServer.api.Serve(nil))
-}
-
-func swaggerSpec() *loads.Document {
-	// load embedded swagger file
-	swaggerSpec, err := loads.Analyzed(restapi.SwaggerJSON, "")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return swaggerSpec
 }
 
 func newAwsSession() *session.Session {
