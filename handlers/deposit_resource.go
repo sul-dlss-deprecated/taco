@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -24,7 +22,6 @@ type depositResource struct {
 
 // Handle the delete entry request
 func (d *depositResource) Handle(params operations.DepositResourceParams) middleware.Responder {
-	fmt.Printf("%+v\n", params)
 	/*
 		validator := validators.NewDepositResourceValidator(repository)
 		if err := validator.ValidateResource(params.Payload); err != nil {
@@ -33,7 +30,6 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 	*/
 
 	resourceID, err := identifier.NewService().Mint()
-	fmt.Printf("resourceID: %s\n", resourceID)
 	if err != nil {
 		panic(err)
 	}
