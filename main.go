@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/justinas/alice"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
@@ -14,6 +15,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/handlers"
 	"github.com/sul-dlss-labs/taco/middleware"
+	"github.com/sul-dlss-labs/taco/streaming"
 )
 
 type Taco struct {
@@ -33,7 +35,12 @@ func main() {
 		Connection: connectToDatabase(),
 		Table:      tacoServer.config.ResourceTableName,
 	}
-	tacoServer.server = createServer(database)
+	stream := &streaming.KinesisStream{
+		Connection: connectToStream(),
+		StreamName: tacoServer.config.DepositStreamName,
+	}
+
+	tacoServer.server = createServer(database, stream)
 
 	//	storage := storage.NewS3Bucket(config, awsSession)
 	//	stream := streaming.NewKinesisStream(config, awsSession)
@@ -49,8 +56,12 @@ func connectToDatabase() *dynamodb.DynamoDB {
 	return dynamodb.New(tacoServer.awsSession, dynamoConfig)
 }
 
-func createServer(database db.Database) *restapi.Server {
-	api := handlers.BuildAPI(database)
+func connectToStream() *kinesis.Kinesis {
+	return kinesis.New(tacoServer.awsSession, &aws.Config{Endpoint: aws.String(tacoServer.config.KinesisEndpoint)})
+}
+
+func createServer(database db.Database, stream streaming.Stream) *restapi.Server {
+	api := handlers.BuildAPI(database, stream)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 	defer server.Shutdown()

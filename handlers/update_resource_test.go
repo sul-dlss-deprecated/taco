@@ -24,7 +24,7 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(handler(repo),
+		Run(handler(repo, NewMockStream("")),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 			})
@@ -43,7 +43,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(handler(NewMockDatabase(nil)),
+		Run(handler(NewMockDatabase(nil), NewMockStream("")),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})
@@ -52,7 +52,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
-		Run(handler(NewMockDatabase(nil)),
+		Run(handler(NewMockDatabase(nil), NewMockStream("")),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})

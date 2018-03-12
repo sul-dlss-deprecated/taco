@@ -11,7 +11,7 @@ import (
 func TestCreateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(nil)
-
+	stream := NewMockStream("")
 	r.POST("/v1/resource").
 		SetJSON(gofight.D{
 			"id":       "oo000oo0001",
@@ -22,7 +22,7 @@ func TestCreateResourceHappyPath(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(handler(repo),
+		Run(handler(repo, stream),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
@@ -37,7 +37,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			"id":    "oo000oo0001",
 			"title": "My work",
 		}).
-		Run(handler(NewMockDatabase(nil)),
+		Run(handler(NewMockDatabase(nil), NewMockStream("")),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
@@ -55,7 +55,7 @@ func TestCreateResourceSemanticallyValid(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(handler(NewMockDatabase(nil)),
+		Run(handler(NewMockDatabase(nil), NewMockStream("")),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
@@ -75,7 +75,7 @@ func TestCreateResourceFailure(t *testing.T) {
 					"preserve": true,
 					"publish":  true,
 					"sourceId": "bib12345678"}).
-				Run(handler(NewMockErrorDatabase()),
+				Run(handler(NewMockErrorDatabase(), NewMockStream("")),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }
