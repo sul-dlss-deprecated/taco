@@ -1,32 +1,13 @@
 package resource
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
 func Create(database *db.Database, id string, params operations.DepositResourceParams) error {
-	row, err := dynamodbattribute.MarshalMap(loadParams(id, params))
-
-	if err != nil {
-		return err
-	}
-
-	input := &dynamodb.PutItemInput{
-		Item:      row,
-		TableName: aws.String(database.Table),
-	}
-
-	_, err = database.Connection.PutItem(input)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	err := db.Insert(database, loadParams(id, params))
+	return err
 }
 
 func loadParams(id string, params operations.DepositResourceParams) interface{} {
