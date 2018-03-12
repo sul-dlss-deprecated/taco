@@ -20,7 +20,6 @@ type Taco struct {
 	config     *config.Config
 	server     *restapi.Server
 	awsSession *session.Session
-	api        *operations.TacoAPI
 }
 
 var tacoServer Taco
@@ -34,8 +33,7 @@ func main() {
 		Connection: connectToDatabase(),
 		Table:      tacoServer.config.ResourceTableName,
 	}
-	tacoServer.api = handlers.BuildAPI(database)
-	tacoServer.server = createServer()
+	tacoServer.server = createServer(database)
 
 	//	storage := storage.NewS3Bucket(config, awsSession)
 	//	stream := streaming.NewKinesisStream(config, awsSession)
@@ -51,22 +49,15 @@ func connectToDatabase() *dynamodb.DynamoDB {
 	return dynamodb.New(tacoServer.awsSession, dynamoConfig)
 }
 
-func createServer() *restapi.Server {
-	server := restapi.NewServer(tacoServer.api)
-	server.SetHandler(addMiddleware())
+func createServer(database db.Database) *restapi.Server {
+	api := handlers.BuildAPI(database)
+	server := restapi.NewServer(api)
+	server.SetHandler(BuildHandler(api))
 	defer server.Shutdown()
 
 	// set the port this service will be run on
 	server.Port = tacoServer.config.Port
 	return server
-}
-
-func addMiddleware() http.Handler {
-	return alice.New(
-		middleware.NewHoneyBadgerMW(),
-		middleware.NewRecoveryMW(),
-		middleware.NewRequestLoggerMW(),
-	).Then(tacoServer.api.Serve(nil))
 }
 
 func newAwsSession() *session.Session {
