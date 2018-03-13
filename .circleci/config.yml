@@ -47,7 +47,7 @@ jobs:
             --region localstack
       - run:
           name: Start server
-          command: go run cmd/tacod/main.go
+          command: go run main.go
           background: true
       - run:
           name: wait for server
