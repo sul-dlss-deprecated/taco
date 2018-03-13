@@ -48,9 +48,6 @@ func main() {
 	}
 	tacoServer.server = createServer(database, stream, storage)
 
-	//	storage := storage.NewS3Bucket(config, awsSession)
-	//	stream := streaming.NewKinesisStream(config, awsSession)
-
 	// serve API
 	if err := tacoServer.server.Serve(); err != nil {
 		log.Fatalln(err)
