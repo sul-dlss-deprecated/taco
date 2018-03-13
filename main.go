@@ -72,8 +72,6 @@ func connectToStorage() *s3manager.Uploader {
 		S3ForcePathStyle: &forcePath,
 	})
 	return s3manager.NewUploaderWithClient(s3Svc)
-
-	// return &S3BucketStorage{config: config, uploader: uploader}
 }
 
 func createServer(database db.Database, stream streaming.Stream, storage storage.Storage) *restapi.Server {
