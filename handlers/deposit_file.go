@@ -11,6 +11,7 @@ import (
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/uploaded"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
 const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
@@ -28,12 +29,11 @@ type depositFileEntry struct {
 
 // Handle the deposit file request
 func (d *depositFileEntry) Handle(params operations.DepositFileParams) middleware.Responder {
-	/*
-		validator := validators.NewDepositFileValidator(d.rt.Repository())
-		if err := validator.ValidateResource(params.Upload.Header); err != nil {
-			return operations.NewDepositFileInternalServerError() // TODO: need a better error
-		}
-	*/
+	validator := validators.NewDepositFileValidator(d.database)
+	if err := validator.ValidateResource(params.Upload.Header); err != nil {
+		return operations.NewDepositFileInternalServerError() // TODO: need a better error
+	}
+
 	id, err := identifier.NewService().Mint()
 	if err != nil {
 		panic(err)
