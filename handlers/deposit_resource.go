@@ -8,6 +8,7 @@ import (
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/resource"
 	"github.com/sul-dlss-labs/taco/streaming"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
@@ -23,12 +24,10 @@ type depositResource struct {
 
 // Handle the delete entry request
 func (d *depositResource) Handle(params operations.DepositResourceParams) middleware.Responder {
-	/*
-		validator := validators.NewDepositResourceValidator(repository)
-		if err := validator.ValidateResource(params.Payload); err != nil {
-			return operations.NewDepositResourceUnprocessableEntity()
-		}
-	*/
+	validator := validators.NewDepositResourceValidator(d.database)
+	if err := validator.ValidateResource(params.Payload); err != nil {
+		return operations.NewDepositResourceUnprocessableEntity()
+	}
 
 	resourceID, err := identifier.NewService().Mint()
 	if err != nil {
