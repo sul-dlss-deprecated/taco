@@ -21,6 +21,7 @@ type S3BucketStorage struct {
 
 // UploadFile stores a file into S3
 func (d *S3BucketStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
+	log.Printf("Here in UploadFile")
 	contentDisposition := fmt.Sprintf("attachment; filename=\"%s\"", file.Filename)
 	// Upload input parameters
 	upParams := &s3manager.UploadInput{
