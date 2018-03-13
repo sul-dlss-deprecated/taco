@@ -2,7 +2,6 @@ package storage
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/sul-dlss-labs/taco/uploaded"
@@ -21,7 +20,6 @@ type S3BucketStorage struct {
 
 // UploadFile stores a file into S3
 func (d *S3BucketStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
-	log.Printf("Here in UploadFile")
 	contentDisposition := fmt.Sprintf("attachment; filename=\"%s\"", file.Filename)
 	// Upload input parameters
 	upParams := &s3manager.UploadInput{
@@ -34,7 +32,6 @@ func (d *S3BucketStorage) UploadFile(id string, file *uploaded.File) (*string, e
 
 	result, err := d.Uploader.Upload(upParams)
 
-	log.Printf("Uploaded file!: %v", result)
 	if err != nil {
 		return nil, err
 	}
