@@ -37,7 +37,7 @@ Some agreements laid out by the development team are listed in the [Development 
 ## Running the Go Code locally without a build
 
 ```shell
-$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run cmd/tacod/main.go
+$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
 ```
 
 Note: we explain the AWS keys usage below.
@@ -65,7 +65,7 @@ $ docker-compose down
 This will create a binary in your path that you can then run the application with.
 
 ```shell
-$ go build -o tacod cmd/tacod/main.go
+$ go build -o tacod main.go
 $ ./tacod
 ```
 
