@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -63,16 +61,4 @@ func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, p
 		"publish":   params.Payload.Publish,
 		"sourceid":  params.Payload.SourceID,
 	}
-}
-
-func (d *updateResourceEntry) addToStream(id *string) error {
-	message, err := json.Marshal(id)
-	if err != nil {
-		return err
-	}
-
-	if err := d.stream.SendMessage(string(message)); err != nil {
-		return err
-	}
-	return nil
 }
