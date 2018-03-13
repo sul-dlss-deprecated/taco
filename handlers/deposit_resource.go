@@ -6,7 +6,6 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/resource"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
 )
@@ -34,7 +33,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 		panic(err)
 	}
 
-	err = d.database.Insert(resource.LoadParams(resourceID, params))
+	err = d.database.Insert(d.loadParams(resourceID, params))
 	if err != nil {
 		// TODO: handle this with an error response
 		panic(err)
@@ -47,4 +46,18 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 
 	response := &models.ResourceResponse{ID: resourceID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
+}
+
+func (d *depositResource) loadParams(id string, params operations.DepositResourceParams) interface{} {
+	// NOTE: This section will be replaced by DataUtils
+	return map[string]interface{}{
+		"id":        id,
+		"attype":    params.Payload.AtType,
+		"atcontext": params.Payload.AtContext,
+		"access":    params.Payload.Access,
+		"label":     params.Payload.Label,
+		"preserve":  params.Payload.Preserve,
+		"publish":   params.Payload.Publish,
+		"sourceid":  params.Payload.SourceID,
+	}
 }
