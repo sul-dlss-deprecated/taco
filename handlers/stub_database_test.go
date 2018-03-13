@@ -70,7 +70,9 @@ func (s *MockStream) SendMessage(message string) error {
 }
 
 func (s *MockStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
-	return nil, nil
+	s.CreatedFiles = append(s.CreatedFiles, file)
+	path := "s3FileLocation"
+	return &path, nil
 }
 
 type MockErrorDatabase struct {
