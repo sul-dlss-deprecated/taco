@@ -6,11 +6,10 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/justinas/alice"
+	"github.com/sul-dlss-labs/taco/aws_session"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
@@ -33,13 +32,13 @@ func main() {
 
 	// Initialize our global struct
 	tacoServer.config = config.NewConfig()
-	tacoServer.awsSession = newAwsSession()
+	tacoServer.awsSession = aws_session.Connect(tacoServer.config.AwsDisableSSL)
 	database := &db.DynamodbDatabase{
-		Connection: connectToDatabase(),
+		Connection: db.Connect(tacoServer.awsSession, tacoServer.config.DynamodbEndpoint),
 		Table:      tacoServer.config.ResourceTableName,
 	}
 	stream := &streaming.KinesisStream{
-		Connection: connectToStream(),
+		Connection: streaming.Connect(tacoServer.awsSession, tacoServer.config.KinesisEndpoint),
 		StreamName: tacoServer.config.DepositStreamName,
 	}
 	storage := &storage.S3BucketStorage{
@@ -52,15 +51,6 @@ func main() {
 	if err := tacoServer.server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
-}
-
-func connectToDatabase() *dynamodb.DynamoDB {
-	dynamoConfig := &aws.Config{Endpoint: aws.String(tacoServer.config.DynamodbEndpoint)}
-	return dynamodb.New(tacoServer.awsSession, dynamoConfig)
-}
-
-func connectToStream() *kinesis.Kinesis {
-	return kinesis.New(tacoServer.awsSession, &aws.Config{Endpoint: aws.String(tacoServer.config.KinesisEndpoint)})
 }
 
 // NewS3Bucket creates a new storage adapter that uses S3 bucket storage to
@@ -83,12 +73,6 @@ func createServer(database db.Database, stream streaming.Stream, storage storage
 	// set the port this service will be run on
 	server.Port = tacoServer.config.Port
 	return server
-}
-
-func newAwsSession() *session.Session {
-	return session.Must(session.NewSession(&aws.Config{
-		DisableSSL: aws.Bool(tacoServer.config.AwsDisableSSL),
-	}))
 }
 
 // BuildHandler sets up the middleware that wraps the API

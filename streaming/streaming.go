@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 )
 
@@ -17,6 +18,9 @@ type KinesisStream struct {
 	Connection *kinesis.Kinesis
 }
 
+func Connect(session *session.Session, kinesisEndpoint string) *kinesis.Kinesis {
+	return kinesis.New(session, &aws.Config{Endpoint: aws.String(kinesisEndpoint)})
+}
 func (d KinesisStream) SendMessage(message string) error {
 	streams, err := d.Connection.DescribeStream(&kinesis.DescribeStreamInput{StreamName: &d.StreamName})
 	if err != nil {

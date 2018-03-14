@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -21,6 +22,11 @@ type Database interface {
 type DynamodbDatabase struct {
 	Connection *dynamodb.DynamoDB
 	Table      string
+}
+
+func Connect(session *session.Session, dynamodbEndpoint string) *dynamodb.DynamoDB {
+	dynamoConfig := &aws.Config{Endpoint: aws.String(dynamodbEndpoint)}
+	return dynamodb.New(session, dynamoConfig)
 }
 
 func (database DynamodbDatabase) Read(id string) (*models.Resource, error) {
