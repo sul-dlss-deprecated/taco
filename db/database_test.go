@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/taco/aws_session"
 	"github.com/sul-dlss-labs/taco/config"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 func TestSaveAndRetrieve(t *testing.T) {
@@ -14,7 +15,7 @@ func TestSaveAndRetrieve(t *testing.T) {
 	}
 	id := "9999"
 	database := initDatabase()
-	resource := Resource{
+	resource := datautils.Resource{
 		"id":    id,
 		"label": "Hello world",
 	}

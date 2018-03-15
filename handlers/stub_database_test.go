@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
@@ -24,12 +25,12 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 }
 
 type MockDatabase struct {
-	record           *db.Resource
-	CreatedResources []db.Resource
+	record           *datautils.Resource
+	CreatedResources []datautils.Resource
 }
 
-func NewMockDatabase(record *db.Resource) db.Database {
-	return &MockDatabase{CreatedResources: []db.Resource{}, record: record}
+func NewMockDatabase(record *datautils.Resource) db.Database {
+	return &MockDatabase{CreatedResources: []datautils.Resource{}, record: record}
 }
 
 type MockStream struct {
@@ -48,19 +49,19 @@ func NewMockStorage() storage.Storage {
 	return &MockStorage{CreatedFiles: []*uploaded.File{}}
 }
 
-func (d *MockDatabase) Insert(params db.Resource) error {
+func (d *MockDatabase) Insert(params datautils.Resource) error {
 	d.CreatedResources = append(d.CreatedResources, params)
 	return nil
 }
 
-func (d *MockDatabase) Read(id string) (*db.Resource, error) {
+func (d *MockDatabase) Read(id string) (*datautils.Resource, error) {
 	if d.record != nil {
 		return d.record, nil
 	}
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) Update(params db.Resource) error {
+func (d *MockDatabase) Update(params datautils.Resource) error {
 	return nil
 }
 
@@ -81,15 +82,15 @@ func NewMockErrorDatabase() db.Database {
 	return &MockErrorDatabase{}
 }
 
-func (d *MockErrorDatabase) Insert(params db.Resource) error {
+func (d *MockErrorDatabase) Insert(params datautils.Resource) error {
 	return errors.New("Broken")
 }
 
-func (d *MockErrorDatabase) Update(params db.Resource) error {
+func (d *MockErrorDatabase) Update(params datautils.Resource) error {
 	return nil
 }
 
-func (d *MockErrorDatabase) Read(id string) (*db.Resource, error) {
+func (d *MockErrorDatabase) Read(id string) (*datautils.Resource, error) {
 	return nil, errors.New("Broken")
 }
 
