@@ -3,7 +3,8 @@
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
   "type": "object",
-  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
+  "not": {"required": ["currentVersion", "id", "version"]},
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -93,7 +94,8 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "isDescribedBy", "sdrPreserve"],
+      "required": ["sdrPreserve"],
+      "not": {"required": ["created", "isDescribedBy", "lastUpdated"]},
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -137,7 +139,7 @@
     "identification": {
       "description": "Identifying information for the Collection.",
       "type": "object",
-      "required": ["identifier"],
+      "not": {"required": ["identifier"]},
       "properties": {
         "catkey": {
           "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same collection being described by the bibliographic record.",

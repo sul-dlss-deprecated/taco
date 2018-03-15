@@ -7,11 +7,9 @@
     "name": "DOR",
     "sunetID": "DOR"
   },
-  "id": "dbe81f8a-20b5-11e2-9c4a-0050569b52d5",
   "label": "Schwend, Rudolf, Mayor of Zurich, ?-1391",
   "version": 1,
   "access": {
-    "access": "world",
     "copyright": "This work is copyrighted by the creator.",
     "download": "world",
     "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
