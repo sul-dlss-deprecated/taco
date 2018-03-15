@@ -105,7 +105,7 @@ $ curl -F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/fil
 
 ## Testing
 
-Testing and test driven development is closely tied to the entire technology stack. Review the [Testing Guidelines & Framework](./docs/testing.md) documentation.
+Testing and test driven development is outlined in the [Testing Guidelines & Framework](./docs/testing.md) documentation.
 
 ## API Code Structure
 
