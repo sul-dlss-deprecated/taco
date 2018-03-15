@@ -4,10 +4,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 // Insert create a row in dynamodb
-func (database *DynamodbDatabase) Insert(params Resource) error {
+func (database *DynamodbDatabase) Insert(params datautils.Resource) error {
 	row, err := dynamodbattribute.MarshalMap(params)
 
 	if err != nil {

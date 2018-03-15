@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
@@ -65,8 +66,8 @@ func (d *updateResourceEntry) updateResource(resourceID string, params models.Re
 	return d.database.Update(resource)
 }
 
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) db.Resource {
-	resource := db.NewResource(data.(map[string]interface{}))
+func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) datautils.Resource {
+	resource := datautils.NewResource(data.(map[string]interface{}))
 	// This ensures they have the same id in the document as in the query param
 	resource["id"] = resourceID
 	return resource

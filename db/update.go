@@ -4,10 +4,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 // Update - Replaces an existing resource in the repository
-func (h DynamodbDatabase) Update(resource Resource) error {
+func (h DynamodbDatabase) Update(resource datautils.Resource) error {
 	row, err := dynamodbattribute.MarshalMap(resource)
 
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
@@ -69,8 +70,8 @@ func (d *depositFileEntry) createFileResource(resourceID string, filename string
 	return d.database.Insert(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) db.Resource {
+func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) datautils.Resource {
 	// TODO: Expand here if we need to set any default properties on the file
 	identification := map[string]interface{}{"filename": filename, "identifier": resourceID, "sdrUUID": resourceID}
-	return db.Resource{"id": resourceID, "identification": identification}
+	return datautils.Resource{"id": resourceID, "identification": identification}
 }

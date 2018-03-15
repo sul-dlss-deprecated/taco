@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
@@ -58,8 +59,8 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositResource) loadParams(resourceID string, data models.Resource) db.Resource {
-	resource := db.NewResource(data.(map[string]interface{}))
+func (d *depositResource) loadParams(resourceID string, data models.Resource) datautils.Resource {
+	resource := datautils.NewResource(data.(map[string]interface{}))
 	resource["id"] = resourceID
 	return resource
 }

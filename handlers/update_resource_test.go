@@ -6,7 +6,7 @@ import (
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 var updateMessage = gofight.D{
@@ -39,7 +39,7 @@ var updateMessage = gofight.D{
 
 func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(&db.Resource{"id": "99"})
+	repo := NewMockDatabase(&datautils.Resource{"id": "99"})
 
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).

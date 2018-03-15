@@ -7,13 +7,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 // Database is a generic connection to a database.
 type Database interface {
-	Insert(Resource) error
-	Update(Resource) error
-	Read(id string) (*Resource, error)
+	Insert(datautils.Resource) error
+	Update(datautils.Resource) error
+	Read(id string) (*datautils.Resource, error)
 }
 
 // DynamodbDatabase Represents a connection to Dynamo
@@ -28,7 +29,7 @@ func Connect(session *session.Session, dynamodbEndpoint string) *dynamodb.Dynamo
 	return dynamodb.New(session, dynamoConfig)
 }
 
-func (database DynamodbDatabase) Read(id string) (*Resource, error) {
+func (database DynamodbDatabase) Read(id string) (*datautils.Resource, error) {
 	params := &dynamodb.GetItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
 			"id": {
@@ -42,7 +43,7 @@ func (database DynamodbDatabase) Read(id string) (*Resource, error) {
 	if err != nil {
 		return nil, err
 	}
-	var resource *Resource
+	var resource *datautils.Resource
 	if err := dynamodbattribute.UnmarshalMap(resp.Item, &resource); err != nil {
 		return nil, err
 	}
