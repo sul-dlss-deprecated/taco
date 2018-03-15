@@ -104,17 +104,8 @@ $ curl -F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/fil
 ```
 
 ## Testing
-The unit tests have no external dependencies and can be run like so:
-```shell
-$ go test -v ./... -short
-```
 
-The integration test depends on the taco binary and [Localstack](docs/localstack.md) running.  Once these conditions are met you can run the integration tests using:
-
-```shell
-$ go test test/integration_test.go
-```
-
+Testing and test driven development is closely tied to the entire technology stack. Review the [Testing Guidelines & Framework](./docs/testing.md) documentation.
 
 ## API Code Structure
 
