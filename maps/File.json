@@ -1,8 +1,9 @@
 {
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "File",
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -11,7 +12,8 @@
     "@type": {
       "description": "The content type of the File.",
       "type": "string",
-      "enum": ["http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
+      "enum": [
+        "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
     "currentVersion": {
@@ -20,17 +22,11 @@
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
-      "type": "object",
-      "properties": {
-        "name": {
-          "description": "Primary label or name for an Agent.",
-          "type": "string"
-        },
-        "sunetID": {
-          "description": "Stanford University NetID for the Agent.",
-          "type": "string"
-        }
-      }
+      "$ref": "Agent.json"
+    },
+    "filename": {
+      "description": "Filename for a file. Can be same as label.",
+      "type": "string"
     },
     "format": {
       "description": "Format of the File.",
@@ -65,11 +61,11 @@
       "type": "integer"
     },
     "precedingVersion": {
-      "description": "Preceding version for the Collection within SDR.",
+      "description": "Preceding version for the File within SDR.",
       "type": "string"
     },
     "followingVersion": {
-      "description": "Following version for the Collection within SDR.",
+      "description": "Following version for the File within SDR.",
       "type": "string"
     },
     "access": {
@@ -124,17 +120,7 @@
           "description": "The Agent (User, Group, Application, Department, other) that remediated this File in SDR.",
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "description": "Primary label or name for an Agent.",
-                "type": "string"
-              },
-              "sunetID": {
-                "description": "Stanford University NetID for the Agent.",
-                "type": "string"
-              }
-            }
+            "$ref": "Agent.json"
           }
         }
       }
@@ -154,7 +140,6 @@
         },
         "sdrUUID": {
           "type": "string",
-          "format": "uuid",
           "description": "UUID for the File within TACO."
         }
       }

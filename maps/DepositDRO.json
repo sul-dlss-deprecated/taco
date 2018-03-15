@@ -3,7 +3,8 @@
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
-  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
+  "not": {"required": ["currentVersion", "id", "version"]},
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -107,7 +108,8 @@
     "administrative": {
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
-      "required": ["created", "isDescribedBy", "sdrPreserve"],
+      "required": ["sdrPreserve"],
+      "not": {"required": ["created", "isDescribedBy"]},
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -151,7 +153,7 @@
     "identification": {
       "description": "Identifying information for the DRO.",
       "type": "object",
-      "required": ["identifier"],
+      "not": {"required": ["identifier"]},
       "properties": {
         "catkey": {
           "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same digital object being described by the bibliographic record.",
