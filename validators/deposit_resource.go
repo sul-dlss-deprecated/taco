@@ -1,6 +1,7 @@
 package validators
 
 import (
+	"path"
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema"
@@ -14,7 +15,8 @@ type DepositResourceValidator struct {
 }
 
 // NewDepositResourceValidator creates a new instance of DepositResourceValidator
-func NewDepositResourceValidator(repository db.Database, schemaPath string) *DepositResourceValidator {
+func NewDepositResourceValidator(repository db.Database, schemaDir string) *DepositResourceValidator {
+	schemaPath := path.Join(schemaDir, "DepositResource.json")
 	schema, err := jsonschema.Compile(schemaPath)
 	if err != nil {
 		panic(err)

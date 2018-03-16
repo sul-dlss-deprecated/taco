@@ -1,6 +1,7 @@
 package validators
 
 import (
+	"path"
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema"
@@ -14,7 +15,8 @@ type UpdateResourceValidator struct {
 }
 
 // NewUpdateResourceValidator creates a new instance of UpdateResourceValidator
-func NewUpdateResourceValidator(repository db.Database, schemaPath string) *UpdateResourceValidator {
+func NewUpdateResourceValidator(repository db.Database, schemaDir string) *UpdateResourceValidator {
+	schemaPath := path.Join(schemaDir, "Resource.json")
 	schema, err := jsonschema.Compile(schemaPath)
 	if err != nil {
 		panic(err)

@@ -10,7 +10,7 @@ import (
 
 func TestDepositResourceIsValid(t *testing.T) {
 	_, filename, _, _ := runtime.Caller(0)
-	schemaPath := path.Join(path.Dir(filename), "../maps/DepositResource.json")
+	schemaPath := path.Join(path.Dir(filename), "../maps/")
 	err := NewDepositResourceValidator(newMockRepository(), schemaPath).ValidateResource(testDepositResource())
 	assert.Nil(t, err)
 }

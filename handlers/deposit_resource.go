@@ -3,8 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"log"
-	"path"
-	"runtime"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -18,10 +16,7 @@ import (
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(database db.Database, stream streaming.Stream) operations.DepositResourceHandler {
-	_, filename, _, _ := runtime.Caller(0)
-	schemaPath := path.Join(path.Dir(filename), "../maps/DepositResource.json")
-	validator := validators.NewDepositResourceValidator(database, schemaPath)
+func NewDepositResource(database db.Database, stream streaming.Stream, validator *validators.DepositResourceValidator) operations.DepositResourceHandler {
 	return &depositResource{database: database, stream: stream, validator: validator}
 }
 

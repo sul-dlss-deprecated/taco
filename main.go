@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"path"
+	"runtime"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -45,7 +47,9 @@ func main() {
 		Uploader:     connectToStorage(),
 		S3BucketName: tacoServer.config.S3BucketName,
 	}
-	tacoServer.server = createServer(database, stream, storage)
+	_, filename, _, _ := runtime.Caller(0)
+	schemaDir := path.Join(path.Dir(filename), "maps/")
+	tacoServer.server = createServer(database, stream, storage, schemaDir)
 
 	// serve API
 	if err := tacoServer.server.Serve(); err != nil {
@@ -64,8 +68,8 @@ func connectToStorage() *s3manager.Uploader {
 	return s3manager.NewUploaderWithClient(s3Svc)
 }
 
-func createServer(database db.Database, stream streaming.Stream, storage storage.Storage) *restapi.Server {
-	api := handlers.BuildAPI(database, stream, storage)
+func createServer(database db.Database, stream streaming.Stream, storage storage.Storage, schemaDir string) *restapi.Server {
+	api := handlers.BuildAPI(database, stream, storage, schemaDir)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 	defer server.Shutdown()
