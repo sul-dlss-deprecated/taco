@@ -9,14 +9,17 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/storage"
 	"github.com/sul-dlss-labs/taco/streaming"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // BuildAPI create new service API
-func BuildAPI(database db.Database, stream streaming.Stream, storage storage.Storage) *operations.TacoAPI {
+func BuildAPI(database db.Database, stream streaming.Stream, storage storage.Storage, schemaDir string) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
-	api.DepositResourceHandler = NewDepositResource(database, stream)
-	api.UpdateResourceHandler = NewUpdateResource(database, stream)
+	depositValidator := validators.NewDepositResourceValidator(database, schemaDir)
+	api.DepositResourceHandler = NewDepositResource(database, stream, depositValidator)
+	updateValidator := validators.NewUpdateResourceValidator(database, schemaDir)
+	api.UpdateResourceHandler = NewUpdateResource(database, stream, updateValidator)
 	api.DepositFileHandler = NewDepositFile(database, storage)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api

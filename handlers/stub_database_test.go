@@ -3,6 +3,8 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"path"
+	"runtime"
 
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
@@ -20,7 +22,10 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 	if storage == nil {
 		storage = NewMockStorage()
 	}
-	return BuildAPI(database, stream, storage).Serve(nil)
+
+	_, filename, _, _ := runtime.Caller(0)
+	schemaDir := path.Join(path.Dir(filename), "../maps/")
+	return BuildAPI(database, stream, storage, schemaDir).Serve(nil)
 }
 
 type MockDatabase struct {
