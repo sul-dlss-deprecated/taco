@@ -61,6 +61,26 @@ func TestUpdateResourceNotFound(t *testing.T) {
 			})
 }
 
+func TestUpdateInvalidResource(t *testing.T) {
+	r := gofight.New()
+	r.PATCH("/v1/resource/100").
+		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetJSON(gofight.D{
+			"id":       "oo000oo0001",
+			"@context": "http://example.com", // This is not a valid context
+			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+			"access":   "world",
+			"label":    "My work",
+			"preserve": true,
+			"publish":  true,
+			"sourceId": "bib12345678"}).
+		Run(handler(nil, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
+				assert.Contains(t, r.Body.String(), "Validation Error")
+			})
+}
+
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").

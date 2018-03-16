@@ -2,22 +2,15 @@ package validators
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 )
 
-func testResource() string {
-	byt, err := ioutil.ReadFile("../examples/bs646cd8717.json")
-	if err != nil {
-		panic(err)
-	}
-	return string(byt)
-}
-
-func testDepositResource() string {
-	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+func testResource(file string) string {
+	byt, err := ioutil.ReadFile(fmt.Sprintf("../examples/%s", file))
 	if err != nil {
 		panic(err)
 	}

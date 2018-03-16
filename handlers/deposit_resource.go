@@ -33,8 +33,9 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 		panic(err)
 	}
 
-	if err := d.validator.ValidateResource(string(json[:])); err != nil {
-		return operations.NewDepositResourceUnprocessableEntity()
+	if errors := d.validator.ValidateResource(string(json[:])); errors != nil {
+		return operations.NewDepositResourceUnprocessableEntity().
+			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
 	resourceID, err := identifier.NewService().Mint()
