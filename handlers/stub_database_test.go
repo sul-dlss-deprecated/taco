@@ -61,7 +61,11 @@ func (d *MockDatabase) Read(id string) (*datautils.Resource, error) {
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) Update(params datautils.Resource) error {
+func (d *MockDatabase) UpdateString(resourceID string, field string, value string) error {
+	return nil
+}
+
+func (d *MockDatabase) UpdateBool(resourceID string, field string, value bool) error {
 	return nil
 }
 
@@ -86,8 +90,12 @@ func (d *MockErrorDatabase) Insert(params datautils.Resource) error {
 	return errors.New("Broken")
 }
 
-func (d *MockErrorDatabase) Update(params datautils.Resource) error {
-	return nil
+func (d *MockErrorDatabase) UpdateString(resourceID string, field string, value string) error {
+	return errors.New("Broken")
+}
+
+func (d *MockErrorDatabase) UpdateBool(resourceID string, field string, value bool) error {
+	return errors.New("Broken")
 }
 
 func (d *MockErrorDatabase) Read(id string) (*datautils.Resource, error) {

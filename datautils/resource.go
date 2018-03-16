@@ -28,6 +28,24 @@ func (d *Resource) GetS(key string) string {
 	return val
 }
 
+// GetB returns the bool value at key
+func (d *Resource) GetB(key string) bool {
+	if (*d)[key] == nil {
+		panic(fmt.Errorf("No key found for %s", key))
+	}
+	val := (*d)[key].(bool)
+	return val
+}
+
 func (d *Resource) String() string {
 	return fmt.Sprintf("<Resource id: '%s'>", d.ID())
+}
+
+// HasKey returns a boolean value:
+// false unless the key exists
+func (d *Resource) HasKey(key string) bool {
+	if (*d)[key] == nil {
+		return false
+	}
+	return true
 }
