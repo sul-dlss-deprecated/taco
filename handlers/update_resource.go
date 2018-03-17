@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"path"
 	"runtime"
@@ -50,12 +51,14 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	if err = d.compareAndUpdateResource(id, newResource, existingResource); err != nil {
-		panic(err)
-	}
-
-	if err = d.addToStream(id); err != nil {
-		panic(err)
+	// log.Printf("Version: %+v", string(newResource["version"]))
+	if !d.resourceVersionChanged(fmt.Sprintf("%s", newResource["version"]), existingResource.GetS("version")) {
+		if err = d.compareAndUpdateResource(id, newResource, existingResource); err != nil {
+			panic(err)
+		}
+		if err = d.addToStream(id); err != nil {
+			panic(err)
+		}
 	}
 
 	response := map[string]interface{}{"id": id}
@@ -110,4 +113,11 @@ func (d *updateResourceEntry) compareAndUpdateResource(id string, newResource da
 	}
 
 	return err
+}
+
+func (d *updateResourceEntry) resourceVersionChanged(newResourceVersion string, existingResourceVersion string) bool {
+	if newResourceVersion == existingResourceVersion {
+		return false
+	}
+	return true
 }
