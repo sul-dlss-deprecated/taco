@@ -150,6 +150,13 @@ $ mkdir generated
 $ swagger generate server -t generated --exclude-main
 ```
 
+### To generate the validator ```
+```shell
+go generate
+```
+This will serialize all the json in the `maps/` directory into `validators/maps.go`
+
+
 ### Non-generated code
 
 Anything outside of `generated/` is our own code and should not be touched by a regeneration of the API code from the Swagger specification.

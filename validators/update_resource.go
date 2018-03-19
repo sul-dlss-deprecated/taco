@@ -14,11 +14,9 @@ type UpdateResourceValidator struct {
 }
 
 // NewUpdateResourceValidator creates a new instance of UpdateResourceValidator
-func NewUpdateResourceValidator(repository db.Database, schemaPath string) *UpdateResourceValidator {
-	schema, err := jsonschema.Compile(schemaPath)
-	if err != nil {
-		panic(err)
-	}
+func NewUpdateResourceValidator(repository db.Database) *UpdateResourceValidator {
+	files := []string{"Resource.json", "Collection.json", "Sequence.json", "Agent.json", "DRO.json", "Fileset.json", "File.json"}
+	schema := BuildSchema("Resource.json", files)
 	return &UpdateResourceValidator{repository: repository,
 		schema: schema}
 }

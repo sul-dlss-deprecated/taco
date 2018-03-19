@@ -231,6 +231,16 @@
   version = "v1.0.0"
 
 [[projects]]
+  name = "github.com/santhosh-tekuri/jsonschema"
+  packages = [
+    ".",
+    "formats",
+    "loader"
+  ]
+  revision = "9d6256e0d97f9102cb6cfbafeb74907e94017a3f"
+  version = "v1.0.2"
+
+[[projects]]
   name = "github.com/shirou/gopsutil"
   packages = [
     "internal/common",
@@ -358,6 +368,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "35f1ce97a642169d6e959d03fc4218ea6dc1f7921a71aafaf080287b697e3310"
+  inputs-digest = "683c3591cd58d4422f20a65957d55197e60e44eef31f4ba65b001b7a2f05f7dd"
   solver-name = "gps-cdcl"
   solver-version = 1
