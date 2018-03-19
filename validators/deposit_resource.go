@@ -14,11 +14,9 @@ type DepositResourceValidator struct {
 }
 
 // NewDepositResourceValidator creates a new instance of DepositResourceValidator
-func NewDepositResourceValidator(repository db.Database, schemaPath string) *DepositResourceValidator {
-	schema, err := jsonschema.Compile(schemaPath)
-	if err != nil {
-		panic(err)
-	}
+func NewDepositResourceValidator(repository db.Database) *DepositResourceValidator {
+	files := []string{"DepositResource.json", "DepositCollection.json", "Sequence.json", "Agent.json", "DepositDRO.json", "DepositFileset.json", "DepositFile.json"}
+	schema := BuildSchema("DepositResource.json", files)
 	return &DepositResourceValidator{repository: repository, schema: schema}
 }
 

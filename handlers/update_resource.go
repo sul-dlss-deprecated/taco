@@ -3,8 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"log"
-	"path"
-	"runtime"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -16,18 +14,14 @@ import (
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(database db.Database, stream streaming.Stream) operations.UpdateResourceHandler {
-	_, filename, _, _ := runtime.Caller(0)
-	schemaPath := path.Join(path.Dir(filename), "../maps/Resource.json")
-	validator := validators.NewUpdateResourceValidator(database, schemaPath)
-
+func NewUpdateResource(database db.Database, stream streaming.Stream, validator validators.ResourceValidator) operations.UpdateResourceHandler {
 	return &updateResourceEntry{database: database, stream: stream, validator: validator}
 }
 
 type updateResourceEntry struct {
 	database  db.Database
 	stream    streaming.Stream
-	validator *validators.UpdateResourceValidator
+	validator validators.ResourceValidator
 }
 
 // Handle the update resource request
