@@ -39,12 +39,15 @@ var updateMessage = gofight.D{
 
 func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(&datautils.Resource{"id": "99"})
+	repo := NewMockDatabase(&datautils.Resource{
+		"id":    "99",
+		"@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+	})
 
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessage).
-		Run(handler(repo, NewMockStream(""), nil),
+		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 			})
@@ -55,7 +58,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessage).
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(NewMockDatabase(nil), nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})
@@ -64,7 +67,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(NewMockDatabase(nil), nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})

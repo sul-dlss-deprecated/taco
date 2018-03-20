@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -47,12 +46,12 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 	if err != nil {
 		panic(err)
 	}
-
-	if err = d.database.Insert(d.loadParams(resourceID, params.Payload)); err != nil {
+	resource := d.loadParams(resourceID, params.Payload)
+	if err = d.database.Insert(resource); err != nil {
 		panic(err)
 	}
 
-	if err := d.stream.SendMessage(resourceID); err != nil {
+	if err := d.stream.Send("deposit", &resource); err != nil {
 		panic(err)
 	}
 
@@ -64,15 +63,4 @@ func (d *depositResource) loadParams(resourceID string, data models.Resource) da
 	resource := datautils.NewResource(data.(map[string]interface{}))
 	resource["id"] = resourceID
 	return resource
-}
-
-func (d *depositResource) addToStream(id *string) error {
-	message, err := json.Marshal(id)
-	if err != nil {
-		return err
-	}
-	if d.stream == nil {
-		log.Printf("Stream is nil")
-	}
-	return d.stream.SendMessage(string(message))
 }

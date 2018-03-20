@@ -1,15 +1,20 @@
 package handlers
 
-import "github.com/sul-dlss-labs/taco/streaming"
+import (
+	"github.com/sul-dlss-labs/taco/datautils"
+	"github.com/sul-dlss-labs/taco/streaming"
+)
 
 type MockStream struct {
-	message string
+	Messages []*streaming.Message
 }
 
-func NewMockStream(message string) streaming.Stream {
-	return &MockStream{message: message}
+func NewMockStream() streaming.Stream {
+	return &MockStream{Messages: []*streaming.Message{}}
 }
 
-func (d *MockStream) SendMessage(message string) error {
+func (s *MockStream) Send(action string, resource *datautils.Resource) error {
+	message := streaming.NewMessage(action, resource)
+	s.Messages = append(s.Messages, message)
 	return nil
 }

@@ -16,7 +16,7 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 		database = NewMockDatabase(nil)
 	}
 	if stream == nil {
-		stream = NewMockStream("")
+		stream = NewMockStream()
 	}
 	if storage == nil {
 		storage = NewMockStorage()
@@ -32,7 +32,10 @@ type MockDatabase struct {
 }
 
 func NewMockDatabase(record *datautils.Resource) db.Database {
-	return &MockDatabase{CreatedResources: []datautils.Resource{}, record: record}
+	return &MockDatabase{
+		CreatedResources: []datautils.Resource{},
+		record:           record,
+	}
 }
 
 func (d *MockDatabase) Insert(params datautils.Resource) error {
