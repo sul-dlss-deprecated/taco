@@ -12,8 +12,8 @@ import (
 
 // Database is a generic connection to a database.
 type Database interface {
-	Insert(datautils.Resource) error
-	Update(datautils.Resource) error
+	Insert(*datautils.Resource) error
+	Update(*datautils.Resource) error
 	Read(id string) (*datautils.Resource, error)
 }
 
@@ -48,10 +48,10 @@ func (database DynamodbDatabase) Read(id string) (*datautils.Resource, error) {
 		return nil, errors.New("not found")
 	}
 
-	var resource *datautils.Resource
-	if err := dynamodbattribute.UnmarshalMap(resp.Item, &resource); err != nil {
+	var json datautils.JSONObject
+	if err := dynamodbattribute.UnmarshalMap(resp.Item, &json); err != nil {
 		return nil, err
 	}
 
-	return resource, nil
+	return datautils.NewResource(json), nil
 }

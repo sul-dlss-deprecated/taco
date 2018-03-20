@@ -26,5 +26,5 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams) midd
 		panic(err)
 	}
 
-	return operations.NewRetrieveResourceOK().WithPayload(resource)
+	return operations.NewRetrieveResourceOK().WithPayload(resource.JSON)
 }

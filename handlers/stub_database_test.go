@@ -28,14 +28,14 @@ func handler(database db.Database, stream streaming.Stream, storage storage.Stor
 
 type MockDatabase struct {
 	record           *datautils.Resource
-	CreatedResources []datautils.Resource
+	CreatedResources []*datautils.Resource
 }
 
 func NewMockDatabase(record *datautils.Resource) db.Database {
-	return &MockDatabase{CreatedResources: []datautils.Resource{}, record: record}
+	return &MockDatabase{CreatedResources: []*datautils.Resource{}, record: record}
 }
 
-func (d *MockDatabase) Insert(params datautils.Resource) error {
+func (d *MockDatabase) Insert(params *datautils.Resource) error {
 	d.CreatedResources = append(d.CreatedResources, params)
 	return nil
 }
@@ -47,7 +47,7 @@ func (d *MockDatabase) Read(id string) (*datautils.Resource, error) {
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) Update(params datautils.Resource) error {
+func (d *MockDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 
@@ -58,11 +58,11 @@ func NewMockErrorDatabase() db.Database {
 	return &MockErrorDatabase{}
 }
 
-func (d *MockErrorDatabase) Insert(params datautils.Resource) error {
+func (d *MockErrorDatabase) Insert(params *datautils.Resource) error {
 	return errors.New("Broken")
 }
 
-func (d *MockErrorDatabase) Update(params datautils.Resource) error {
+func (d *MockErrorDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 

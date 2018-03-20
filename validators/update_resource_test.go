@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	updateValidator = NewUpdateResourceValidator(newMockRepository())
+	updateValidator = NewUpdateResourceValidator(newMockRepository(nil))
 )
 
 func TestUpdateResourceIsValid(t *testing.T) {

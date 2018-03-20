@@ -8,8 +8,8 @@ import (
 )
 
 // Update - Replaces an existing resource in the repository
-func (h DynamodbDatabase) Update(resource datautils.Resource) error {
-	row, err := dynamodbattribute.MarshalMap(resource)
+func (h DynamodbDatabase) Update(resource *datautils.Resource) error {
+	row, err := dynamodbattribute.MarshalMap(resource.JSON)
 
 	if err != nil {
 		return err

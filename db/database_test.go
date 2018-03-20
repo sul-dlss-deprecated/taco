@@ -15,11 +15,11 @@ func TestSaveAndRetrieve(t *testing.T) {
 	}
 	id := "9999"
 	database := initDatabase()
-	resource := datautils.Resource{
+	json := datautils.JSONObject{
 		"id":    id,
 		"label": "Hello world",
 	}
-	err := database.Insert(resource)
+	err := database.Insert(datautils.NewResource(json))
 	assert.Nil(t, err)
 }
 

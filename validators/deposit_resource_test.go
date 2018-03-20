@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	depositValidator = NewDepositResourceValidator(newMockRepository())
+	depositValidator = NewDepositResourceValidator(newMockRepository(nil))
 )
 
 func TestDepositResourceIsValid(t *testing.T) {

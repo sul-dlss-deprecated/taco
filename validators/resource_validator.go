@@ -1,8 +1,11 @@
 package validators
 
-import "github.com/sul-dlss-labs/taco/generated/models"
+import (
+	"github.com/sul-dlss-labs/taco/datautils"
+	"github.com/sul-dlss-labs/taco/generated/models"
+)
 
-// ResourceValidator validates that a request body is acceptable
+// ResourceValidator is the interface for validators that check the resources format
 type ResourceValidator interface {
-	ValidateResource(body string) *models.ErrorResponseErrors
+	ValidateResource(resource *datautils.Resource) *models.ErrorResponseErrors
 }
