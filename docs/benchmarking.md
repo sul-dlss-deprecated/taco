@@ -13,7 +13,7 @@ $ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main
 
 ## Benchmark 1000 create resource requests:
 ```
-ab -T application/json -p examples/request.json -n 1000 http://localhost:8080/v1/resource
+ab -T application/json -p examples/create-bs646cd8717.json -n 1000 http://localhost:8080/v1/resource
 ```
 
 ## Benchmark 1000 GET requests:
@@ -36,7 +36,7 @@ fcrepo_wrapper
 
 Then start the benchmark in a new shell
 ```
-ab -p examples/request.json -n 1000 http://localhost:8984/rest
+ab -p examples/create-bs646cd8717.json -n 1000 http://localhost:8984/rest
 ```
 
 ### DOR Services / Fedora 3
