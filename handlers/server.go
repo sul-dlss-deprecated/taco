@@ -17,13 +17,42 @@ import (
 func BuildAPI(database db.Database, stream streaming.Stream, storage storage.Storage, identifierService identifier.Service) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
-	depositValidator := validators.NewDepositResourceValidator(database)
-	api.DepositResourceHandler = NewDepositResource(database, stream, depositValidator, identifierService)
-	updateValidator := validators.NewUpdateResourceValidator(database)
-	api.UpdateResourceHandler = NewUpdateResource(database, stream, updateValidator)
+	api.DepositResourceHandler = NewDepositResource(database, stream, depositValidator(database), identifierService)
+	api.UpdateResourceHandler = NewUpdateResource(database, stream, updateValidator(database))
 	api.DepositFileHandler = NewDepositFile(database, storage, identifierService)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api
+}
+
+// Builds the validator for deposit resource requests
+func depositValidator(database db.Database) validators.ResourceValidator {
+	return validators.NewCompositeResourceValidator(
+		[]validators.ResourceValidator{
+			validators.NewDepositResourceValidator(database),
+			structuralValidator(database),
+		})
+}
+
+// Builds the validator for update resource requests
+func updateValidator(database db.Database) validators.ResourceValidator {
+	return validators.NewCompositeResourceValidator(
+		[]validators.ResourceValidator{
+			validators.NewUpdateResourceValidator(database),
+			structuralValidator(database),
+		})
+}
+
+// Builds the validator for structural validations.
+// This is suitable for both create and update requests
+func structuralValidator(database db.Database) validators.ResourceValidator {
+	return validators.NewCompositeResourceValidator(
+		[]validators.ResourceValidator{
+			validators.NewFileStructuralValidator(database),
+			validators.NewFilesetStructuralValidator(database),
+			validators.NewDROStructuralValidator(database),
+			validators.NewCollectionStructuralValidator(database),
+			validators.NewSequenceValidator(),
+		})
 }
 
 func swaggerSpec() *loads.Document {

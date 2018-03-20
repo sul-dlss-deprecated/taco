@@ -1,9 +1,8 @@
 package validators
 
 import (
-	"strings"
-
 	"github.com/santhosh-tekuri/jsonschema"
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 )
@@ -23,9 +22,8 @@ func NewUpdateResourceValidator(repository db.Database) ResourceValidator {
 }
 
 // ValidateResource validates that a Resource models is semantically acceptable
-func (d *UpdateResourceValidator) ValidateResource(body string) *models.ErrorResponseErrors {
-	f := strings.NewReader(body)
-	if err := d.schema.Validate(f); err != nil {
+func (d *UpdateResourceValidator) ValidateResource(resource *datautils.Resource) *models.ErrorResponseErrors {
+	if err := d.schema.Validate(toReader(resource)); err != nil {
 		return buildErrors(err.(*jsonschema.ValidationError))
 	}
 	return nil

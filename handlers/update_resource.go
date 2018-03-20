@@ -26,17 +26,15 @@ type updateResourceEntry struct {
 
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
-	json, err := json.Marshal(params.Payload)
-	if err != nil {
-		panic(err)
-	}
-	if errors := d.validator.ValidateResource(string(json[:])); errors != nil {
+	id := params.ID
+	resource := d.persistableResourceFromParams(id, params.Payload)
+
+	if errors := d.validator.ValidateResource(resource); errors != nil {
 		return operations.NewUpdateResourceUnprocessableEntity().
 			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
-	id := params.ID
-	_, err = d.database.Read(id)
+	_, err := d.database.Read(id)
 	if err != nil {
 		if err.Error() == "not found" {
 			return operations.NewRetrieveResourceNotFound()
@@ -44,7 +42,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	if err = d.updateResource(id, params.Payload); err != nil {
+	if err = d.database.Update(resource); err != nil {
 		panic(err)
 	}
 
@@ -56,15 +54,10 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	return operations.NewUpdateResourceOK().WithPayload(response)
 }
 
-func (d *updateResourceEntry) updateResource(resourceID string, params models.Resource) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
-	return d.database.Update(resource)
-}
-
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) datautils.Resource {
+func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) *datautils.Resource {
 	resource := datautils.NewResource(data.(map[string]interface{}))
 	// This ensures they have the same id in the document as in the query param
-	resource["id"] = resourceID
+	resource.JSON["id"] = resourceID
 	return resource
 }
 

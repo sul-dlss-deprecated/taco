@@ -8,6 +8,6 @@ import (
 )
 
 func TestDepositFileIsValid(t *testing.T) {
-	err := NewDepositFileValidator(newMockRepository()).ValidateResource(&multipart.FileHeader{})
+	err := NewDepositFileValidator(newMockRepository(nil)).ValidateResource(&multipart.FileHeader{})
 	assert.Nil(t, err)
 }

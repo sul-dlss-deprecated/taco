@@ -34,12 +34,9 @@ type depositResource struct {
 
 // Handle the delete entry request
 func (d *depositResource) Handle(params operations.DepositResourceParams) middleware.Responder {
-	json, err := json.Marshal(params.Payload)
-	if err != nil {
-		panic(err)
-	}
+	resource := datautils.NewResource(params.Payload.(map[string]interface{}))
 
-	if errors := d.validator.ValidateResource(string(json[:])); errors != nil {
+	if errors := d.validator.ValidateResource(resource); errors != nil {
 		return operations.NewDepositResourceUnprocessableEntity().
 			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
@@ -48,8 +45,10 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 	if err != nil {
 		panic(err)
 	}
+	resource.JSON["id"] = resourceID
+	resource.JSON["version"] = 1
 
-	if err = d.database.Insert(d.loadParams(resourceID, params.Payload)); err != nil {
+	if err = d.database.Insert(resource); err != nil {
 		panic(err)
 	}
 
@@ -59,13 +58,6 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 
 	response := map[string]interface{}{"id": resourceID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
-}
-
-func (d *depositResource) loadParams(resourceID string, data models.Resource) datautils.Resource {
-	resource := datautils.NewResource(data.(map[string]interface{}))
-	resource["id"] = resourceID
-	resource["version"] = 1
-	return resource
 }
 
 func (d *depositResource) addToStream(id *string) error {

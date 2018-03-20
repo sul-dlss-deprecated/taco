@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"testing"
@@ -39,7 +40,7 @@ func TestCreateResource(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+	byt, err := ioutil.ReadFile("../examples/request.json")
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +72,7 @@ func TestUpdateResource(t *testing.T) {
 		t.Skip("skpping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+	byt, err := ioutil.ReadFile("../examples/request.json")
 	if err != nil {
 		panic(err)
 	}
@@ -175,9 +176,10 @@ func assertResourceResponse(res *http.Response, req *http.Request) error {
 func assertUpdatedResourceResponse(res *http.Response, req *http.Request) error {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(res.Body)
-
 	jsonLabel, _ := jsonparser.GetString(buf.Bytes(), "label")
 	if jsonLabel != "My updated SDR3 resource" {
+		log.Printf("Found %s", string(buf.Bytes()))
+
 		return errors.New("UpdateResource failure")
 	}
 	return nil

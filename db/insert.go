@@ -8,8 +8,8 @@ import (
 )
 
 // Insert create a row in dynamodb
-func (database *DynamodbDatabase) Insert(params datautils.Resource) error {
-	row, err := dynamodbattribute.MarshalMap(params)
+func (database *DynamodbDatabase) Insert(resource *datautils.Resource) error {
+	row, err := dynamodbattribute.MarshalMap(resource.JSON)
 
 	if err != nil {
 		return err
