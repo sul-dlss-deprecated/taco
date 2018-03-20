@@ -57,6 +57,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 func (d *depositResource) loadParams(resourceID string, data models.Resource) datautils.Resource {
 	resource := datautils.NewResource(data.(map[string]interface{}))
 	resource["id"] = resourceID
+	resource["version"] = 1
 	return resource
 }
 
