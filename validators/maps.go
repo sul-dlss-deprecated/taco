@@ -1376,6 +1376,7 @@ var (
     "structural": {
       "description": "Structural metadata for the File.",
       "type": "object",
+      "required": ["isContainedBy"],
       "properties": {
         "isContainedBy": {
           "description": "Fileset that contains this File.",
