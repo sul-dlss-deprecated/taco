@@ -23,6 +23,14 @@ func TestSaveAndRetrieve(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestReadNotFound(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+	_, err := initDatabase().Read("8888")
+	assert.NotNil(t, err)
+}
+
 func initDatabase() *DynamodbDatabase {
 	testConfig := config.NewConfig()
 	return &DynamodbDatabase{
