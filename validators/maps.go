@@ -432,6 +432,7 @@ var (
       "required": ["hasAgreement"],
       "properties": {
         "contains": {
+          "$comment": "This property is deprecated. Assert isContainedBy on the Fileset instead.",
           "description": "Filesets that contain the digital representations (Files) of the DRO.",
           "type": "array",
           "items": {
