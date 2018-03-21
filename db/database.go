@@ -43,13 +43,15 @@ func (database DynamodbDatabase) Read(id string) (*datautils.Resource, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if len(resp.Item) == 0 {
+		return nil, errors.New("not found")
+	}
+
 	var resource *datautils.Resource
 	if err := dynamodbattribute.UnmarshalMap(resp.Item, &resource); err != nil {
 		return nil, err
 	}
 
-	if resource.ID() == "" {
-		return nil, errors.New("not found")
-	}
 	return resource, nil
 }
