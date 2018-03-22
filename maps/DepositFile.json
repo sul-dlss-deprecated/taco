@@ -4,7 +4,13 @@
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
   "type": "object",
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
-  "not": {"required": ["currentVersion", "id", "version"]},
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",

@@ -471,7 +471,13 @@ var (
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
   "type": "object",
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
-  "not": {"required": ["currentVersion", "id", "version"]},
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -674,7 +680,13 @@ var (
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
-  "not": {"required": ["currentVersion", "id", "version"]},
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -917,7 +929,13 @@ var (
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
   "type": "object",
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
-  "not": {"required": ["currentVersion", "id", "version"]},
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -1082,7 +1100,13 @@ var (
   "description": "Relevant groupings of Files. Also called a File Grouping.",
   "type": "object",
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
-  "not": {"required": ["currentVersion", "id", "version"]},
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
