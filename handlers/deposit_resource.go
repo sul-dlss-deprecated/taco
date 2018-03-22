@@ -45,8 +45,8 @@ func (d *depositResource) Handle(params operations.DepositResourceParams) middle
 	if err != nil {
 		panic(err)
 	}
-	resource.JSON["id"] = resourceID
-	resource.JSON["version"] = 1
+
+	resource = resource.WithID(resourceID).WithVersion(1).WithCurrentVersion(true)
 
 	if err = d.database.Insert(resource); err != nil {
 		panic(err)

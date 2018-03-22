@@ -85,6 +85,29 @@ func (d *Resource) IsCollection() bool {
 	return contains(CollectionTypes, d.Type())
 }
 
+// CurrentVersion returns true if this is the current version
+func (d *Resource) CurrentVersion() bool {
+	return d.JSON.GetB("currentVersion")
+}
+
+// WithID sets the document's identifier
+func (d *Resource) WithID(id string) *Resource {
+	d.JSON["id"] = id
+	return d
+}
+
+// WithCurrentVersion sets the currentVersion flag
+func (d *Resource) WithCurrentVersion(flag bool) *Resource {
+	d.JSON["currentVersion"] = flag
+	return d
+}
+
+// WithVersion sets the version
+func (d *Resource) WithVersion(version int) *Resource {
+	d.JSON["version"] = version
+	return d
+}
+
 func contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
@@ -97,6 +120,11 @@ func contains(s []string, e string) bool {
 // Structural returns structural.isContainedBy
 func (d *Resource) Structural() *JSONObject {
 	return d.JSON.GetObj("structural")
+}
+
+// Identification returns the identification subschema
+func (d *Resource) Identification() *JSONObject {
+	return d.JSON.GetObj("identification")
 }
 
 func (d *Resource) String() string {

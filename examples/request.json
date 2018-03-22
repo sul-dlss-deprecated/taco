@@ -3,7 +3,6 @@
   "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
   "@type": "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
   "citation": "Leon Kolb Collection of Portraits. https://purl.stanford.edu/bs646cd8717",
-  "currentVersion": true,
   "depositor": {
     "name": "DOR",
     "sunetID": "DOR"

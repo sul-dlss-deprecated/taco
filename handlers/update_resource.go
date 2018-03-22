@@ -50,15 +50,13 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	response := map[string]interface{}{"id": id}
+	response := datautils.JSONObject{"id": id}
 	return operations.NewUpdateResourceOK().WithPayload(response)
 }
 
 func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) *datautils.Resource {
-	resource := datautils.NewResource(data.(map[string]interface{}))
 	// This ensures they have the same id in the document as in the query param
-	resource.JSON["id"] = resourceID
-	return resource
+	return datautils.NewResource(data.(map[string]interface{})).WithID(resourceID)
 }
 
 func (d *updateResourceEntry) addToStream(id string) error {

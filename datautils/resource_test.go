@@ -6,16 +6,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestWithID(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithID("8888")
+	assert.Equal(t, "8888", resource.ID())
+}
+
+func TestWithCurrentVersion(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithCurrentVersion(true)
+	assert.True(t, resource.CurrentVersion())
+}
+
+func TestWithVersion(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithVersion(5)
+	assert.Equal(t, 5, resource.Version())
+}
+
 func TestType(t *testing.T) {
 	json := JSONObject{"@type": "Foo"}
 	resource := NewResource(json)
 	assert.Equal(t, "Foo", resource.Type())
-}
-
-func TestID(t *testing.T) {
-	json := JSONObject{"id": "123"}
-	resource := NewResource(json)
-	assert.Equal(t, "123", resource.ID())
 }
 
 func TestIsObject(t *testing.T) {

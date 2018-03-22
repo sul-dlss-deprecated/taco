@@ -34,7 +34,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 				assert.Equal(t, 1, len(storage.(*MockStorage).CreatedFiles))
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
 				fileResource := repo.(*MockDatabase).CreatedResources[0]
-				fileName := fileResource.JSON.GetObj("identification").GetS("filename")
+				fileName := fileResource.Identification().GetS("filename")
 				assert.Equal(t, fileName, "foo.txt")
 			})
 }
