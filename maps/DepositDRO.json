@@ -4,7 +4,13 @@
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
-  "not": {"required": ["currentVersion", "id", "version"]},
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
