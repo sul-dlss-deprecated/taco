@@ -22,14 +22,7 @@ import (
 	"github.com/sul-dlss-labs/taco/streaming"
 )
 
-type Taco struct {
-	server *restapi.Server
-}
-
-var tacoServer Taco
-
 func main() {
-
 	// Initialize our global struct
 	config := config.NewConfig()
 	awsSession := aws_session.Connect(config.AwsDisableSSL)
@@ -47,10 +40,11 @@ func main() {
 	}
 
 	identifierService := identifier.NewService(config)
-	tacoServer.server = createServer(database, stream, storage, identifierService, config.Port)
+	server := createServer(database, stream, storage, identifierService, config.Port)
+	defer server.Shutdown()
 
 	// serve API
-	if err := tacoServer.server.Serve(); err != nil {
+	if err := server.Serve(); err != nil {
 		log.Fatalln(err)
 	}
 }
@@ -70,7 +64,6 @@ func createServer(database db.Database, stream streaming.Stream, storage storage
 	api := handlers.BuildAPI(database, stream, storage, identifierService)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
-	defer server.Shutdown()
 
 	// set the port this service will be run on
 	server.Port = port
