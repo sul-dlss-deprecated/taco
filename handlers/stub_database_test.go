@@ -7,6 +7,7 @@ import (
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/identifier"
+	"github.com/sul-dlss-labs/taco/runtime"
 	"github.com/sul-dlss-labs/taco/storage"
 )
 
@@ -19,7 +20,12 @@ func handler(database db.Database, storage storage.Storage) http.Handler {
 	}
 
 	identifierService := identifier.NewUUIDService()
-	return BuildAPI(database, storage, identifierService).Serve(nil)
+	rt := &runtime.Runtime{
+		Database:          database,
+		Storage:           storage,
+		IdentifierService: identifierService,
+	}
+	return BuildAPI(rt).Serve(nil)
 }
 
 type MockDatabase struct {
