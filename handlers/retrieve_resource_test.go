@@ -22,7 +22,7 @@ func TestRetrieveHappyPath(t *testing.T) {
 func TestRetrieveNotFound(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/resource/100").
-		Run(handler(NewMockDatabase(nil), nil, nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})

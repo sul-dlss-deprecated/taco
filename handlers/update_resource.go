@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -35,7 +34,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	}
 
 	id := params.ID
-	_, err = d.database.Read(id)
+	resource, err := d.database.Read(id)
 	if err != nil {
 		if err.Error() == "not found" {
 			return operations.NewRetrieveResourceNotFound()
@@ -47,7 +46,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	if err = d.addToStream(id); err != nil {
+	if err = d.stream.Send("update", resource); err != nil {
 		panic(err)
 	}
 
@@ -65,15 +64,4 @@ func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, d
 	// This ensures they have the same id in the document as in the query param
 	resource["id"] = resourceID
 	return resource
-}
-
-func (d *updateResourceEntry) addToStream(id string) error {
-	message, err := json.Marshal(id)
-	if err != nil {
-		return err
-	}
-	if d.stream == nil {
-		log.Printf("Stream is nil")
-	}
-	return d.stream.SendMessage(string(message))
 }

@@ -14,9 +14,14 @@ func NewResource(data map[string]interface{}) Resource {
 	return Resource(data)
 }
 
-// ID returns the documents identifier
+// ID returns the document's identifier
 func (d *Resource) ID() string {
 	return d.GetS("id")
+}
+
+// Type returns the document's type
+func (d *Resource) Type() string {
+	return d.GetS("@type")
 }
 
 // GetS returns the string value at key
