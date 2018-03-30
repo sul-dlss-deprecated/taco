@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -71,8 +70,6 @@ func (d *depositResource) addToStream(id *string) error {
 	if err != nil {
 		return err
 	}
-	if d.stream == nil {
-		log.Printf("Stream is nil")
-	}
+
 	return d.stream.SendMessage(string(message))
 }

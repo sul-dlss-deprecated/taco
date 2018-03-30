@@ -22,13 +22,14 @@ func TestCreateFileHappyPath(t *testing.T) {
 	r := gofight.New()
 	storage := NewMockStorage()
 	repo := NewMockDatabase(nil)
+	stream := NewMockStream()
 
 	r.POST(filePath).
 		SetHeader(gofight.H{
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(repo, nil, storage),
+		Run(handler(repo, stream, storage),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(storage.(*MockStorage).CreatedFiles))
@@ -36,6 +37,8 @@ func TestCreateFileHappyPath(t *testing.T) {
 				fileResource := repo.(*MockDatabase).CreatedResources[0]
 				fileName := fileResource["identification"].(map[string]interface{})["filename"]
 				assert.Equal(t, fileName, "foo.txt")
+				assert.Equal(t, 1, len(stream.(*MockStream).Messages))
+
 			})
 }
 

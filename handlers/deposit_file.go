@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 
 	"github.com/go-openapi/runtime"
@@ -10,6 +11,7 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
+	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/uploaded"
 	"github.com/sul-dlss-labs/taco/validators"
 )
@@ -18,15 +20,19 @@ const atContext = "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld"
 const fileType = "http://sdr.sul.stanford.edu/contexts/sdr3-file.jsonld"
 
 // NewDepositFile -- Accepts requests to create a file and pushes it to s3.
-func NewDepositFile(database db.Database, uploader storage.Storage, identifierService identifier.Service) operations.DepositFileHandler {
-	return &depositFileEntry{database: database,
+func NewDepositFile(database db.Database, uploader storage.Storage, stream streaming.Stream, identifierService identifier.Service) operations.DepositFileHandler {
+	return &depositFileEntry{
+		database:          database,
 		storage:           uploader,
-		identifierService: identifierService}
+		stream:            stream,
+		identifierService: identifierService,
+	}
 }
 
 type depositFileEntry struct {
 	database          db.Database
 	storage           storage.Storage
+	stream            streaming.Stream
 	identifierService identifier.Service
 }
 
@@ -52,6 +58,11 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams) middlewar
 	if err := d.createFileResource(id, params.Upload.Header.Filename); err != nil {
 		panic(err)
 	}
+
+	if err := d.addToStream(&id); err != nil {
+		panic(err)
+	}
+
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
 	response := map[string]interface{}{"id": id}
 	return operations.NewDepositResourceCreated().WithPayload(response)
@@ -69,6 +80,15 @@ func (d *depositFileEntry) copyFileToStorage(id string, file runtime.File) (*str
 func (d *depositFileEntry) createFileResource(resourceID string, filename string) error {
 	resource := d.buildPersistableResource(resourceID, filename)
 	return d.database.Insert(resource)
+}
+
+func (d *depositFileEntry) addToStream(id *string) error {
+	message, err := json.Marshal(id)
+	if err != nil {
+		return err
+	}
+
+	return d.stream.SendMessage(string(message))
 }
 
 func (d *depositFileEntry) buildPersistableResource(resourceID string, filename string) datautils.Resource {
