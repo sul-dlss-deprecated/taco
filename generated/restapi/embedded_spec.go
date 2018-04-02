@@ -153,6 +153,12 @@ func init() {
             "name": "ID",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "TACO Resource Version Number.",
+            "name": "version",
+            "in": "query"
           }
         ],
         "responses": {

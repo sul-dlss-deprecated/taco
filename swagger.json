@@ -66,6 +66,12 @@
           "description": "TACO Resource Identifier.",
           "required": true,
           "type": "string"
+        },{
+          "name": "version",
+          "in": "query",
+          "description": "TACO Resource Version Number.",
+          "required": false,
+          "type": "string"
         }],
         "responses": {
           "200": {
