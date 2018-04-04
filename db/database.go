@@ -1,12 +1,9 @@
 package db
 
 import (
-	"errors"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
@@ -15,6 +12,7 @@ type Database interface {
 	Insert(*datautils.Resource) error
 	Read(id string) (*datautils.Resource, error)
 	DeleteByID(id string) error
+	ReadVersion(id string, version *string) (*datautils.Resource, error)
 }
 
 // DynamodbDatabase Represents a connection to Dynamo
@@ -39,19 +37,5 @@ func (database DynamodbDatabase) Read(id string) (*datautils.Resource, error) {
 		TableName:      &database.Table,
 		ConsistentRead: aws.Bool(true),
 	}
-	resp, err := database.Connection.GetItem(params)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(resp.Item) == 0 {
-		return nil, errors.New("not found")
-	}
-
-	var json datautils.JSONObject
-	if err := dynamodbattribute.UnmarshalMap(resp.Item, &json); err != nil {
-		return nil, err
-	}
-
-	return datautils.NewResource(json), nil
+	return database.query(params)
 }
