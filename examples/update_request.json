@@ -3,12 +3,28 @@
   "@type": "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
   "citation": "Leon Kolb Collection of Portraits. https://purl.stanford.edu/bs646cd8717",
   "currentVersion": true,
+  "testFoo": "testBar",
+  "testArray": ["foo", "bar", 3],
+  "testObject": {
+    "testFoo": "testBar"
+  },
+  "testNestedObject": {
+    "testFoo": "testBar",
+    "testRoo": "testPooh",
+    "testPB": {
+      "testFoo": "testBar",
+      "testData": {
+        "is": "hard",
+        "really": "hard"
+      }
+    }
+  },
   "depositor": {
     "name": "DOR",
     "sunetID": "DOR"
   },
   "id": "742a0134-1e20-11e2-979d-022c4a946c80",
-  "label": "My updated SDR3 resource",
+  "label": "UPDATED: Leon Kolb Collection of Portraits",
   "version": 1,
   "access": {
     "access": "world",
