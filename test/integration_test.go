@@ -126,6 +126,40 @@ func TestUpdateResource(t *testing.T) {
 		Done()
 }
 
+func TestRetrieveVersions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	byt, err := ioutil.ReadFile("../examples/request.json")
+	if err != nil {
+		panic(err)
+	}
+	var postData map[string]interface{}
+
+	if err := json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
+
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(postData).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		AddQuery("version", "1").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		Expect(t).
+		Status(200).
+		Type("json").
+		Done()
+}
+
 func TestCreateFile(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
@@ -173,7 +207,6 @@ func assertResourceResponse(res *http.Response, req *http.Request) error {
 	//       Then we could just do res.Location()
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(res.Body)
-
 	jsonID, _ := jsonparser.GetString(buf.Bytes(), "id")
 	id = jsonID
 	return nil

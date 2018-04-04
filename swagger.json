@@ -73,13 +73,21 @@
         ],
         "operationId": "retrieveResource",
         "produces": ["application/json"],
-        "parameters": [{
-          "name": "ID",
-          "in": "path",
-          "description": "TACO Resource Identifier.",
-          "required": true,
-          "type": "string"
-        }],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "TACO Resource Identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Version",
+            "in": "query",
+            "type": "string",
+            "description": "The version of the requested resource"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Resource metadata retrieved.",
