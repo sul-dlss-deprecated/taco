@@ -168,6 +168,12 @@ func init() {
             "name": "ID",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "The version of the requested resource",
+            "name": "Version",
+            "in": "query"
           }
         ],
         "responses": {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/authorization"
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
@@ -21,7 +22,14 @@ type retrieveResource struct {
 
 // Handle the retrieve resource request
 func (d *retrieveResource) Handle(params operations.RetrieveResourceParams, agent *authorization.Agent) middleware.Responder {
-	resource, err := d.database.Read(params.ID)
+	var resource *datautils.Resource
+	var err error
+	if params.Version != nil {
+		resource, err = d.database.ReadVersion(params.ID, params.Version)
+	} else {
+		resource, err = d.database.Read(params.ID)
+	}
+
 	if err != nil {
 		if err.Error() == "not found" {
 			return operations.NewRetrieveResourceNotFound()
