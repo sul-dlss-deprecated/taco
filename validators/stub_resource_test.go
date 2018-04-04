@@ -40,6 +40,10 @@ func (f *fakeRepository) Read(id string) (*datautils.Resource, error) {
 	return nil, errors.New("not found")
 }
 
+func (f *fakeRepository) ReadVersion(id string, version *string) (*datautils.Resource, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (f *fakeRepository) Insert(resource *datautils.Resource) error {
 	return errors.New("not implemented")
 }
