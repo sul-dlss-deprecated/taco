@@ -1,50 +1,48 @@
 package validators
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 )
 
-func testResource(file string) *datautils.Resource {
-	byt, err := ioutil.ReadFile(fmt.Sprintf("../examples/%s", file))
+func testResource() string {
+	byt, err := ioutil.ReadFile("../examples/bs646cd8717.json")
 	if err != nil {
 		panic(err)
 	}
-	data := datautils.JSONObject{}
-	if err := json.Unmarshal(byt, &data); err != nil {
+	return string(byt)
+}
+
+func testDepositResource() string {
+	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+	if err != nil {
 		panic(err)
 	}
-
-	return datautils.NewResource(data)
+	return string(byt)
 }
 
-func newMockRepository(record *datautils.Resource) db.Database {
-	return &fakeRepository{
-		record: record,
-	}
+func newMockRepository() db.Database {
+	return &fakeRepository{}
 }
 
-type fakeRepository struct {
-	record *datautils.Resource
-}
+type fakeRepository struct{}
 
 func (f *fakeRepository) Read(id string) (*datautils.Resource, error) {
-	if f.record != nil {
-		return f.record, nil
-	}
-	return nil, errors.New("not found")
+	return nil, errors.New("not implemented")
 }
 
-func (f *fakeRepository) Insert(resource *datautils.Resource) error {
+func (f *fakeRepository) Insert(resource datautils.Resource) error {
 	return errors.New("not implemented")
 }
 
-func (f *fakeRepository) Update(resource *datautils.Resource) error {
+func (d *fakeRepository) UpdateString(resourceID string, field string, value string) error {
+	return errors.New("not implemented")
+}
+
+func (d *fakeRepository) UpdateBool(resourceID string, field string, value bool) error {
 	return errors.New("not implemented")
 }
 
