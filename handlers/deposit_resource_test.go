@@ -51,7 +51,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			})
 }
 
-func TestCreateResourceSemanticallyValid(t *testing.T) {
+func TestCreateInvalidResource(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetJSON(gofight.D{
@@ -63,9 +63,10 @@ func TestCreateResourceSemanticallyValid(t *testing.T) {
 			"preserve": true,
 			"publish":  true,
 			"sourceId": "bib12345678"}).
-		Run(handler(NewMockDatabase(nil), NewMockStream(""), nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
+				assert.Contains(t, r.Body.String(), "Validation Error")
 			})
 }
 

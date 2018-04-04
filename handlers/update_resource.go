@@ -30,8 +30,9 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	if err != nil {
 		panic(err)
 	}
-	if err := d.validator.ValidateResource(string(json[:])); err != nil {
-		return operations.NewUpdateResourceUnprocessableEntity()
+	if errors := d.validator.ValidateResource(string(json[:])); errors != nil {
+		return operations.NewUpdateResourceUnprocessableEntity().
+			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
 	id := params.ID
