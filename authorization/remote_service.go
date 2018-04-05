@@ -21,40 +21,50 @@ func NewRemoteAuthorizationService(config *config.Config) Service {
 	}
 }
 
-func (d *remoteAuthorizationService) CanCreateResourceOfType(agentID string, resourceType string) bool {
-	c := remoteService.NewHTTPClientWithConfig(nil, d.TransportConfig)
+func (d *remoteAuthorizationService) CanCreateResourceOfType(agent *Agent, resourceType string) bool {
 	params := paramsFor("create", resourceType)
-	ok, err := c.Operations.QueryAction(params, authInfo(agentID))
+	ok, err := d.query(agent, params)
 	if err != nil {
 		panic(err)
 	}
 	return ok.Payload.Authorized
 }
 
-func (d *remoteAuthorizationService) CanRetrieveResource(agentID string, res *datautils.Resource) bool {
-	c := remoteService.NewHTTPClientWithConfig(nil, d.TransportConfig)
+func (d *remoteAuthorizationService) CanUpdateResource(agent *Agent, res *datautils.Resource) bool {
+	params := paramsFor("update", res.ID())
+	ok, err := d.query(agent, params)
+	if err != nil {
+		panic(err)
+	}
+	return ok.Payload.Authorized
+}
 
+func (d *remoteAuthorizationService) CanDeleteResource(agent *Agent, id string) bool {
+	params := paramsFor("update", id)
+	ok, err := d.query(agent, params)
+	if err != nil {
+		panic(err)
+	}
+	return ok.Payload.Authorized
+}
+
+func (d *remoteAuthorizationService) CanRetrieveResource(agent *Agent, res *datautils.Resource) bool {
 	params := paramsFor("retrieve", res.ID())
-	ok, err := c.Operations.QueryAction(params, authInfo(agentID))
+	ok, err := d.query(agent, params)
 	if err != nil {
 		panic(err)
 	}
 	return ok.Payload.Authorized
 }
 
-func (d *remoteAuthorizationService) CanDeleteResource(agentID string, id string) bool {
+func (d *remoteAuthorizationService) query(agent *Agent, params *operations.QueryActionParams) (*operations.QueryActionOK, error) {
 	c := remoteService.NewHTTPClientWithConfig(nil, d.TransportConfig)
 
-	params := paramsFor("delete", id)
-	ok, err := c.Operations.QueryAction(params, authInfo(agentID))
-	if err != nil {
-		panic(err)
-	}
-	return ok.Payload.Authorized
+	return c.Operations.QueryAction(params, authInfo(agent))
 }
 
-func authInfo(agentID string) runtime.ClientAuthInfoWriter {
-	return client.APIKeyAuth("On-Behalf-Of", "header", agentID)
+func authInfo(agent *Agent) runtime.ClientAuthInfoWriter {
+	return client.APIKeyAuth("On-Behalf-Of", "header", agent.Identifier)
 }
 
 func paramsFor(action string, resource string) *operations.QueryActionParams {

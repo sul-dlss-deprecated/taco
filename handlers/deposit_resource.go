@@ -36,7 +36,7 @@ type depositResource struct {
 func (d *depositResource) Handle(params operations.DepositResourceParams, agent *authorization.Agent) middleware.Responder {
 	resource := datautils.NewResource(params.Payload.(map[string]interface{}))
 
-	if !d.authService.CanCreateResourceOfType(agent.Identifier, resource.Type()) {
+	if !d.authService.CanCreateResourceOfType(agent, resource.Type()) {
 		log.Printf("Agent %s is not permitted to create a resource of type %s", agent, resource.Type())
 		return operations.NewDepositResourceUnauthorized()
 	}

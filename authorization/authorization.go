@@ -9,9 +9,10 @@ import (
 
 // Service can answer queries about whether an agent can take a specific action
 type Service interface {
-	CanCreateResourceOfType(agentID string, resourceType string) bool
-	CanRetrieveResource(agentID string, resource *datautils.Resource) bool
-	CanDeleteResource(agentID string, id string) bool
+	CanCreateResourceOfType(agent *Agent, resourceType string) bool
+	CanRetrieveResource(agent *Agent, resource *datautils.Resource) bool
+	CanDeleteResource(agent *Agent, id string) bool
+	CanUpdateResource(agent *Agent, resource *datautils.Resource) bool
 }
 
 // NewService creates a new instance of the authorization service

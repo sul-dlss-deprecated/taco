@@ -38,7 +38,7 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams, agen
 		panic(err)
 	}
 
-	if !d.authService.CanRetrieveResource(agent.Identifier, resource) {
+	if !d.authService.CanRetrieveResource(agent, resource) {
 		log.Printf("Agent %s is not permitted to retrieve this resource %s", agent, params.ID)
 		return operations.NewRetrieveResourceUnauthorized()
 	}

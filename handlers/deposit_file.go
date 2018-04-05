@@ -35,7 +35,7 @@ type depositFileEntry struct {
 
 // Handle the deposit file request
 func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *authorization.Agent) middleware.Responder {
-	if !d.authService.CanCreateResourceOfType(agent.Identifier, datautils.FileType) {
+	if !d.authService.CanCreateResourceOfType(agent, datautils.FileType) {
 		log.Printf("Agent %s is not permitted to create a resource of type %s", agent, datautils.FileType)
 		return operations.NewDepositResourceUnauthorized()
 	}

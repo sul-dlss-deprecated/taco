@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -30,9 +31,14 @@ type updateResourceEntry struct {
 }
 
 // Handle the update resource request
-func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
+func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams, agent *authorization.Agent) middleware.Responder {
 	id := params.ID
 	newResource := datautils.NewResource(params.Payload.(map[string]interface{}))
+
+	if !d.authService.CanUpdateResource(agent, newResource) {
+		log.Printf("Agent %s is not permitted to update this resource %s", agent, params.ID)
+		return operations.NewUpdateResourceUnauthorized()
+	}
 
 	if errors := d.validator.ValidateResource(newResource); errors != nil {
 		return operations.NewUpdateResourceUnprocessableEntity().

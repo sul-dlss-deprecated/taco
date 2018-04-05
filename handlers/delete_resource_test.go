@@ -39,6 +39,9 @@ func TestDeleteFileResourceHappyPath(t *testing.T) {
 	storage := NewMockStorage()
 
 	r.DELETE("/v1/resource/oo000oo0001").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
 		Run(handler(repo, storage, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNoContent, r.Code)

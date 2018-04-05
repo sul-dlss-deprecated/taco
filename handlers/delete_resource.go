@@ -28,7 +28,7 @@ type deleteResourceEntry struct {
 // Handle the delete entry request. If the resource being deleted is a file,
 // Also delete the associated binary from s3
 func (d *deleteResourceEntry) Handle(params operations.DeleteResourceParams, agent *authorization.Agent) middleware.Responder {
-	if !d.authService.CanDeleteResource(agent.Identifier, params.ID) {
+	if !d.authService.CanDeleteResource(agent, params.ID) {
 		log.Printf("Agent %s is not permitted to delete resource %s", agent, params.ID)
 		return operations.NewDeleteResourceUnauthorized()
 	}

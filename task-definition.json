@@ -20,6 +20,10 @@
             ],
             "environment": [
                 {
+                    "name": "AUTHORIZATION_SERVICE_HOST",
+                    "value": "permissions-REPLACE_ENVIRONMENT.sul.stanford.edu"
+                },
+                {
                     "name": "AWS_REGION",
                     "value": "REPLACE_REGION"
                 },
