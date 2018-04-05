@@ -46,7 +46,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	response := map[string]interface{}{"id": id}
+	response := datautils.JSONObject{"id": id}
 	return operations.NewUpdateResourceOK().WithPayload(response)
 }
 
