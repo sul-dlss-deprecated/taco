@@ -90,7 +90,7 @@ func (d *updateResourceEntry) mergeJSON(maps ...*datautils.JSONObject) datautils
 }
 
 func (d *updateResourceEntry) buildNewResourceVersion(newResource *datautils.Resource, version int, existingResource *datautils.Resource) {
-	tacoIdentifier, err := identifier.NewUUIDService().Mint()
+	tacoIdentifier, err := identifier.NewUUIDService().Mint(newResource)
 	if err != nil {
 		panic(err)
 	}

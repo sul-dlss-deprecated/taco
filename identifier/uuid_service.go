@@ -2,6 +2,7 @@ package identifier
 
 import (
 	"github.com/google/uuid"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 type uuidService struct{}
@@ -11,7 +12,7 @@ func NewUUIDService() Service {
 	return &uuidService{}
 }
 
-func (d *uuidService) Mint() (string, error) {
+func (d *uuidService) Mint(resource *datautils.Resource) (string, error) {
 	resourceID, err := uuid.NewRandom()
 	if err != nil {
 		return "", err

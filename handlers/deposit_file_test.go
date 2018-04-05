@@ -37,7 +37,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(repo, storage),
+		Run(handler(repo, storage, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(storage.(*MockStorage).CreatedFiles))
@@ -60,7 +60,7 @@ func TestCreateFileWrongContentType(t *testing.T) {
 			"Content-Type": "application/xml",
 		}).
 		SetBody(``).
-		Run(handler(nil, NewMockStorage()),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusBadRequest, r.Code)
 			})
@@ -87,7 +87,7 @@ func TestCreateFileNoApiKey(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(nil, nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -101,7 +101,7 @@ func TestCreateFileNoPermissions(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(nil, nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -116,7 +116,7 @@ func TestCreateFileNoFileset(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(nil, nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 				assert.Contains(t, r.Body.String(), "Validation Error")
@@ -139,7 +139,7 @@ func TestCreateFileFailure(t *testing.T) {
 					"Content-Type": contentType,
 				}).
 				SetBody(body).
-				Run(handler(repo, storage),
+				Run(handler(repo, storage, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }
@@ -160,7 +160,7 @@ func TestCreateFileResourceFailure(t *testing.T) {
 					"Content-Type": contentType,
 				}).
 				SetBody(body).
-				Run(handler(repo, nil),
+				Run(handler(repo, nil, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

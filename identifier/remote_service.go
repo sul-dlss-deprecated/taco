@@ -5,6 +5,7 @@ import (
 
 	"github.com/sul-dlss-labs/identifier-service/generated/client"
 	"github.com/sul-dlss-labs/taco/config"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 type remoteIdentifierService struct {
@@ -19,7 +20,7 @@ func NewRemoteIdentifierService(config *config.Config) Service {
 	}
 }
 
-func (d *remoteIdentifierService) Mint() (string, error) {
+func (d *remoteIdentifierService) Mint(resource *datautils.Resource) (string, error) {
 	c := client.NewHTTPClientWithConfig(nil, d.TransportConfig)
 	ok, err := c.Operations.MintNewDRUIDS(nil)
 	if err != nil {

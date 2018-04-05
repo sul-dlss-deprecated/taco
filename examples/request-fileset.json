@@ -1,0 +1,25 @@
+{
+  "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+  "@type": "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld",
+  "depositor": {
+    "name": "DOR",
+    "sunetID": "DOR"
+  },
+  "label": "Schwend, Rudolf, Mayor of Zurich, ?-1391. Fileset 1.",
+  "access": {
+    "access": "world",
+    "download": "world"
+  },
+  "administrative": {
+    "deleted": false,
+    "isDescribedBy": "https://purl.stanford.edu/bq582kh2487.xml",
+    "lastUpdated": "2014-02-19T21:02:26.550Z",
+    "sdrPreserve": true
+  },
+  "identification": {
+    "sdrUUID": "fccd1108-1ca7-11e8-accf-0ed5f89f718b"
+  },
+  "structural": {
+    "isContainedBy": "druid:bq582kh2487"
+  }
+}

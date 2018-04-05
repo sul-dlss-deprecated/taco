@@ -32,7 +32,6 @@ type depositResource struct {
 // Handle the create resource request
 func (d *depositResource) Handle(params operations.DepositResourceParams, agent *authorization.Agent) middleware.Responder {
 	resource := datautils.NewResource(params.Payload.(map[string]interface{}))
-
 	if errors := d.validator.ValidateResource(resource); errors != nil {
 		return operations.NewDepositResourceUnprocessableEntity().
 			WithPayload(&models.ErrorResponse{Errors: *errors})
@@ -44,12 +43,12 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		return operations.NewDepositResourceUnauthorized()
 	}
 
-	externalID, err := d.identifierService.Mint()
+	externalID, err := d.identifierService.Mint(resource)
 	if err != nil {
 		panic(err)
 	}
 
-	uuid, err := identifier.NewUUIDService().Mint()
+	uuid, err := identifier.NewUUIDService().Mint(resource)
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +58,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		WithExternalIdentifier(externalID).
 		WithVersion(1)
 
-	if err = d.database.Insert(resource); err != nil {
+	if err := d.database.Insert(resource); err != nil {
 		panic(err)
 	}
 
