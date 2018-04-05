@@ -1,6 +1,7 @@
 package datautils
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -190,5 +191,13 @@ func (d *Resource) Identification() *JSONObject {
 }
 
 func (d *Resource) String() string {
-	return fmt.Sprintf("<Resource id: '%s'>", d.ID())
+	buf := bytes.NewBufferString("<Resource")
+	if d.JSON.HasKey("tacoIdentifier") {
+		buf.WriteString(fmt.Sprintf(" id:'%s'", d.ID()))
+	}
+	if d.JSON.HasKey("@type") {
+		buf.WriteString(fmt.Sprintf(" @type:'%s'", d.Type()))
+	}
+	buf.WriteString(">")
+	return buf.String()
 }

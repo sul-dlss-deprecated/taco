@@ -42,9 +42,9 @@ func TestWithMimeType(t *testing.T) {
 	assert.Equal(t, "text/plain", resource.MimeType())
 }
 
-func TestType(t *testing.T) {
-	json := JSONObject{"@type": "Foo"}
-	resource := NewResource(json)
+func TestWithType(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithType("Foo")
 	assert.Equal(t, "Foo", resource.Type())
 }
 
@@ -87,7 +87,9 @@ func TestIsFile(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	json := JSONObject{"tacoIdentifier": "Foo"}
-	resource := NewResource(json)
-	assert.Equal(t, "<Resource id: 'Foo'>", resource.String())
+	json := JSONObject{}
+	resource := NewResource(json).WithType("Bar")
+	assert.Equal(t, "<Resource @type:'Bar'>", resource.String())
+	resource = resource.WithID("Foo")
+	assert.Equal(t, "<Resource id:'Foo' @type:'Bar'>", resource.String())
 }

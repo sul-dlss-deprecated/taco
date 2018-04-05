@@ -47,12 +47,12 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
-	externalID, err := d.identifierService.Mint()
+	externalID, err := d.identifierService.Mint(resource)
 	if err != nil {
 		panic(err)
 	}
 
-	uuid, err := identifier.NewUUIDService().Mint()
+	uuid, err := identifier.NewUUIDService().Mint(resource)
 	if err != nil {
 		panic(err)
 	}
@@ -71,6 +71,7 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 	if err := d.database.Insert(resource); err != nil {
 		panic(err)
 	}
+
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
 	response := datautils.JSONObject{"id": externalID}
 	return operations.NewDepositResourceCreated().WithPayload(response)

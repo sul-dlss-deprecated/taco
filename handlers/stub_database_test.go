@@ -10,7 +10,7 @@ import (
 	"github.com/sul-dlss-labs/taco/storage"
 )
 
-func handler(database db.Database, storage storage.Storage) http.Handler {
+func handler(database db.Database, storage storage.Storage, identifierService identifier.Service) http.Handler {
 	if database == nil {
 		database = NewMockDatabase(nil)
 	}
@@ -18,7 +18,10 @@ func handler(database db.Database, storage storage.Storage) http.Handler {
 		storage = NewMockStorage()
 	}
 
-	identifierService := identifier.NewUUIDService()
+	if identifierService == nil {
+		identifierService = identifier.NewUUIDService()
+	}
+
 	return BuildAPI(database, storage, identifierService).Serve(nil)
 }
 
