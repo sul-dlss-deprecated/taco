@@ -3,22 +3,22 @@ package handlers
 import (
 	"errors"
 
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/storage"
-	"github.com/sul-dlss-labs/taco/uploaded"
 )
 
 type MockStorage struct {
-	CreatedFiles []*uploaded.File
+	CreatedFiles []*datautils.File
 }
 
-func (s *MockStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
+func (s *MockStorage) UploadFile(id string, file *datautils.File) (*string, error) {
 	s.CreatedFiles = append(s.CreatedFiles, file)
 	path := "s3FileLocation"
 	return &path, nil
 }
 
 func NewMockStorage() storage.Storage {
-	return &MockStorage{CreatedFiles: []*uploaded.File{}}
+	return &MockStorage{CreatedFiles: []*datautils.File{}}
 }
 
 func NewMockErrorStorage() storage.Storage {
@@ -27,6 +27,6 @@ func NewMockErrorStorage() storage.Storage {
 
 type fakeErroringStorage struct{}
 
-func (f *fakeErroringStorage) UploadFile(id string, file *uploaded.File) (*string, error) {
+func (f *fakeErroringStorage) UploadFile(id string, file *datautils.File) (*string, error) {
 	return nil, errors.New("broken")
 }
