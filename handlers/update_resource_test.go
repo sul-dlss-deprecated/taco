@@ -39,7 +39,7 @@ var updateMessage = gofight.D{
 
 func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(&datautils.Resource{"id": "99"})
+	repo := NewMockDatabase(&datautils.Resource{"id": "99", "version": "5"})
 
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).

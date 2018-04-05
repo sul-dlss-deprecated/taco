@@ -13,7 +13,8 @@ import (
 // Database is a generic connection to a database.
 type Database interface {
 	Insert(datautils.Resource) error
-	Update(datautils.Resource) error
+	UpdateString(string, string, string) error
+	UpdateBool(string, string, bool) error
 	Read(id string) (*datautils.Resource, error)
 }
 

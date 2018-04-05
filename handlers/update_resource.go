@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
-	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
@@ -36,7 +36,9 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	}
 
 	id := params.ID
-	_, err = d.database.Read(id)
+	newResource := datautils.NewResource(params.Payload.(map[string]interface{}))
+
+	existingResource, err := d.database.Read(id)
 	if err != nil {
 		if err.Error() == "not found" {
 			return operations.NewRetrieveResourceNotFound()
@@ -44,28 +46,18 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	if err = d.updateResource(id, params.Payload); err != nil {
-		panic(err)
-	}
-
-	if err = d.addToStream(id); err != nil {
-		panic(err)
+	// log.Printf("Version: %+v", string(newResource["version"]))
+	if !d.resourceVersionChanged(fmt.Sprintf("%s", newResource["version"]), existingResource.GetS("version")) {
+		if err = d.compareAndUpdateResource(id, newResource, existingResource); err != nil {
+			panic(err)
+		}
+		if err = d.addToStream(id); err != nil {
+			panic(err)
+		}
 	}
 
 	response := map[string]interface{}{"id": id}
 	return operations.NewUpdateResourceOK().WithPayload(response)
-}
-
-func (d *updateResourceEntry) updateResource(resourceID string, params models.Resource) error {
-	resource := d.persistableResourceFromParams(resourceID, params)
-	return d.database.Update(resource)
-}
-
-func (d *updateResourceEntry) persistableResourceFromParams(resourceID string, data models.Resource) datautils.Resource {
-	resource := datautils.NewResource(data.(map[string]interface{}))
-	// This ensures they have the same id in the document as in the query param
-	resource["id"] = resourceID
-	return resource
 }
 
 func (d *updateResourceEntry) addToStream(id string) error {
@@ -77,4 +69,50 @@ func (d *updateResourceEntry) addToStream(id string) error {
 		log.Printf("Stream is nil")
 	}
 	return d.stream.SendMessage(string(message))
+}
+
+func (d *updateResourceEntry) compareAndUpdateResource(id string, newResource datautils.Resource, existingResource *datautils.Resource) error {
+
+	var err error
+
+	for k, v := range newResource {
+		if existingResource.HasKey(k) {
+			switch v.(type) {
+			case string:
+				if v != existingResource.GetS(k) {
+					err = d.database.UpdateString(id, k, v.(string))
+				}
+			case json.Number:
+				if v.(json.Number).String() != existingResource.GetS(k) {
+					err = d.database.UpdateString(id, k, v.(json.Number).String())
+				}
+			case bool:
+				if v != existingResource.GetB(k) {
+					err = d.database.UpdateBool(id, k, v.(bool))
+				}
+			case map[string]interface{}:
+				// TODO: Update on nested values
+				// updates := make(map[string]interface{})
+				// updates[k] = d.compareMap(v, (*oldRes)[k])
+			}
+		} else {
+			switch v.(type) {
+			case string:
+				err = d.database.UpdateString(id, k, v.(string))
+			case json.Number:
+				err = d.database.UpdateString(id, k, v.(json.Number).String())
+			case bool:
+				err = d.database.UpdateBool(id, k, v.(bool))
+			}
+		}
+	}
+
+	return err
+}
+
+func (d *updateResourceEntry) resourceVersionChanged(newResourceVersion string, existingResourceVersion string) bool {
+	if newResourceVersion == existingResourceVersion {
+		return false
+	}
+	return true
 }

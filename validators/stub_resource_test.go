@@ -31,6 +31,10 @@ func (f *fakeRepository) Insert(resource datautils.Resource) error {
 	return errors.New("not implemented")
 }
 
-func (f *fakeRepository) Update(resource datautils.Resource) error {
+func (d *fakeRepository) UpdateString(resourceID string, field string, value string) error {
+	return errors.New("not implemented")
+}
+
+func (d *fakeRepository) UpdateBool(resourceID string, field string, value bool) error {
 	return errors.New("not implemented")
 }
