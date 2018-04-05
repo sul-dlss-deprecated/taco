@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
@@ -24,16 +23,13 @@ type updateResourceEntry struct {
 
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
-	json, err := json.Marshal(params.Payload)
-	if err != nil {
-		panic(err)
-	}
-	if err := d.validator.ValidateResource(string(json[:])); err != nil {
-		return operations.NewUpdateResourceUnprocessableEntity()
-	}
-
 	id := params.ID
-	newResource := datautils.NewResource(params.Payload.(map[string]interface{}))
+	newResource := datautils.NewResource(params.Payload.(map[string]interface{})).WithID(id)
+
+	if errors := d.validator.ValidateResource(newResource); errors != nil {
+		return operations.NewUpdateResourceUnprocessableEntity().
+			WithPayload(&models.ErrorResponse{Errors: *errors})
+	}
 
 	existingResource, err := d.database.Read(id)
 	if err != nil {
@@ -43,12 +39,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	// newResource.MergeResource(existingResource)
-	newResource = d.mergeResources(*existingResource, newResource)
-	newResource["id"] = id
-	if err != nil {
-		panic(err)
-	}
+	newResource = datautils.NewResource(d.mergeJSON(&existingResource.JSON, &newResource.JSON)).WithID(id)
 
 	err = d.database.Insert(newResource)
 	if err != nil {
@@ -59,15 +50,16 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	return operations.NewUpdateResourceOK().WithPayload(response)
 }
 
-// Merges multiple map[string]interface{} objects. Overritting in order.
-func (d *updateResourceEntry) mergeResources(maps ...map[string]interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
+// Merges multiple JSONObjects. Overritting in order.
+func (d *updateResourceEntry) mergeJSON(maps ...*datautils.JSONObject) datautils.JSONObject {
+	result := make(datautils.JSONObject)
 	for _, m := range maps {
-		for k, v := range m {
+		for k, v := range *m {
 			switch v.(type) {
-			case map[string]interface{}:
+			case datautils.JSONObject:
 				if _, ok := result[k]; ok {
-					result[k] = d.mergeResources(result[k].(map[string]interface{}), v.(map[string]interface{}))
+					x := v.(datautils.JSONObject)
+					result[k] = d.mergeJSON(result.GetObj(k), &x)
 				} else {
 					result[k] = v
 				}
