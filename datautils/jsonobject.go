@@ -17,6 +17,12 @@ func (d *JSONObject) GetI(key string) int {
 	return (*d)[key].(int)
 }
 
+// GetB returns the boolean value at key
+func (d *JSONObject) GetB(key string) bool {
+	d.ensureKeyExists(key)
+	return (*d)[key].(bool)
+}
+
 // GetA returns the array value at key
 func (d *JSONObject) GetA(key string) *JSONArray {
 	d.ensureKeyExists(key)
