@@ -40,7 +40,7 @@ func TestCreateResource(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+	byt, err := ioutil.ReadFile("../examples/request.json")
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func TestUpdateResource(t *testing.T) {
 		t.Skip("skpping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/create-bs646cd8717.json")
+	byt, err := ioutil.ReadFile("../examples/request.json")
 	if err != nil {
 		panic(err)
 	}
