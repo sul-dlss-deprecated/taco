@@ -10,7 +10,6 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
-	"github.com/sul-dlss-labs/taco/uploaded"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
@@ -61,17 +60,17 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositFileEntry) paramsToFile(params operations.DepositFileParams) *uploaded.File {
+func (d *depositFileEntry) paramsToFile(params operations.DepositFileParams) *datautils.File {
 	file := params.Upload
 	fileHeader := file.Header
-	metadata := uploaded.FileMetadata{
+	metadata := datautils.FileMetadata{
 		Filename:    fileHeader.Filename,
 		ContentType: fileHeader.Header.Get("Content-Type"),
 	}
-	return uploaded.NewFile(metadata, file.Data)
+	return datautils.NewFile(metadata, file.Data)
 }
 
-func (d *depositFileEntry) copyFileToStorage(id string, file *uploaded.File) (*string, error) {
+func (d *depositFileEntry) copyFileToStorage(id string, file *datautils.File) (*string, error) {
 	log.Printf("Saving file \"%s\" with content-type: %s to: %s",
 		file.Metadata.Filename,
 		file.Metadata.ContentType,
@@ -79,12 +78,12 @@ func (d *depositFileEntry) copyFileToStorage(id string, file *uploaded.File) (*s
 	return d.storage.UploadFile(id, file)
 }
 
-func (d *depositFileEntry) createFileResource(resourceID string, metadata uploaded.FileMetadata) error {
+func (d *depositFileEntry) createFileResource(resourceID string, metadata datautils.FileMetadata) error {
 	resource := d.buildPersistableResource(resourceID, metadata)
 	return d.database.Insert(resource)
 }
 
-func (d *depositFileEntry) buildPersistableResource(resourceID string, metadata uploaded.FileMetadata) *datautils.Resource {
+func (d *depositFileEntry) buildPersistableResource(resourceID string, metadata datautils.FileMetadata) *datautils.Resource {
 	identification := map[string]interface{}{"filename": metadata.Filename, "identifier": resourceID, "sdrUUID": resourceID}
 	json := datautils.JSONObject{"id": resourceID, "identification": identification, "hasMimeType": metadata.ContentType}
 	return datautils.NewResource(json)
