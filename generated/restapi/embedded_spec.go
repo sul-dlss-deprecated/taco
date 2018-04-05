@@ -279,6 +279,49 @@ func init() {
         }
       }
     },
+    "/resource/{ID}/{Version}": {
+      "get": {
+        "description": "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing version of a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Retrieve TACO Resource metadata for a specific version.",
+        "operationId": "retrieveResourceVersion",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "TACO Resource Identifier.",
+            "name": "ID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "TACO resource version number.",
+            "name": "Version",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource metadata retrieved.",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "401": {
+            "description": "You are not authorized to view this resource in TACO."
+          },
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
+          },
+          "500": {
+            "description": "The resource could not be retrieved by TACO at this time."
+          }
+        }
+      }
+    },
     "/status/{ID}": {
       "get": {
         "security": [

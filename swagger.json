@@ -64,6 +64,47 @@
         }
       }
     },
+    "/resource/{ID}/{Version}": {
+      "get": {
+        "summary": "Retrieve TACO Resource metadata for a specific version.",
+        "description": "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing version of a TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
+        "operationId": "retrieveResourceVersion",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "TACO Resource Identifier.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Version",
+            "in": "path",
+            "description": "TACO resource version number.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource metadata retrieved.",
+            "schema": {
+              "$ref": "#/definitions/Resource"
+            }
+          },
+          "401": {
+            "description": "You are not authorized to view this resource in TACO."
+          },
+          "404": {
+            "description": "Resource not found. Please check your provided TACO identifier."
+          },
+          "500": {
+            "description": "The resource could not be retrieved by TACO at this time."
+          }
+        }
+      }
+    },
     "/resource/{ID}": {
       "get": {
         "summary": "Retrieve TACO Resource Metadata.",

@@ -55,6 +55,9 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation RetrieveResource has not yet been implemented")
 		}),
+		RetrieveResourceVersionHandler: RetrieveResourceVersionHandlerFunc(func(params RetrieveResourceVersionParams) middleware.Responder {
+			return middleware.NotImplemented("operation RetrieveResourceVersion has not yet been implemented")
+		}),
 		UpdateResourceHandler: UpdateResourceHandlerFunc(func(params UpdateResourceParams) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateResource has not yet been implemented")
 		}),
@@ -89,7 +92,7 @@ type TacoAPI struct {
 	// It has a default implemention in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
 
-	// JSONConsumer registers a consumer for a "application/json" mime type
+	// JSONConsumer registers a consumer for a "application/json+ld" mime type
 	JSONConsumer runtime.Consumer
 	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
 	MultipartformConsumer runtime.Consumer
@@ -116,6 +119,8 @@ type TacoAPI struct {
 	HealthCheckHandler HealthCheckHandler
 	// RetrieveResourceHandler sets the operation handler for the retrieve resource operation
 	RetrieveResourceHandler RetrieveResourceHandler
+	// RetrieveResourceVersionHandler sets the operation handler for the retrieve resource version operation
+	RetrieveResourceVersionHandler RetrieveResourceVersionHandler
 	// UpdateResourceHandler sets the operation handler for the update resource operation
 	UpdateResourceHandler UpdateResourceHandler
 
@@ -211,6 +216,10 @@ func (o *TacoAPI) Validate() error {
 
 	if o.RetrieveResourceHandler == nil {
 		unregistered = append(unregistered, "RetrieveResourceHandler")
+	}
+
+	if o.RetrieveResourceVersionHandler == nil {
+		unregistered = append(unregistered, "RetrieveResourceVersionHandler")
 	}
 
 	if o.UpdateResourceHandler == nil {
@@ -354,6 +363,11 @@ func (o *TacoAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/resource/{ID}"] = NewRetrieveResource(o.context, o.RetrieveResourceHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/resource/{ID}/{Version}"] = NewRetrieveResourceVersion(o.context, o.RetrieveResourceVersionHandler)
 
 	if o.handlers["PATCH"] == nil {
 		o.handlers["PATCH"] = make(map[string]http.Handler)
