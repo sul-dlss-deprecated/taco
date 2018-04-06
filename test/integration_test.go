@@ -240,3 +240,37 @@ func assertUpdatedResourceResponse(res *http.Response, req *http.Request) error 
 	}
 	return nil
 }
+
+func BenchmarkCreateResource(b *testing.B) {
+	byt, err := ioutil.ReadFile("../examples/request.json")
+	if err != nil {
+		panic(err)
+	}
+	var postData map[string]interface{}
+
+	if err := json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
+	for i := 0; i < b.N; i++ {
+
+		runPostTest(b, "/v1/resource", postData, 201)
+
+		setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+			SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+			Expect(b).
+			Status(200).
+			Type("json").
+			Done()
+	}
+}
+
+func runPostTest(t testing.TB, url string, data map[string]interface{}, responseCode int) {
+	setupTest().Post(url).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(data).
+		Expect(*(t)).
+		Status(responseCode).
+		Type("json").
+		Done()
+
+}

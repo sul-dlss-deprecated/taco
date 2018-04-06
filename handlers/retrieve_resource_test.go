@@ -71,13 +71,9 @@ func TestRetrieveError(t *testing.T) {
 }
 
 func BenchmarkRetrieveHappyPath(b *testing.B) {
-	r := gofight.New()
-	repo := NewMockDatabase(&datautils.Resource{})
+	mockParams := map[string]interface{}{"ID": 999}
+
 	for i := 0; i < b.N; i++ {
-		r.GET("/v1/resource/99").
-			Run(handler(repo, nil, nil),
-				func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-					assert.Equal(b, http.StatusOK, r.Code)
-				})
+		resp := Handle(mockParams)
 	}
 }
