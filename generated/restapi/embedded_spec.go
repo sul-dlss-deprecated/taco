@@ -375,13 +375,13 @@ func init() {
     "ProcessResponse": {
       "type": "object",
       "properties": {
-        "id": {
+        "tacoIdentifier": {
           "type": "string",
           "example": "oo000oo0001"
         }
       },
       "example": {
-        "id": "oo000oo0001"
+        "tacoIdentifier": "oo000oo0001"
       }
     },
     "Resource": {

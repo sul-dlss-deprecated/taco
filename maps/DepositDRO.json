@@ -6,8 +6,9 @@
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["externalIdentifier", "tacoIdentifier"] },
-      { "required": ["version"] }
+      { "required": ["tacoIdentifier"] },
+      { "required": ["version"] },
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {

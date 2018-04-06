@@ -52,7 +52,12 @@ func NewResource(data map[string]interface{}) *Resource {
 
 // ID returns the document's identifier
 func (d *Resource) ID() string {
-	return d.JSON.GetS("id")
+	return d.JSON.GetS("tacoIdentifier")
+}
+
+// ExternalIdentifier returns the document's external identifier (DRUID or UUID)
+func (d *Resource) ExternalIdentifier() string {
+	return d.JSON.GetS("externalIdentifier")
 }
 
 // Version returns the document's version
@@ -85,20 +90,15 @@ func (d *Resource) IsCollection() bool {
 	return contains(CollectionTypes, d.Type())
 }
 
-// CurrentVersion returns true if this is the current version
-func (d *Resource) CurrentVersion() bool {
-	return d.JSON.GetB("currentVersion")
-}
-
-// WithID sets the document's identifier
+// WithID sets the document's primary key
 func (d *Resource) WithID(id string) *Resource {
-	d.JSON["id"] = id
+	d.JSON["tacoIdentifier"] = id
 	return d
 }
 
-// WithCurrentVersion sets the currentVersion flag
-func (d *Resource) WithCurrentVersion(flag bool) *Resource {
-	d.JSON["currentVersion"] = flag
+// WithExternalIdentifier sets the document's external identifier (DRUID or UUID)
+func (d *Resource) WithExternalIdentifier(id string) *Resource {
+	d.JSON["externalIdentifier"] = id
 	return d
 }
 

@@ -1,18 +1,21 @@
 package db
 
 import (
+	"errors"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 // Database is a generic connection to a database.
 type Database interface {
 	Insert(*datautils.Resource) error
-	Read(id string) (*datautils.Resource, error)
-	DeleteByID(id string) error
-	ReadVersion(id string, version *string) (*datautils.Resource, error)
+	DeleteAllVersions(externalID string) error
+	RetrieveVersion(externalID string, version *string) (*datautils.Resource, error)
+	RetrieveLatest(externalID string) (*datautils.Resource, error)
 }
 
 // DynamodbDatabase Represents a connection to Dynamo
@@ -27,15 +30,28 @@ func Connect(session *session.Session, dynamodbEndpoint string) *dynamodb.Dynamo
 	return dynamodb.New(session, dynamoConfig)
 }
 
-func (database DynamodbDatabase) Read(id string) (*datautils.Resource, error) {
-	params := &dynamodb.GetItemInput{
-		Key: map[string]*dynamodb.AttributeValue{
-			"id": {
-				S: aws.String(id),
-			},
-		},
-		TableName:      &database.Table,
-		ConsistentRead: aws.Bool(true),
+func (d *DynamodbDatabase) query(params *dynamodb.QueryInput) (*datautils.Resource, error) {
+	resp, err := d.Connection.Query(params)
+
+	if err != nil {
+		return nil, err
 	}
-	return database.query(params)
+	if len(resp.Items) == 0 {
+		return nil, errors.New("not found")
+	}
+
+	return respToResource(resp.Items[0])
+}
+
+func respToResource(item map[string]*dynamodb.AttributeValue) (*datautils.Resource, error) {
+	var json datautils.JSONObject
+	if err := dynamodbattribute.UnmarshalMap(item, &json); err != nil {
+		return nil, err
+	}
+
+	// UnmarshalMap coerces all numbers in AWS to float64.
+	// Force version to be an integer
+	json["version"] = int(json["version"].(float64))
+
+	return datautils.NewResource(json), nil
 }

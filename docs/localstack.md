@@ -21,9 +21,16 @@ Next we have to set up the services.
 #### Create the resources table in DynamoDB:
 ```shell
 $ awslocal dynamodb create-table --table-name resources \
-  --attribute-definitions "AttributeName=id,AttributeType=S" \
-  --key-schema "AttributeName=id,KeyType=HASH" \
-  --provisioned-throughput=ReadCapacityUnits=100,WriteCapacityUnits=100
+  --attribute-definitions AttributeName=tacoIdentifier,AttributeType=S \
+  AttributeName=externalIdentifier,AttributeType=S \
+  AttributeName=version,AttributeType=N \
+  --key-schema "AttributeName=tacoIdentifier,KeyType=HASH" \
+  --provisioned-throughput=ReadCapacityUnits=10,WriteCapacityUnits=10 \
+  --global-secondary-indexes "IndexName=ResourceByExternalIDAndVersion, \
+            KeySchema=[{AttributeName=externalIdentifier,KeyType=HASH}, \
+                       {AttributeName=version,KeyType=RANGE}], \
+            Projection={ProjectionType=ALL}, \
+            ProvisionedThroughput={ReadCapacityUnits=10,WriteCapacityUnits=10}"
 ```
 
 #### Create the S3 bucket:
