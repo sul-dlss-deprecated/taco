@@ -24,12 +24,12 @@
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
-    "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
-      "type": "string"
-    },
     "externalIdentifier": {
       "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as `identification.identifier`",
+      "type": "string"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
