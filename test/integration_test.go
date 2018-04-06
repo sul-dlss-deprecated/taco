@@ -207,6 +207,7 @@ func TestCreateFile(t *testing.T) {
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/file/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		BodyEquals("sample data").
 		Done()

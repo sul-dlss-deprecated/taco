@@ -235,6 +235,9 @@
       "get": {
         "summary": "Retrieve TACO managed binary.",
         "description": "Retrieves the binary associated with the TACO identifier.",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "retrieveFile",
         "parameters": [{
           "name": "ID",

@@ -65,7 +65,7 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 	api.HealthCheckHandler = operations.HealthCheckHandlerFunc(func(params operations.HealthCheckParams) middleware.Responder {
 		return middleware.NotImplemented("operation .HealthCheck has not yet been implemented")
 	})
-	api.RetrieveFileHandler = operations.RetrieveFileHandlerFunc(func(params operations.RetrieveFileParams) middleware.Responder {
+	api.RetrieveFileHandler = operations.RetrieveFileHandlerFunc(func(params operations.RetrieveFileParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .RetrieveFile has not yet been implemented")
 	})
 	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {

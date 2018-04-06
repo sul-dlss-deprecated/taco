@@ -126,7 +126,8 @@ $ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
 Then you can retrieve the file by accessing it at that identifier:
 
 ```shell
-$ curl -L http://localhost:8080/v1/file/ef8e96fc-b29a-452e-b311-ca695256e7ca
+$ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
+-L http://localhost:8080/v1/file/ef8e96fc-b29a-452e-b311-ca695256e7ca
 ```
 
 ## Running TACO via docker compose
