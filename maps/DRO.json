@@ -157,9 +157,40 @@
       "type": "object",
       "required": ["identifier"],
       "properties": {
-        "catkey": {
-          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same digital object being described by the bibliographic record.",
-          "type": "string"
+        "catalogLinks": {
+          "description": "Links to catalog records for the resource that the DRO represents in whole or part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["catalog", "catalogRecordId"],
+            "properties": {
+              "catalog": {
+                "description": "Catalog that is the source of the linked record.",
+                "type": "string"
+              },
+              "catalogRecordId": {
+                "description": "Record identifier that is unique within the context of the linked record's catalog.",
+                "type": "string"
+              },
+              "recordSchema": {
+                "description": "Metadata schema of the linked record.",
+                "type": "string"
+              },
+              "deriveMetadata": {
+                "description": "If the DRO descriptive metadata should be automatically updated when the linked record changes.",
+                "type": "boolean"
+              },
+              "deliverMetadata": {
+                "description": "If the linked record should be automatically updated when the DRO descriptive metadata changes.",
+                "type": "boolean"
+              },
+              "recordScope": {
+                "description": "Whether the linked record describes a resource that is broader than, equivalent to, or narrower than the resource the DRO represents.",
+                "type": "string",
+                "enum": ["broader", "equivalent", "narrower"]
+              }
+            }
+          }
         },
         "doi": {
           "description": "Digital Object Identifier (DOI) for the DRO within this repository.",
@@ -169,16 +200,12 @@
           "description": "Identifier for the Digital Repository Object within the Stanford Digital Repository system",
           "type": "string"
         },
-        "isRepresentationOf": {
-          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the DRO is a digital representation of.",
-          "type": "string"
-        },
         "sameAs": {
           "description": "Another object, either external or internal to the system (if duplication occurs) that is the same digital resource as this DRO.",
           "type": "string"
         },
         "sourceId": {
-          "description": "For anything that cannot cleanly map into is representation of.",
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the DRO is a digital representation of.",
           "type": "string"
         },
         "sdrUUID": {
