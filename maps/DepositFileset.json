@@ -6,9 +6,8 @@
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
-      { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier", "tacoIdentifier"] },
+      { "required": ["version"] }
     ]
   },
   "properties": {
@@ -23,10 +22,6 @@
         "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
-    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
       "$ref": "Agent.json"
@@ -35,8 +30,12 @@
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
-    "id": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with `identification.identifier`, which is the SDR3 Identifier).",
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
+      "type": "string"
+    },
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as `identification.identifier`",
       "type": "string"
     },
     "version": {
@@ -115,12 +114,12 @@
       "not": {"required": ["identifier"]},
       "properties": {
         "identifier": {
-          "description": "Identifier for the Fileset within SDR.",
+          "description": "Identifier for the Fileset within the Stanford Digital Repository system",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the Fileset within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
