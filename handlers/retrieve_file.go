@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/storage"
@@ -19,7 +22,7 @@ type retrieveFileEntry struct {
 }
 
 // Handle the retrieve file request
-func (d *retrieveFileEntry) Handle(params operations.RetrieveFileParams) middleware.Responder {
+func (d *retrieveFileEntry) Handle(params operations.RetrieveFileParams, agent *authorization.Agent) middleware.Responder {
 	resource, err := d.repository.RetrieveLatest(params.ID)
 	if err != nil {
 		if err.Error() == "not found" {
@@ -29,7 +32,12 @@ func (d *retrieveFileEntry) Handle(params operations.RetrieveFileParams) middlew
 	}
 
 	// TODO: validate that this is a file type https://github.com/sul-dlss-labs/taco/issues/214
-	// TODO: check permissions https://github.com/sul-dlss-labs/taco/pull/81
+
+	authService := authorization.NewService(agent)
+	if !authService.CanRetrieveResource(resource) {
+		log.Printf("Agent %s is not permitted to retrieve this resource %s", agent, params.ID)
+		return operations.NewRetrieveFileUnauthorized()
+	}
 
 	signedURL, err := d.storage.CreateSignedURL(resource.JSON.GetS("file-location"))
 	if err != nil {

@@ -35,6 +35,11 @@ func init() {
         "description": "Retrieves the binary associated with the TACO identifier.",
         "summary": "Retrieve TACO managed binary.",
         "operationId": "retrieveFile",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "type": "string",

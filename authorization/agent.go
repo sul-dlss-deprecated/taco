@@ -6,3 +6,7 @@ type Agent struct {
 	// but it could also include special identifiers, e.g.: labs@stanford
 	Identifier string
 }
+
+func (d *Agent) String() string {
+	return d.Identifier
+}

@@ -52,7 +52,7 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		HealthCheckHandler: HealthCheckHandlerFunc(func(params HealthCheckParams) middleware.Responder {
 			return middleware.NotImplemented("operation HealthCheck has not yet been implemented")
 		}),
-		RetrieveFileHandler: RetrieveFileHandlerFunc(func(params RetrieveFileParams) middleware.Responder {
+		RetrieveFileHandler: RetrieveFileHandlerFunc(func(params RetrieveFileParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation RetrieveFile has not yet been implemented")
 		}),
 		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
