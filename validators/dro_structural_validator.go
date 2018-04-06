@@ -34,7 +34,7 @@ func (d *droStructuralValidator) ValidateResource(resource *datautils.Resource) 
 
 	memberIds := structuralMd.GetA("hasMember")
 	for _, memberID := range memberIds.GetS() {
-		member, err := d.repository.Read(memberID)
+		member, err := d.repository.RetrieveLatest(memberID)
 		if err != nil {
 			return d.buildErrors(fmt.Sprintf("Unable to find member %s", memberID))
 		}

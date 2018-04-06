@@ -47,22 +47,30 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		return operations.NewDepositResourceUnauthorized()
 	}
 
-	resourceID, err := d.identifierService.Mint()
+	externalID, err := d.identifierService.Mint()
 	if err != nil {
 		panic(err)
 	}
 
-	resource = resource.WithID(resourceID).WithVersion(1).WithCurrentVersion(true)
+	uuid, err := identifier.NewUUIDService().Mint()
+	if err != nil {
+		panic(err)
+	}
+
+	resource = resource.
+		WithID(uuid).
+		WithExternalIdentifier(externalID).
+		WithVersion(1)
 
 	if err = d.database.Insert(resource); err != nil {
 		panic(err)
 	}
 
-	if err := d.addToStream(resourceID); err != nil {
+	if err := d.addToStream(externalID); err != nil {
 		panic(err)
 	}
 
-	response := map[string]interface{}{"id": resourceID}
+	response := datautils.JSONObject{"id": externalID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 

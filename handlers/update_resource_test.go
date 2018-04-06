@@ -10,9 +10,10 @@ import (
 )
 
 var updateMessage = gofight.D{
-	"id":       "99",
-	"@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
-	"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+	"tacoIdentifier":     "77",
+	"externalIdentifier": "99",
+	"@context":           "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+	"@type":              "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
 	"access": gofight.D{
 		"access":   "world",
 		"download": "world",
@@ -22,8 +23,7 @@ var updateMessage = gofight.D{
 		"isDescribedBy": "the_mods.xml",
 		"created":       "2012-10-28T04:13:43.639Z",
 	},
-	"currentVersion": true,
-	"version":        5,
+	"version": 5,
 	"depositor": gofight.D{
 		"name":    "Lynn",
 		"sunetID": "lmcray",
@@ -39,7 +39,7 @@ var updateMessage = gofight.D{
 
 func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"id": "99"}))
+	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99"}))
 
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
@@ -66,14 +66,14 @@ func TestUpdateInvalidResource(t *testing.T) {
 	r.PATCH("/v1/resource/100").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(gofight.D{
-			"id":       "oo000oo0001",
-			"@context": "http://example.com", // This is not a valid context
-			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"access":   "world",
-			"label":    "My work",
-			"preserve": true,
-			"publish":  true,
-			"sourceId": "bib12345678"}).
+			"externalIdentifier": "oo000oo0001",
+			"@context":           "http://example.com", // This is not a valid context
+			"@type":              "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+			"access":             "world",
+			"label":              "My work",
+			"preserve":           true,
+			"publish":            true,
+			"sourceId":           "bib12345678"}).
 		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)

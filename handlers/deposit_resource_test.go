@@ -38,7 +38,6 @@ func TestCreateResourceHappyPath(t *testing.T) {
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
 				resource := repo.(*MockDatabase).CreatedResources[0]
 				assert.Equal(t, 1, resource.Version())
-				assert.True(t, resource.CurrentVersion())
 
 				// assert.Equal(t, "bib12345678", repo.(*MockDatabase).CreatedResources[0].(map[string]interface{})["sourceid"])
 			})
@@ -48,7 +47,7 @@ func TestCreateResourceNoApiKey(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetJSON(gofight.D{
-			"id":       "oo000oo0001",
+			"tacoIdentifier":       "oo000oo0001",
 			"sourceId": "bib12345678",
 			"title":    "My work",
 		}).
@@ -78,7 +77,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
 		SetJSON(gofight.D{
-			"id":    "oo000oo0001",
+			"tacoIdentifier":    "oo000oo0001",
 			"@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
 			"title": "My work",
 		}).
@@ -95,7 +94,7 @@ func TestCreateInvalidResource(t *testing.T) {
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
 		SetJSON(gofight.D{
-			"id":       "oo000oo0001",
+			"tacoIdentifier":       "oo000oo0001",
 			"@context": "http://example.com", // This is not a valid context
 			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
 			"access":   "world",

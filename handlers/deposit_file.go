@@ -39,24 +39,35 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 		return operations.NewDepositFileInternalServerError() // TODO: need a better error
 	}
 
-	id, err := d.identifierService.Mint()
+	externalID, err := d.identifierService.Mint()
+	if err != nil {
+		panic(err)
+	}
+
+	uuid, err := identifier.NewUUIDService().Mint()
 	if err != nil {
 		panic(err)
 	}
 
 	upload := d.paramsToFile(params)
-	location, err := d.copyFileToStorage(id, upload)
+	location, err := d.copyFileToStorage(externalID, upload)
 	if err != nil {
 		panic(err)
 	}
 
 	log.Printf("The location of the file is: %s", *location)
 
-	if err := d.createFileResource(id, upload.Metadata); err != nil {
+	resource := d.buildPersistableResource(upload.Metadata)
+	resource = resource.
+		WithExternalIdentifier(externalID).
+		WithVersion(1).
+		WithID(uuid)
+
+	if err := d.database.Insert(resource); err != nil {
 		panic(err)
 	}
 	// TODO: return file location: https://github.com/sul-dlss-labs/taco/issues/160
-	response := datautils.JSONObject{"id": id}
+	response := datautils.JSONObject{"id": externalID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
@@ -78,13 +89,8 @@ func (d *depositFileEntry) copyFileToStorage(id string, file *datautils.File) (*
 	return d.storage.UploadFile(id, file)
 }
 
-func (d *depositFileEntry) createFileResource(resourceID string, metadata datautils.FileMetadata) error {
-	resource := d.buildPersistableResource(resourceID, metadata)
-	return d.database.Insert(resource)
-}
-
-func (d *depositFileEntry) buildPersistableResource(resourceID string, metadata datautils.FileMetadata) *datautils.Resource {
-	identification := map[string]interface{}{"filename": metadata.Filename, "identifier": resourceID, "sdrUUID": resourceID}
-	json := datautils.JSONObject{"id": resourceID, "identification": identification, "hasMimeType": metadata.ContentType}
+func (d *depositFileEntry) buildPersistableResource(metadata datautils.FileMetadata) *datautils.Resource {
+	identification := map[string]interface{}{"filename": metadata.Filename}
+	json := datautils.JSONObject{"identification": identification, "hasMimeType": metadata.ContentType}
 	return datautils.NewResource(json)
 }

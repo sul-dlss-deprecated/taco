@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
@@ -31,7 +33,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
-	existingResource, err := d.database.Read(id)
+	existingResource, err := d.database.RetrieveLatest(id)
 	if err != nil {
 		if err.Error() == "not found" {
 			return operations.NewRetrieveResourceNotFound()
@@ -39,7 +41,10 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	newResource = datautils.NewResource(d.mergeJSON(&existingResource.JSON, &newResource.JSON)).WithID(id)
+	merged := d.mergeJSON(&existingResource.JSON, &newResource.JSON)
+	newResource = datautils.NewResource(merged).
+		WithExternalIdentifier(id).   // Don't allow changing druids
+		WithID(existingResource.ID()) // Ignore any passed in tacoIdentifier
 
 	err = d.database.Insert(newResource)
 	if err != nil {
@@ -67,6 +72,14 @@ func (d *updateResourceEntry) mergeJSON(maps ...*datautils.JSONObject) datautils
 				} else {
 					result[k] = v
 				}
+			case json.Number:
+				// Cast "version" to int, otherswise dynamodbattribute.MarshalMap will cast it to String
+				// See https://github.com/aws/aws-sdk-go-v2/issues/115
+				i64, err := v.(json.Number).Int64()
+				if err != nil {
+					panic(err)
+				}
+				result[k] = int(i64)
 			default:
 				result[k] = v
 			}
