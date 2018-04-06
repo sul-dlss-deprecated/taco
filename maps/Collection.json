@@ -143,9 +143,40 @@
       "type": "object",
       "required": ["identifier"],
       "properties": {
-        "catkey": {
-          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same collection being described by the bibliographic record.",
-          "type": "string"
+        "catalogLinks": {
+          "description": "Links to catalog records for the resource that the Collection represents in whole or part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["catalog", "catalogRecordId"],
+            "properties": {
+              "catalog": {
+                "description": "Catalog that is the source of the linked record.",
+                "type": "string"
+              },
+              "catalogRecordId": {
+                "description": "Record identifier that is unique within the context of the linked record's catalog.",
+                "type": "string"
+              },
+              "recordSchema": {
+                "description": "Metadata schema of the linked record.",
+                "type": "string"
+              },
+              "deriveMetadata": {
+                "description": "If the Collection descriptive metadata should be automatically updated when the linked record changes.",
+                "type": "boolean"
+              },
+              "deliverMetadata": {
+                "description": "If the linked record should be automatically updated when the Collection descriptive metadata changes.",
+                "type": "boolean"
+              },
+              "recordScope": {
+                "description": "Whether the linked record describes a resource that is broader than, equivalent to, or narrower than the resource the Collection represents.",
+                "type": "string",
+                "enum": ["broader", "equivalent", "narrower"]
+              }
+            }
+          }
         },
         "DOI": {
           "description": "Digital Object Identifier (DOI) for the Collection within this repository.",
@@ -160,7 +191,7 @@
           "type": "string"
         },
         "sourceId": {
-          "description": "For anything that cannot cleanly map into isRepresentationOf.",
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the Collection is a digital representation of.",
           "type": "string"
         },
         "sdrUUID": {

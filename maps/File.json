@@ -16,13 +16,13 @@
         "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
-    "externalIdentifier": {
-      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as `identification.identifier`",
-      "type": "string"
-    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
       "$ref": "Agent.json"
+    },
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as `identification.identifier`",
+      "type": "string"
     },
     "filename": {
       "description": "Filename for a file. Can be same as label.",
