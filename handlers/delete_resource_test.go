@@ -6,11 +6,13 @@ import (
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 func TestDeleteResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(nil)
+	json := datautils.JSONObject{}
+	repo := NewMockDatabase(datautils.NewResource(json).WithID("99999"))
 	stream := NewMockStream()
 	r.DELETE("/v1/resource/oo000oo0001").
 		Run(handler(repo, stream, nil),

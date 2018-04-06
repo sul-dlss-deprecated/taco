@@ -5,11 +5,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-// DeleteByID -- given an identifier, remove the resource
-func (h DynamodbDatabase) DeleteByID(id string) error {
+// deleteByID -- given an identifier, remove the resource
+func (h DynamodbDatabase) deleteByID(id string) error {
 	params := &dynamodb.DeleteItemInput{
 		Key: map[string]*dynamodb.AttributeValue{
-			"id": {
+			"tacoIdentifier": {
 				S: aws.String(id),
 			},
 		},
@@ -18,6 +18,25 @@ func (h DynamodbDatabase) DeleteByID(id string) error {
 	_, err := h.Connection.DeleteItem(params)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+// DeleteAllVersions removes all versions with the given external id
+func (h *DynamodbDatabase) DeleteAllVersions(externalID string) error {
+	resource, err := h.RetrieveLatest(externalID)
+	if err != nil {
+		panic(err)
+	}
+	// Delete all versions of the resource
+	for resource != nil {
+		if err = h.deleteByID(resource.ID()); err != nil {
+			panic(err)
+		}
+		resource, err = h.RetrieveLatest(externalID)
+		if err != nil && err.Error() != "not found" {
+			panic(err)
+		}
 	}
 	return nil
 }

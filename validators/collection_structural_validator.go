@@ -35,7 +35,7 @@ func (d *collectionStructuralValidator) ValidateResource(resource *datautils.Res
 
 	memberIds := structuralMd.GetA("hasMember").GetS()
 	for _, memberID := range memberIds {
-		member, err := d.repository.Read(memberID)
+		member, err := d.repository.RetrieveLatest(memberID)
 		if err != nil {
 			return d.buildErrors(fmt.Sprintf("Unable to find member %s", memberID))
 		}

@@ -3,7 +3,7 @@
   "title": "Fileset",
   "description": "Relevant groupings of Files. Also called a File Grouping.",
   "type": "object",
-  "required": ["@context", "@type", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",

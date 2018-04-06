@@ -33,14 +33,14 @@ type fakeRepository struct {
 	record *datautils.Resource
 }
 
-func (f *fakeRepository) Read(id string) (*datautils.Resource, error) {
+func (f *fakeRepository) RetrieveLatest(externalID string) (*datautils.Resource, error) {
 	if f.record != nil {
 		return f.record, nil
 	}
 	return nil, errors.New("not found")
 }
 
-func (f *fakeRepository) ReadVersion(id string, version *string) (*datautils.Resource, error) {
+func (f *fakeRepository) RetrieveVersion(externalID string, version *string) (*datautils.Resource, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -48,6 +48,6 @@ func (f *fakeRepository) Insert(resource *datautils.Resource) error {
 	return errors.New("not implemented")
 }
 
-func (f *fakeRepository) DeleteByID(id string) error {
+func (f *fakeRepository) DeleteAllVersions(externalID string) error {
 	return errors.New("not implemented")
 }

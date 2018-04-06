@@ -2,7 +2,7 @@
   "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
   "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
   "citation": "Schwend, Rudolf, Mayor of Zurich, ?-1391. https://purl.stanford.edu/bq582kh2487",
-  "currentVersion": true,
+  "externalIdentifier": "druid:bq582kh2487",
   "depositor": {
     "name": "DOR",
     "sunetID": "DOR"

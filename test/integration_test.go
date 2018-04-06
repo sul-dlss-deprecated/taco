@@ -35,7 +35,7 @@ const resourceSchema = `{
 
 var id string
 
-func TestCreateResource(t *testing.T) {
+func TestCreateAndDestroyResource(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
@@ -66,6 +66,19 @@ func TestCreateResource(t *testing.T) {
 		Status(200).
 		Type("json").
 		Done()
+
+	setupTest().Delete(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		Expect(t).
+		Status(204).
+		Done()
+
+	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		Expect(t).
+		Status(404).
+		Done()
+
 }
 
 func TestUpdateResource(t *testing.T) {

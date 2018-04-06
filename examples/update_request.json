@@ -2,12 +2,12 @@
   "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
   "@type": "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
   "citation": "Leon Kolb Collection of Portraits. https://purl.stanford.edu/bs646cd8717",
-  "currentVersion": true,
+  "externalIdentifier": "druid:bs646cd8717",
   "depositor": {
     "name": "DOR",
     "sunetID": "DOR"
   },
-  "id": "742a0134-1e20-11e2-979d-022c4a946c80",
+  "tacoIdentifier": "742a0134-1e20-11e2-979d-022c4a946c80",
   "label": "UPDATED: Leon Kolb Collection of Portraits",
   "version": 1,
   "access": {

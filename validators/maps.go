@@ -28,7 +28,7 @@ var (
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
   "type": "object",
-  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -49,15 +49,15 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a DRUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Collection into SDR.",
       "$ref": "Agent.json"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
       "type": "string"
     },
@@ -229,7 +229,7 @@ var (
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
-  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -260,15 +260,15 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a DRUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
       "$ref": "Agent.json"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
       "type": "string"
     },
@@ -473,9 +473,9 @@ var (
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
+      { "required": ["tacoIdentifier"] },
       { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {
@@ -498,15 +498,15 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a DRUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Collection into SDR.",
       "$ref": "Agent.json"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
       "type": "string"
     },
@@ -682,9 +682,9 @@ var (
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
+      { "required": ["tacoIdentifier"] },
       { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {
@@ -717,15 +717,15 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a DRUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
       "$ref": "Agent.json"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
       "type": "string"
     },
@@ -931,9 +931,9 @@ var (
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
+      { "required": ["tacoIdentifier"] },
       { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {
@@ -948,9 +948,9 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a UUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
@@ -1102,9 +1102,9 @@ var (
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
+      { "required": ["tacoIdentifier"] },
       { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {
@@ -1119,9 +1119,9 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a UUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
@@ -1131,7 +1131,7 @@ var (
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
       "type": "string"
     },
@@ -1256,7 +1256,7 @@ var (
   "title": "File",
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
   "type": "object",
-  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -1269,9 +1269,9 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a UUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
@@ -1419,7 +1419,7 @@ var (
   "title": "Fileset",
   "description": "Relevant groupings of Files. Also called a File Grouping.",
   "type": "object",
-  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -1432,9 +1432,9 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a UUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
@@ -1444,7 +1444,7 @@ var (
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
       "type": "string"
     },

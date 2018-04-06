@@ -24,8 +24,7 @@ type deleteResourceEntry struct {
 // Handle the delete entry request
 // TODO: Delete from S3
 func (d *deleteResourceEntry) Handle(params operations.DeleteResourceParams) middleware.Responder {
-
-	if err := d.repository.DeleteByID(params.ID); err != nil {
+	if err := d.repository.DeleteAllVersions(params.ID); err != nil {
 		panic(err)
 	}
 

@@ -31,7 +31,7 @@ func (d *fileStructuralValidator) ValidateResource(resource *datautils.Resource)
 	}
 
 	containedBy := structuralMd.GetS("isContainedBy")
-	containing, err := d.repository.Read(containedBy)
+	containing, err := d.repository.RetrieveLatest(containedBy)
 	if err != nil {
 		return d.buildErrors(fmt.Sprintf("Unable to find container %s", containedBy))
 	}
