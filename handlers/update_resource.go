@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
@@ -46,6 +49,10 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
+	if err = d.addToStream(id); err != nil {
+		panic(err)
+	}
+
 	response := datautils.JSONObject{"id": id}
 	return operations.NewUpdateResourceOK().WithPayload(response)
 }
@@ -69,4 +76,15 @@ func (d *updateResourceEntry) mergeJSON(maps ...*datautils.JSONObject) datautils
 		}
 	}
 	return result
+}
+
+func (d *updateResourceEntry) addToStream(id string) error {
+	message, err := json.Marshal(id)
+	if err != nil {
+		return err
+	}
+	if d.stream == nil {
+		log.Printf("Stream is nil")
+	}
+	return d.stream.SendMessage(string(message))
 }
