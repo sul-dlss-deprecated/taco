@@ -6,9 +6,9 @@
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
+      { "required": ["tacoIdentifier"] },
       { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {
@@ -23,9 +23,9 @@
         "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a UUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
@@ -35,7 +35,7 @@
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
-    "id": {
+    "tacoIdentifier": {
       "description": "Identifier for the resource within TACO (should, but may not, overlap with `identification.identifier`, which is the SDR3 Identifier).",
       "type": "string"
     },

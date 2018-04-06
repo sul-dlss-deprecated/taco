@@ -21,7 +21,6 @@ func (h DynamodbDatabase) Update(resource *datautils.Resource) error {
 	}
 
 	_, err = h.Connection.PutItem(input)
-
 	if err != nil {
 		return err
 	}

@@ -12,10 +12,10 @@ func TestWithID(t *testing.T) {
 	assert.Equal(t, "8888", resource.ID())
 }
 
-func TestWithCurrentVersion(t *testing.T) {
+func TestWithExternalIdentifier(t *testing.T) {
 	resource := NewResource(JSONObject{})
-	resource.WithCurrentVersion(true)
-	assert.True(t, resource.CurrentVersion())
+	resource.WithExternalIdentifier("8888")
+	assert.Equal(t, "8888", resource.JSON.GetS("externalIdentifier"))
 }
 
 func TestWithVersion(t *testing.T) {
@@ -69,7 +69,7 @@ func TestIsFile(t *testing.T) {
 }
 
 func TestString(t *testing.T) {
-	json := JSONObject{"id": "Foo"}
+	json := JSONObject{"tacoIdentifier": "Foo"}
 	resource := NewResource(json)
 	assert.Equal(t, "<Resource id: 'Foo'>", resource.String())
 }

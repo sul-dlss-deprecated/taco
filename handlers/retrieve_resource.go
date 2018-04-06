@@ -25,9 +25,9 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams, agen
 	var resource *datautils.Resource
 	var err error
 	if params.Version != nil {
-		resource, err = d.database.ReadVersion(params.ID, params.Version)
+		resource, err = d.database.RetrieveVersion(params.ID, params.Version)
 	} else {
-		resource, err = d.database.Read(params.ID)
+		resource, err = d.database.RetrieveLatest(params.ID)
 	}
 
 	if err != nil {

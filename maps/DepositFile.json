@@ -6,9 +6,9 @@
   "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
   "not": {
     "anyOf": [
-      { "required": ["id"] },
+      { "required": ["tacoIdentifier"] },
       { "required": ["version"] },
-      { "required": ["currentVersion"] }
+      { "required": ["externalIdentifier"] }
     ]
   },
   "properties": {
@@ -23,9 +23,9 @@
         "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
-    "currentVersion": {
-      "description": "If this is the current version (most recent version) for the resource.",
-      "type": "boolean"
+    "externalIdentifier": {
+      "description": "The external SDR identifier. Typically a UUID",
+      "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",

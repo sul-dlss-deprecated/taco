@@ -45,14 +45,14 @@ func (d *MockDatabase) Insert(params *datautils.Resource) error {
 	return nil
 }
 
-func (d *MockDatabase) Read(id string) (*datautils.Resource, error) {
+func (d *MockDatabase) RetrieveLatest(externalID string) (*datautils.Resource, error) {
 	if d.record != nil {
 		return d.record, nil
 	}
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) ReadVersion(id string, version *string) (*datautils.Resource, error) {
+func (d *MockDatabase) RetrieveVersion(id string, version *string) (*datautils.Resource, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -80,7 +80,7 @@ func (d *MockErrorDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 
-func (d *MockErrorDatabase) Read(id string) (*datautils.Resource, error) {
+func (d *MockErrorDatabase) RetrieveLatest(externalID string) (*datautils.Resource, error) {
 	return nil, errors.New("Broken")
 }
 
@@ -88,6 +88,6 @@ func (d *MockErrorDatabase) DeleteByID(id string) error {
 	return errors.New("Broken")
 }
 
-func (d *MockErrorDatabase) ReadVersion(id string, version *string) (*datautils.Resource, error) {
+func (d *MockErrorDatabase) RetrieveVersion(id string, version *string) (*datautils.Resource, error) {
 	return nil, errors.New("not implemented")
 }
