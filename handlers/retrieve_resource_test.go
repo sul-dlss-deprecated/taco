@@ -6,7 +6,9 @@ import (
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
+	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 )
 
 func TestRetrieveHappyPath(t *testing.T) {
@@ -71,9 +73,11 @@ func TestRetrieveError(t *testing.T) {
 }
 
 func BenchmarkRetrieveHappyPath(b *testing.B) {
-	mockParams := map[string]interface{}{"ID": 999}
-
+	mockDb := NewMockDatabase(&datautils.Resource{})
+	mockRr := NewRetrieveResource(mockDb)
+	mockAgent := &authorization.Agent{Identifier: "lmcrae@stanford.edu"}
+	mockParams := &operations.RetrieveResourceParams{ID: "999"}
 	for i := 0; i < b.N; i++ {
-		resp := Handle(mockParams)
+		_ = mockRr.Handle(*mockParams, mockAgent)
 	}
 }
