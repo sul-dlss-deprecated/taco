@@ -101,6 +101,9 @@
       "patch": {
         "summary": "Update TACO Resource.",
         "description": "Updates the metadata for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). Only include the required fields and the fields you wish to have changed. Will return the TACO resource identifier.",
+        "security" : [
+          { "RemoteUser": [] }
+        ],
         "operationId": "updateResource",
         "consumes": ["application/json", "application/json+ld"],
         "produces": ["application/json"],

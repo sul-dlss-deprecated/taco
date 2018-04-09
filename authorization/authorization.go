@@ -8,6 +8,7 @@ import (
 type Service interface {
 	CanCreateResourceOfType(string) bool
 	CanRetrieveResource(*datautils.Resource) bool
+	CanUpdateResource(*datautils.Resource) bool
 }
 
 type dummyAuthorizationService struct {
@@ -24,5 +25,9 @@ func (d *dummyAuthorizationService) CanCreateResourceOfType(resourceType string)
 }
 
 func (d *dummyAuthorizationService) CanRetrieveResource(res *datautils.Resource) bool {
+	return d.agent.Identifier == "lmcrae@stanford.edu"
+}
+
+func (d *dummyAuthorizationService) CanUpdateResource(res *datautils.Resource) bool {
 	return d.agent.Identifier == "lmcrae@stanford.edu"
 }

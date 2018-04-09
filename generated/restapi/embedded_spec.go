@@ -32,11 +32,6 @@ func init() {
   "paths": {
     "/file": {
       "post": {
-        "security": [
-          {
-            "RemoteUser": []
-          }
-        ],
         "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
         "consumes": [
           "multipart/form-data"
@@ -46,6 +41,11 @@ func init() {
         ],
         "summary": "Deposit New File (binary).",
         "operationId": "depositFile",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "type": "file",
@@ -97,11 +97,6 @@ func init() {
     },
     "/resource": {
       "post": {
-        "security": [
-          {
-            "RemoteUser": []
-          }
-        ],
         "description": "Deposits a new resource (Collection, Digital Repository Object, File [metadata only] or subclass of those) into SDR. Will return the SDR identifier for the resource.",
         "consumes": [
           "application/json",
@@ -112,6 +107,11 @@ func init() {
         ],
         "summary": "Deposit New TACO Resource.",
         "operationId": "depositResource",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "description": "JSON-LD representation of the resource metadata going into SDR. Needs to fit the SDR 3.0 MAP requirements.",
@@ -150,17 +150,17 @@ func init() {
     },
     "/resource/{ID}": {
       "get": {
-        "security": [
-          {
-            "RemoteUser": []
-          }
-        ],
         "description": "Retrieves the metadata (as JSON-LD following our SDR3 MAP v.1) for an existing TACO resource (Collection, Digital Repository Object, File metadata object [not binary] or subclass of those). The resource is identified by the TACO identifier.",
         "produces": [
           "application/json"
         ],
         "summary": "Retrieve TACO Resource Metadata.",
         "operationId": "retrieveResource",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "type": "string",
@@ -230,6 +230,11 @@ func init() {
         ],
         "summary": "Update TACO Resource.",
         "operationId": "updateResource",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "type": "string",
@@ -278,17 +283,17 @@ func init() {
     },
     "/status/{ID}": {
       "get": {
-        "security": [
-          {
-            "RemoteUser": []
-          }
-        ],
         "description": "Get the processing status and history for a resource.",
         "produces": [
           "application/json"
         ],
         "summary": "Resource Processing Status.",
         "operationId": "getProcessStatus",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
         "parameters": [
           {
             "type": "string",
