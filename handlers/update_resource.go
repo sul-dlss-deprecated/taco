@@ -1,7 +1,10 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -22,7 +25,7 @@ type updateResourceEntry struct {
 }
 
 // Handle the update resource request
-func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
+func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams, agent *authorization.Agent) middleware.Responder {
 	id := params.ID
 	newResource := datautils.NewResource(params.Payload.(map[string]interface{})).WithID(id)
 
@@ -37,6 +40,12 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 			return operations.NewRetrieveResourceNotFound()
 		}
 		panic(err)
+	}
+
+	authService := authorization.NewService(agent)
+	if !authService.CanUpdateResource(existingResource) {
+		log.Printf("Agent %s is not permitted to update this resource %s", agent, existingResource.String())
+		return operations.NewUpdateResourceUnauthorized()
 	}
 
 	newResource = datautils.NewResource(d.mergeJSON(&existingResource.JSON, &newResource.JSON)).WithID(id)

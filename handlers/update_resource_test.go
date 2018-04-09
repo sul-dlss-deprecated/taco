@@ -42,7 +42,7 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"id": "99"}))
 
 	r.PATCH("/v1/resource/99").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{"Content-Type": "application/json", "On-Behalf-Of": "lmcrae@stanford.edu"}).
 		SetJSON(updateMessage).
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -53,7 +53,7 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 func TestUpdateResourceNotFound(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/99").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{"Content-Type": "application/json", "On-Behalf-Of": "lmcrae@stanford.edu"}).
 		SetJSON(updateMessage).
 		Run(handler(NewMockDatabase(nil), nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -64,7 +64,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 func TestUpdateInvalidResource(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{"Content-Type": "application/json", "On-Behalf-Of": "lmcrae@stanford.edu"}).
 		SetJSON(gofight.D{
 			"id":       "oo000oo0001",
 			"@context": "http://example.com", // This is not a valid context
@@ -84,6 +84,9 @@ func TestUpdateInvalidResource(t *testing.T) {
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
 		Run(handler(NewMockDatabase(nil), nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)

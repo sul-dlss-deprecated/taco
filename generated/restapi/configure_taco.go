@@ -68,7 +68,7 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .RetrieveResource has not yet been implemented")
 	})
-	api.UpdateResourceHandler = operations.UpdateResourceHandlerFunc(func(params operations.UpdateResourceParams) middleware.Responder {
+	api.UpdateResourceHandler = operations.UpdateResourceHandlerFunc(func(params operations.UpdateResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .UpdateResource has not yet been implemented")
 	})
 
