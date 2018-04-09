@@ -1,14 +1,19 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
 	"github.com/appleboy/gofight"
 	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
-const filePath = "/v1/file"
+const filesetID = "99999"
+
+var filePath = fmt.Sprintf("/v1/resource/%s/file", filesetID)
+
 const contentType = "multipart/form-data; boundary=------------------------a31e2ddd4b2c0d92"
 const body = `--------------------------a31e2ddd4b2c0d92
 Content-Disposition: form-data; name="upload"; filename="foo.txt"
@@ -21,7 +26,10 @@ Hello
 func TestCreateFileHappyPath(t *testing.T) {
 	r := gofight.New()
 	storage := NewMockStorage()
-	repo := NewMockDatabase(nil)
+	fileSet := datautils.NewResource(nil).
+		WithType(datautils.FilesetType).
+		WithID(filesetID)
+	repo := NewMockDatabase(fileSet)
 
 	r.POST(filePath).
 		SetHeader(gofight.H{
@@ -40,7 +48,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 				assert.Equal(t, fileResource.Label(), "foo.txt")
 				assert.Equal(t, "text/plain", fileResource.MimeType())
 				assert.Equal(t, "s3FileLocation", fileResource.FileLocation())
-
+				assert.Equal(t, fileSet.ID(), fileResource.Structural().GetS("isContainedBy"))
 			})
 }
 
@@ -99,9 +107,29 @@ func TestCreateFileNoPermissions(t *testing.T) {
 			})
 }
 
-func TestCreateFileFailure(t *testing.T) {
+func TestCreateFileNoFileset(t *testing.T) {
+	// Trying to attach to a nonexistent fileset returns a 404
 	r := gofight.New()
-	repo := NewMockDatabase(nil)
+	r.POST(filePath).
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Content-Type": contentType,
+		}).
+		SetBody(body).
+		Run(handler(nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusNotFound, r.Code)
+				assert.Contains(t, r.Body.String(), "Validation Error")
+			})
+}
+
+func TestCreateFileFailure(t *testing.T) {
+	// Failure in storing the binary causes a panic
+	r := gofight.New()
+	fileSet := datautils.NewResource(nil).
+		WithType(datautils.FilesetType).
+		WithID(filesetID)
+	repo := NewMockDatabase(fileSet)
 	storage := NewMockErrorStorage()
 	assert.Panics(t,
 		func() {
@@ -117,8 +145,12 @@ func TestCreateFileFailure(t *testing.T) {
 }
 
 func TestCreateFileResourceFailure(t *testing.T) {
+	// Failure in storing the metadata causes a panic
 	r := gofight.New()
-	repo := NewMockErrorDatabase()
+	fileSet := datautils.NewResource(nil).
+		WithType(datautils.FilesetType).
+		WithID(filesetID)
+	repo := NewMockErrorDatabase(fileSet)
 	assert.Panics(t,
 		func() {
 

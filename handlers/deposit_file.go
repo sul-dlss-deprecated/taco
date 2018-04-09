@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"log"
+	"mime/multipart"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
@@ -14,16 +16,19 @@ import (
 )
 
 // NewDepositFile -- Accepts requests to create a file and pushes it to s3.
-func NewDepositFile(database db.Database, uploader storage.Storage, identifierService identifier.Service) operations.DepositFileHandler {
+func NewDepositFile(database db.Database, uploader storage.Storage, validator validators.ResourceValidator, identifierService identifier.Service) operations.DepositFileHandler {
 	return &depositFileEntry{database: database,
 		storage:           uploader,
-		identifierService: identifierService}
+		identifierService: identifierService,
+		validator:         validator,
+	}
 }
 
 type depositFileEntry struct {
 	database          db.Database
 	storage           storage.Storage
 	identifierService identifier.Service
+	validator         validators.ResourceValidator
 }
 
 // Handle the deposit file request
@@ -34,9 +39,12 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 		return operations.NewDepositResourceUnauthorized()
 	}
 
-	validator := validators.NewDepositFileValidator(d.database)
-	if err := validator.ValidateResource(params.Upload.Header); err != nil {
-		return operations.NewDepositFileInternalServerError() // TODO: need a better error
+	upload := d.buildFile(params.Upload.Header, params.Upload.Data)
+	resource := d.buildPersistableResource(params.FilesetID, upload.Metadata)
+
+	if errors := d.validator.ValidateResource(resource); errors != nil {
+		return operations.NewDepositFileNotFound().
+			WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
 	externalID, err := d.identifierService.Mint()
@@ -49,16 +57,15 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 		panic(err)
 	}
 
-	upload := d.paramsToFile(params)
 	location, err := d.copyFileToStorage(externalID, upload)
 	if err != nil {
 		panic(err)
 	}
 
-	resource := d.buildPersistableResource(upload.Metadata, location)
 	resource = resource.
 		WithExternalIdentifier(externalID).
 		WithVersion(1).
+		WithFileLocation(*location).
 		WithID(uuid)
 
 	if err := d.database.Insert(resource); err != nil {
@@ -69,14 +76,12 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 	return operations.NewDepositResourceCreated().WithPayload(response)
 }
 
-func (d *depositFileEntry) paramsToFile(params operations.DepositFileParams) *datautils.File {
-	file := params.Upload
-	fileHeader := file.Header
+func (d *depositFileEntry) buildFile(fileHeader *multipart.FileHeader, data multipart.File) *datautils.File {
 	metadata := datautils.FileMetadata{
 		Filename:    fileHeader.Filename,
 		ContentType: fileHeader.Header.Get("Content-Type"),
 	}
-	return datautils.NewFile(metadata, file.Data)
+	return datautils.NewFile(metadata, data)
 }
 
 func (d *depositFileEntry) copyFileToStorage(id string, file *datautils.File) (*string, error) {
@@ -87,11 +92,12 @@ func (d *depositFileEntry) copyFileToStorage(id string, file *datautils.File) (*
 	return d.storage.UploadFile(id, file)
 }
 
-func (d *depositFileEntry) buildPersistableResource(metadata datautils.FileMetadata, location *string) *datautils.Resource {
+func (d *depositFileEntry) buildPersistableResource(FilesetID string, metadata datautils.FileMetadata) *datautils.Resource {
 	resource := NewFile()
 	identification := resource.Identification()
 	(*identification)["filename"] = metadata.Filename
+	structural := resource.Structural()
+	(*structural)["isContainedBy"] = FilesetID
 	return resource.WithMimeType(metadata.ContentType).
-		WithLabel(metadata.Filename).
-		WithFileLocation(*location)
+		WithLabel(metadata.Filename)
 }

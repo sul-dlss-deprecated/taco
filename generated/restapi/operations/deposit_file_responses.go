@@ -78,6 +78,49 @@ func (o *DepositFileUnauthorized) WriteResponse(rw http.ResponseWriter, producer
 	rw.WriteHeader(401)
 }
 
+// DepositFileNotFoundCode is the HTTP code returned for type DepositFileNotFound
+const DepositFileNotFoundCode int = 404
+
+/*DepositFileNotFound Resource not found. Check that the provide identifier is correct.
+
+swagger:response depositFileNotFound
+*/
+type DepositFileNotFound struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.ErrorResponse `json:"body,omitempty"`
+}
+
+// NewDepositFileNotFound creates DepositFileNotFound with default headers values
+func NewDepositFileNotFound() *DepositFileNotFound {
+	return &DepositFileNotFound{}
+}
+
+// WithPayload adds the payload to the deposit file not found response
+func (o *DepositFileNotFound) WithPayload(payload *models.ErrorResponse) *DepositFileNotFound {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the deposit file not found response
+func (o *DepositFileNotFound) SetPayload(payload *models.ErrorResponse) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *DepositFileNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(404)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}
+
 // DepositFileUnsupportedMediaTypeCode is the HTTP code returned for type DepositFileUnsupportedMediaType
 const DepositFileUnsupportedMediaTypeCode int = 415
 

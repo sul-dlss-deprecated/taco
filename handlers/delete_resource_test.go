@@ -24,7 +24,7 @@ func TestDeleteResourceHappyPath(t *testing.T) {
 
 func TestDeleteResourceFailure(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockErrorDatabase()
+	repo := NewMockErrorDatabase(nil)
 	assert.Panics(t,
 		func() {
 			r.DELETE("/v1/resource/oo000oo0001").

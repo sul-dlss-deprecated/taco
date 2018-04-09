@@ -1,0 +1,25 @@
+{
+  "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+  "@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+  "citation": "Schwend, Rudolf, Mayor of Zurich, ?-1391. https://purl.stanford.edu/bq582kh2487",
+  "depositor": {
+    "name": "DOR",
+    "sunetID": "DOR"
+  },
+  "label": "Schwend, Rudolf, Mayor of Zurich, ?-1391",
+  "access": {
+    "access": "world",
+    "copyright": "This work is copyrighted by the creator.",
+    "download": "world",
+    "license": "http://creativecommons.org/licenses/by-nc-sa/4.0/",
+    "reuseAndReproductionStatement": "Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Special Collections Public Services Librarian at speccollref@stanford.edu."
+  },
+  "administrative": {
+    "sdrPreserve": true
+  },
+  "identification": {
+  },
+  "structural": {
+    "hasAgreement": "druid:dd327qr3670"
+  }
+}

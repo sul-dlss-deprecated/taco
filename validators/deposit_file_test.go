@@ -1,13 +1,14 @@
 package validators
 
 import (
-	"mime/multipart"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 func TestDepositFileIsValid(t *testing.T) {
-	err := NewDepositFileValidator(newMockRepository(nil)).ValidateResource(&multipart.FileHeader{})
+	resource := &datautils.Resource{}
+	err := NewDepositFileValidator(newMockRepository(nil)).ValidateResource(resource)
 	assert.Nil(t, err)
 }

@@ -9,11 +9,16 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
+	"strings"
 )
 
 // DepositFileURL generates an URL for the deposit file operation
 type DepositFileURL struct {
+	FilesetID string
+
 	_basePath string
+	// avoid unkeyed usage
+	_ struct{}
 }
 
 // WithBasePath sets the base path for this url builder, only required when it's different from the
@@ -35,8 +40,14 @@ func (o *DepositFileURL) SetBasePath(bp string) {
 func (o *DepositFileURL) Build() (*url.URL, error) {
 	var result url.URL
 
-	var _path = "/file"
+	var _path = "/resource/{FilesetID}/file"
 
+	filesetID := o.FilesetID
+	if filesetID != "" {
+		_path = strings.Replace(_path, "{FilesetID}", filesetID, -1)
+	} else {
+		return nil, errors.New("FilesetID is required on DepositFileURL")
+	}
 	_basePath := o._basePath
 	if _basePath == "" {
 		_basePath = "/v1"
