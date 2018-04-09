@@ -11,7 +11,7 @@ import (
 )
 
 func postData() map[string]interface{} {
-	byt, err := ioutil.ReadFile("../examples/request.json")
+	byt, err := ioutil.ReadFile("../../examples/request.json")
 	if err != nil {
 		panic(err)
 	}
