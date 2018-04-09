@@ -30,7 +30,7 @@ func NewDepositFile(ctx *middleware.Context, handler DepositFileHandler) *Deposi
 	return &DepositFile{Context: ctx, Handler: handler}
 }
 
-/*DepositFile swagger:route POST /file depositFile
+/*DepositFile swagger:route POST /resource/{FilesetID}/file depositFile
 
 Deposit New File (binary).
 

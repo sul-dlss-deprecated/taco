@@ -333,7 +333,7 @@ func (o *TacoAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/file"] = NewDepositFile(o.context, o.DepositFileHandler)
+	o.handlers["POST"]["/resource/{FilesetID}/file"] = NewDepositFile(o.context, o.DepositFileHandler)
 
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)

@@ -64,10 +64,13 @@ func (d *MockDatabase) DeleteAllVersions(externalID string) error {
 }
 
 type MockErrorDatabase struct {
+	record *datautils.Resource
 }
 
-func NewMockErrorDatabase() db.Database {
-	return &MockErrorDatabase{}
+func NewMockErrorDatabase(record *datautils.Resource) db.Database {
+	return &MockErrorDatabase{
+		record: record,
+	}
 }
 
 func (d *MockErrorDatabase) Insert(params *datautils.Resource) error {
@@ -79,7 +82,7 @@ func (d *MockErrorDatabase) Update(params *datautils.Resource) error {
 }
 
 func (d *MockErrorDatabase) RetrieveLatest(externalID string) (*datautils.Resource, error) {
-	return nil, errors.New("Broken")
+	return d.record, nil
 }
 
 func (d *MockErrorDatabase) DeleteAllVersions(externalID string) error {

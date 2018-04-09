@@ -21,15 +21,24 @@ func BuildAPI(database db.Database, storage storage.Storage, identifierService i
 	}
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
 	api.DeleteResourceHandler = NewDeleteResource(database)
-	api.DepositResourceHandler = NewDepositResource(database, depositValidator(database), identifierService)
-	api.UpdateResourceHandler = NewUpdateResource(database, updateValidator(database))
-	api.DepositFileHandler = NewDepositFile(database, storage, identifierService)
+	api.DepositResourceHandler = NewDepositResource(database, depositResourceValidator(database), identifierService)
+	api.UpdateResourceHandler = NewUpdateResource(database, updateResourceValidator(database))
+	api.DepositFileHandler = NewDepositFile(database, storage, depositFileValidator(database), identifierService)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api
 }
 
+// Builds the validator for deposit file requests
+func depositFileValidator(database db.Database) validators.ResourceValidator {
+	return validators.NewCompositeResourceValidator(
+		[]validators.ResourceValidator{
+			validators.NewDepositFileValidator(database),
+			structuralValidator(database),
+		})
+}
+
 // Builds the validator for deposit resource requests
-func depositValidator(database db.Database) validators.ResourceValidator {
+func depositResourceValidator(database db.Database) validators.ResourceValidator {
 	return validators.NewCompositeResourceValidator(
 		[]validators.ResourceValidator{
 			validators.NewDepositResourceValidator(database),
@@ -38,7 +47,7 @@ func depositValidator(database db.Database) validators.ResourceValidator {
 }
 
 // Builds the validator for update resource requests
-func updateValidator(database db.Database) validators.ResourceValidator {
+func updateResourceValidator(database db.Database) validators.ResourceValidator {
 	return validators.NewCompositeResourceValidator(
 		[]validators.ResourceValidator{
 			validators.NewUpdateResourceValidator(database),

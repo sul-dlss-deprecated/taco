@@ -118,7 +118,7 @@ func TestCreateResourceFailure(t *testing.T) {
 					"On-Behalf-Of": "lmcrae@stanford.edu",
 				}).
 				SetJSON(postData()).
-				Run(handler(NewMockErrorDatabase(), nil),
+				Run(handler(NewMockErrorDatabase(nil), nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

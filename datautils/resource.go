@@ -47,6 +47,9 @@ type Resource struct {
 
 // NewResource creates a new resource instance
 func NewResource(data map[string]interface{}) *Resource {
+	if data == nil {
+		data = map[string]interface{}{}
+	}
 	return &Resource{JSON: JSONObject(data)}
 }
 
@@ -108,6 +111,12 @@ func (d *Resource) IsCollection() bool {
 // WithID sets the document's primary key
 func (d *Resource) WithID(id string) *Resource {
 	d.JSON["tacoIdentifier"] = id
+	return d
+}
+
+// WithType sets the document's type
+func (d *Resource) WithType(atType string) *Resource {
+	d.JSON["@type"] = atType
 	return d
 }
 

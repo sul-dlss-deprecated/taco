@@ -30,50 +30,6 @@ func init() {
   "host": "sdr.dlss.stanford.edu",
   "basePath": "/v1",
   "paths": {
-    "/file": {
-      "post": {
-        "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "summary": "Deposit New File (binary).",
-        "operationId": "depositFile",
-        "security": [
-          {
-            "RemoteUser": []
-          }
-        ],
-        "parameters": [
-          {
-            "type": "file",
-            "description": "Binary to be added to an Object in TACO.",
-            "name": "upload",
-            "in": "formData",
-            "required": true
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "TACO binary ingested, File management metadata created, \u0026 File processing started.",
-            "schema": {
-              "$ref": "#/definitions/ResourceResponse"
-            }
-          },
-          "401": {
-            "description": "You are not authorized to ingest a File into TACO."
-          },
-          "415": {
-            "description": "Unsupported file type provided."
-          },
-          "500": {
-            "description": "This file could be ingested at this time by TACO."
-          }
-        }
-      }
-    },
     "/healthcheck": {
       "get": {
         "description": "The healthcheck endpoint provides information about the health of the service.",
@@ -144,6 +100,63 @@ func init() {
           },
           "500": {
             "description": "This resource could be created at this time by TACO."
+          }
+        }
+      }
+    },
+    "/resource/{FilesetID}/file": {
+      "post": {
+        "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "summary": "Deposit New File (binary).",
+        "operationId": "depositFile",
+        "security": [
+          {
+            "RemoteUser": []
+          }
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Fileset identifier. This points at the container for this file.",
+            "name": "FilesetID",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "file",
+            "description": "Binary to be added to an Object in TACO.",
+            "name": "upload",
+            "in": "formData",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "TACO binary ingested, File management metadata created, \u0026 File processing started.",
+            "schema": {
+              "$ref": "#/definitions/ResourceResponse"
+            }
+          },
+          "401": {
+            "description": "You are not authorized to ingest a File into TACO."
+          },
+          "404": {
+            "description": "Resource not found. Check that the provide identifier is correct.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "415": {
+            "description": "Unsupported file type provided."
+          },
+          "500": {
+            "description": "This file could be ingested at this time by TACO."
           }
         }
       }

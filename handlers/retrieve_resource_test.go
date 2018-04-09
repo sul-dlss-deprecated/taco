@@ -64,7 +64,7 @@ func TestRetrieveError(t *testing.T) {
 				SetHeader(gofight.H{
 					"On-Behalf-Of": "lmcrae@stanford.edu",
 				}).
-				Run(handler(NewMockErrorDatabase(), nil),
+				Run(handler(NewMockErrorDatabase(nil), nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 
 		})

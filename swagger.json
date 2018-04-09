@@ -182,7 +182,7 @@
         }
       }
     },
-    "/file": {
+    "/resource/{FilesetID}/file": {
       "post": {
         "summary": "Deposit New File (binary).",
         "description": "Deposits a new File (binary) into SDR. Will return the SDR identifier for the File resource (aka the metadata object generated and persisted for management of the provided binary).",
@@ -192,7 +192,14 @@
         "operationId": "depositFile",
         "consumes": ["multipart/form-data"],
         "produces": ["application/json"],
-        "parameters": [{
+        "parameters": [
+          {
+            "name": "FilesetID",
+            "in": "path",
+            "description": "Fileset identifier. This points at the container for this file.",
+            "required": true,
+            "type": "string"
+          },{
           "in": "formData",
           "name": "upload",
           "type": "file",
@@ -211,6 +218,12 @@
           },
           "415": {
             "description": "Unsupported file type provided."
+          },
+          "404": {
+            "description": "Resource not found. Check that the provide identifier is correct.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
           },
           "500": {
             "description": "This file could be ingested at this time by TACO."

@@ -14,6 +14,7 @@ import (
 
 	"github.com/buger/jsonparser"
 	"github.com/sul-dlss-labs/taco/config"
+	"github.com/sul-dlss-labs/taco/datautils"
 	baloo "gopkg.in/h2non/baloo.v3"
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
@@ -49,19 +50,9 @@ func TestCreateAndDestroyResource(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/request.json")
-	if err != nil {
-		panic(err)
-	}
-	var postData map[string]interface{}
-
-	if err := json.Unmarshal(byt, &postData); err != nil {
-		panic(err)
-	}
-
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(postData).
+		JSON(fromFile("request.json")).
 		Expect(t).
 		Status(201).
 		Type("json").
@@ -95,36 +86,15 @@ func TestUpdateResource(t *testing.T) {
 		t.Skip("skpping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/request.json")
-	if err != nil {
-		panic(err)
-	}
-	var postData map[string]interface{}
-
-	if err = json.Unmarshal(byt, &postData); err != nil {
-		panic(err)
-	}
-
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(postData).
+		JSON(fromFile("request.json")).
 		Expect(t).
 		Status(201).
 		Type("json").
 		JSONSchema(resourceSchema).
 		AssertFunc(assertResourceResponse).
 		Done()
-
-	byt, err = ioutil.ReadFile("../examples/update_request.json")
-	if err != nil {
-		panic(err)
-	}
-
-	var patchData map[string]interface{}
-
-	if err := json.Unmarshal(byt, &patchData); err != nil {
-		panic(err)
-	}
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
 		AddQuery("version", "1").
@@ -137,8 +107,9 @@ func TestUpdateResource(t *testing.T) {
 
 	// This is required to ensure we're not passing an example with
 	// incorrect identifiers
-	patchData["externalIdentifier"] = externalIdentifier
-	patchData["tacoIdentifier"] = tacoIdentifier
+	patchData := fromFile("update_request.json")
+	(*patchData)["externalIdentifier"] = externalIdentifier
+	(*patchData)["tacoIdentifier"] = tacoIdentifier
 
 	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
@@ -167,19 +138,9 @@ func TestRetrieveVersions(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	byt, err := ioutil.ReadFile("../examples/request.json")
-	if err != nil {
-		panic(err)
-	}
-	var postData map[string]interface{}
-
-	if err := json.Unmarshal(byt, &postData); err != nil {
-		panic(err)
-	}
-
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(postData).
+		JSON(fromFile("request.json")).
 		Expect(t).
 		Status(201).
 		Type("json").
@@ -201,9 +162,34 @@ func TestCreateFile(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
+	// First create the DRO to attach it to.
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(fromFile("deposit_object.json")).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	fileset := fromFile("deposit_fileset.json")
+	(*fileset.GetObj("structural"))["isContainedBy"] = id
+	// Next, create the fileset to attach it to.
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(fileset).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
 	file := multipart.FormFile{Name: "upload", Reader: strings.NewReader("data")}
 	files := []multipart.FormFile{file}
-	setupTest().Post("/v1/file").
+	filePath := fmt.Sprintf("/v1/resource/%s/file", id)
+	setupTest().Post(filePath).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Files(files).
 		Expect(t).
@@ -265,4 +251,17 @@ func assertUpdatedResourceResponse(res *http.Response, req *http.Request) error 
 		return errors.New("UpdateResource failure")
 	}
 	return nil
+}
+
+func fromFile(file string) *datautils.JSONObject {
+	byt, err := ioutil.ReadFile(fmt.Sprintf("../examples/%s", file))
+	if err != nil {
+		panic(err)
+	}
+	var postData datautils.JSONObject
+
+	if err = json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
+	return &postData
 }
