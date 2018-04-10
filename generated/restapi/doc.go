@@ -13,7 +13,7 @@ TACO, the Stanford Digital Repository (SDR) Management Layer API
     License: Apache 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
 
     Consumes:
-    - application/json
+    - application/json+ld
     - multipart/form-data
 
     Produces:

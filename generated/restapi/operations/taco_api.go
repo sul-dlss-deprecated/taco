@@ -59,9 +59,9 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 			return middleware.NotImplemented("operation UpdateResource has not yet been implemented")
 		}),
 
-		// Applies when the "On-Behalf-Of" header is set
-		RemoteUserAuth: func(token string) (*authorization.Agent, error) {
-			return nil, errors.NotImplemented("api key auth (RemoteUser) On-Behalf-Of from header param [On-Behalf-Of] has not yet been implemented")
+		// Applies when the "Authorization" header is set
+		BearerAuth: func(token string) (*authorization.Agent, error) {
+			return nil, errors.NotImplemented("api key auth (bearer) Authorization from header param [Authorization] has not yet been implemented")
 		},
 
 		// default authorizer is authorized meaning no requests are blocked
@@ -89,7 +89,7 @@ type TacoAPI struct {
 	// It has a default implemention in the security package, however you can replace it for your particular usage.
 	BearerAuthenticator func(string, security.ScopedTokenAuthentication) runtime.Authenticator
 
-	// JSONConsumer registers a consumer for a "application/json" mime type
+	// JSONConsumer registers a consumer for a "application/json+ld" mime type
 	JSONConsumer runtime.Consumer
 	// MultipartformConsumer registers a consumer for a "multipart/form-data" mime type
 	MultipartformConsumer runtime.Consumer
@@ -97,9 +97,9 @@ type TacoAPI struct {
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
 
-	// RemoteUserAuth registers a function that takes a token and returns a principal
-	// it performs authentication based on an api key On-Behalf-Of provided in the header
-	RemoteUserAuth func(string) (*authorization.Agent, error)
+	// BearerAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key Authorization provided in the header
+	BearerAuth func(string) (*authorization.Agent, error)
 
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
@@ -185,8 +185,8 @@ func (o *TacoAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.RemoteUserAuth == nil {
-		unregistered = append(unregistered, "OnBehalfOfAuth")
+	if o.BearerAuth == nil {
+		unregistered = append(unregistered, "AuthorizationAuth")
 	}
 
 	if o.DeleteResourceHandler == nil {
@@ -236,10 +236,10 @@ func (o *TacoAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[
 	for name, scheme := range schemes {
 		switch name {
 
-		case "RemoteUser":
+		case "bearer":
 
 			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
-				return o.RemoteUserAuth(token)
+				return o.BearerAuth(token)
 			})
 
 		}
