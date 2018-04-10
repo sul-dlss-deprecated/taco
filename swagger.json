@@ -82,7 +82,7 @@
             "type": "string"
           },
           {
-            "name": "Version",
+            "name": "version",
             "in": "query",
             "type": "string",
             "description": "The version of the requested resource"

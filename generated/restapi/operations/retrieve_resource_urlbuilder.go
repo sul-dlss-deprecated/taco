@@ -63,7 +63,7 @@ func (o *RetrieveResourceURL) Build() (*url.URL, error) {
 		version = *o.Version
 	}
 	if version != "" {
-		qs.Set("Version", version)
+		qs.Set("version", version)
 	}
 
 	result.RawQuery = qs.Encode()

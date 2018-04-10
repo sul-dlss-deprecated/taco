@@ -55,7 +55,7 @@ func (o *RetrieveResourceParams) BindRequest(r *http.Request, route *middleware.
 		res = append(res, err)
 	}
 
-	qVersion, qhkVersion, _ := qs.GetOK("Version")
+	qVersion, qhkVersion, _ := qs.GetOK("version")
 	if err := o.bindVersion(qVersion, qhkVersion, route.Formats); err != nil {
 		res = append(res, err)
 	}
