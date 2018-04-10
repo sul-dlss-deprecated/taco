@@ -14,11 +14,11 @@ import (
 )
 
 // BuildAPI create new service API
-func BuildAPI(database db.Database, storage storage.Storage, identifierService identifier.Service) *operations.TacoAPI {
+func BuildAPI(database db.Database, storage storage.Storage, identifierService identifier.Service, authenticationService authorization.AuthenticationService) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
-	api.RemoteUserAuth = func(identifier string) (*authorization.Agent, error) {
-		return &authorization.Agent{Identifier: identifier}, nil
-	}
+	// Applies when the "Authorization" header is set
+	api.BearerAuth = authenticationService
+
 	api.RetrieveResourceHandler = NewRetrieveResource(database)
 	api.DeleteResourceHandler = NewDeleteResource(database)
 	api.DepositResourceHandler = NewDepositResource(database, depositValidator(database), identifierService)

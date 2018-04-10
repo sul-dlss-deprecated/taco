@@ -71,6 +71,8 @@ jobs:
           command: |
             export AWS_ACCESS_KEY_ID=$DEMO_AWS_KEY
             export AWS_SECRET_ACCESS_KEY=$DEMO_AWS_SECRET
+            export TACO_SECRET_KEY=$DEMO_TACO_SECRET
+
             aws configure set region $DEMO_AWS_REGION
             aws configure set default.output json
             aws configure list  # Get confirmation it worked in your logs
