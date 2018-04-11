@@ -15,38 +15,39 @@ func TestRetrieveVersion(t *testing.T) {
 	}
 	database := initDatabase()
 	id := "9999"
-	json := datautils.JSONObject{
-		"externalIdentifier": id,
-		"tacoIdentifier":         "7777777",
-		"version":    1,
-		"label":      "Hello world",
-	}
-	if err := database.Insert(datautils.NewResource(json)); err != nil {
+	resource := datautils.NewResource(datautils.JSONObject{}).
+		WithVersion(1).
+		WithLabel("Hello world").
+		WithExternalIdentifier(id).
+		WithID("7777777")
+
+	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
 
-	json = datautils.JSONObject{
-		"externalIdentifier": id,
-		"tacoIdentifier":         "7777778",
-		"version":    2,
-		"label":      "Middle one",
-	}
-	if err := database.Insert(datautils.NewResource(json)); err != nil {
+	resource = datautils.NewResource(datautils.JSONObject{}).
+		WithVersion(2).
+		WithLabel("Middle one").
+		WithExternalIdentifier(id).
+		WithID("7777778")
+
+	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
-	json = datautils.JSONObject{
-		"externalIdentifier": id,
-		"tacoIdentifier":         "7777779",
-		"version":    3,
-		"label":      "Hello world",
-	}
-	if err := database.Insert(datautils.NewResource(json)); err != nil {
+
+	resource = datautils.NewResource(datautils.JSONObject{}).
+		WithVersion(3).
+		WithLabel("Middle one").
+		WithExternalIdentifier(id).
+		WithID("7777779")
+
+	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
 	version := "2"
 	record, err := database.RetrieveVersion(id, &version)
 	assert.Nil(t, err)
-	assert.Equal(t, "Middle one", record.JSON.GetS("label"))
+	assert.Equal(t, "Middle one", record.Label())
 }
 
 func TestRetrieveLatest(t *testing.T) {
@@ -55,32 +56,32 @@ func TestRetrieveLatest(t *testing.T) {
 	}
 	database := initDatabase()
 	id := "9999"
-	json := datautils.JSONObject{
-		"externalIdentifier": id,
-		"tacoIdentifier":         "7777777",
-		"version":    1,
-		"label":      "Hello world",
-	}
-	if err := database.Insert(datautils.NewResource(json)); err != nil {
+	resource := datautils.NewResource(datautils.JSONObject{}).
+		WithVersion(1).
+		WithLabel("Hello world").
+		WithExternalIdentifier(id).
+		WithID("7777777")
+	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
 
-	json = datautils.JSONObject{
-		"externalIdentifier": id,
-		"tacoIdentifier":         "7777778",
-		"version":    2,
-		"label":      "Middle one",
-	}
-	if err := database.Insert(datautils.NewResource(json)); err != nil {
+	resource = datautils.NewResource(datautils.JSONObject{}).
+		WithVersion(2).
+		WithLabel("Middle one").
+		WithExternalIdentifier(id).
+		WithID("7777778")
+
+	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
-	json = datautils.JSONObject{
-		"externalIdentifier": id,
-		"tacoIdentifier":         "7777779",
-		"version":    3,
-		"label":      "Hello world",
-	}
-	if err := database.Insert(datautils.NewResource(json)); err != nil {
+
+	resource = datautils.NewResource(datautils.JSONObject{}).
+		WithVersion(3).
+		WithLabel("Hello world").
+		WithExternalIdentifier(id).
+		WithID("7777779")
+
+	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
 	record, err := database.RetrieveLatest(id)
