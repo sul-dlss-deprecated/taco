@@ -70,6 +70,16 @@ func (d *Resource) Type() string {
 	return d.JSON.GetS("@type")
 }
 
+// MimeType returns the document's MIME type
+func (d *Resource) MimeType() string {
+	return d.JSON.GetS("hasMimeType")
+}
+
+// Label returns the document's Label
+func (d *Resource) Label() string {
+	return d.JSON.GetS("label")
+}
+
 // IsFile returns true if the resource has the file type assertion
 func (d *Resource) IsFile() bool {
 	return d.Type() == FileType
@@ -105,6 +115,12 @@ func (d *Resource) WithExternalIdentifier(id string) *Resource {
 // WithMimeType sets the mime type. This should only be used on File resources
 func (d *Resource) WithMimeType(mimeType string) *Resource {
 	d.JSON["hasMimeType"] = mimeType
+	return d
+}
+
+// WithLabel sets the label.
+func (d *Resource) WithLabel(label string) *Resource {
+	d.JSON["label"] = label
 	return d
 }
 

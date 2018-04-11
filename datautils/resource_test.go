@@ -24,6 +24,18 @@ func TestWithVersion(t *testing.T) {
 	assert.Equal(t, 5, resource.Version())
 }
 
+func TestWithLabel(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithLabel("My file")
+	assert.Equal(t, "My file", resource.Label())
+}
+
+func TestWithMimeType(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithMimeType("text/plain")
+	assert.Equal(t, "text/plain", resource.MimeType())
+}
+
 func TestType(t *testing.T) {
 	json := JSONObject{"@type": "Foo"}
 	resource := NewResource(json)

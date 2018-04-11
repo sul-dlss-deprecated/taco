@@ -93,5 +93,6 @@ func (d *depositFileEntry) buildPersistableResource(metadata datautils.FileMetad
 	resource := NewFile()
 	identification := resource.Identification()
 	(*identification)["filename"] = metadata.Filename
-	return resource.WithMimeType(metadata.ContentType)
+	return resource.WithMimeType(metadata.ContentType).
+		WithLabel(metadata.Filename)
 }
