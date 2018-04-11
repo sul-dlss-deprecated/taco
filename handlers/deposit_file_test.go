@@ -29,7 +29,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(repo, nil, storage),
+		Run(handler(repo, storage),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(storage.(*MockStorage).CreatedFiles))
@@ -50,7 +50,7 @@ func TestCreateFileWrongContentType(t *testing.T) {
 			"Content-Type": "application/xml",
 		}).
 		SetBody(``).
-		Run(handler(nil, nil, NewMockStorage()),
+		Run(handler(nil, NewMockStorage()),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusBadRequest, r.Code)
 			})
@@ -77,7 +77,7 @@ func TestCreateFileNoApiKey(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(nil, nil, nil),
+		Run(handler(nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -91,7 +91,7 @@ func TestCreateFileNoPermissions(t *testing.T) {
 			"Content-Type": contentType,
 		}).
 		SetBody(body).
-		Run(handler(nil, nil, nil),
+		Run(handler(nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -109,7 +109,7 @@ func TestCreateFileFailure(t *testing.T) {
 					"Content-Type": contentType,
 				}).
 				SetBody(body).
-				Run(handler(repo, nil, storage),
+				Run(handler(repo, storage),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }
@@ -126,7 +126,7 @@ func TestCreateFileResourceFailure(t *testing.T) {
 					"Content-Type": contentType,
 				}).
 				SetBody(body).
-				Run(handler(repo, nil, nil),
+				Run(handler(repo, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

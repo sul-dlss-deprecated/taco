@@ -8,22 +8,18 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
-	"github.com/sul-dlss-labs/taco/streaming"
 )
 
-func handler(database db.Database, stream streaming.Stream, storage storage.Storage) http.Handler {
+func handler(database db.Database, storage storage.Storage) http.Handler {
 	if database == nil {
 		database = NewMockDatabase(nil)
-	}
-	if stream == nil {
-		stream = NewMockStream()
 	}
 	if storage == nil {
 		storage = NewMockStorage()
 	}
 
 	identifierService := identifier.NewUUIDService()
-	return BuildAPI(database, stream, storage, identifierService).Serve(nil)
+	return BuildAPI(database, storage, identifierService).Serve(nil)
 }
 
 type MockDatabase struct {
