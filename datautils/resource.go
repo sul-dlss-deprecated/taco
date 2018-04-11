@@ -102,6 +102,18 @@ func (d *Resource) WithExternalIdentifier(id string) *Resource {
 	return d
 }
 
+// WithMimeType sets the mime type. This should only be used on File resources
+func (d *Resource) WithMimeType(mimeType string) *Resource {
+	d.JSON["hasMimeType"] = mimeType
+	return d
+}
+
+// WithCurrentVersion sets the currentVersion flag
+func (d *Resource) WithCurrentVersion(flag bool) *Resource {
+	d.JSON["currentVersion"] = flag
+	return d
+}
+
 // WithVersion sets the version
 func (d *Resource) WithVersion(version int) *Resource {
 	d.JSON["version"] = version
