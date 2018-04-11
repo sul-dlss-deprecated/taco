@@ -175,12 +175,14 @@ $ mkdir generated
 $ swagger generate server -t generated --exclude-main --principal authorization.Agent
 ```
 
-### To generate the validator ```
+### To generate the validator and default values```
 ```shell
 go generate
 ```
 This will serialize all the json in the `maps/` directory into `validators/maps.go`
 
+Additionally it grabs the defaults from `maps/DepositFile.json` and
+creates a template for File resources in `handlers/file_template.go`.
 
 ### Non-generated code
 

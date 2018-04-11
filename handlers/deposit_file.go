@@ -90,7 +90,8 @@ func (d *depositFileEntry) copyFileToStorage(id string, file *datautils.File) (*
 }
 
 func (d *depositFileEntry) buildPersistableResource(metadata datautils.FileMetadata) *datautils.Resource {
-	identification := map[string]interface{}{"filename": metadata.Filename}
-	json := datautils.JSONObject{"identification": identification, "hasMimeType": metadata.ContentType}
-	return datautils.NewResource(json)
+	resource := NewFile()
+	identification := resource.Identification()
+	(*identification)["filename"] = metadata.Filename
+	return resource.WithMimeType(metadata.ContentType)
 }

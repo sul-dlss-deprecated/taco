@@ -1,6 +1,7 @@
 package main
 
-//go:generate go run generate/includemaps.go
+//go:generate go run generate/generate.go
+
 import (
 	"log"
 	"net/http"
