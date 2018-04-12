@@ -127,7 +127,7 @@
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this Fileset.",
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }

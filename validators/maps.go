@@ -208,7 +208,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the Collection.",
-          "type": "string"
+          "type": ["string", "null"]
         },
         "hasMemberOrders": {
           "description": "Provided sequences or orderings of members of the Collection, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
@@ -451,7 +451,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the DRO.",
-          "type": "string"
+          "type": ["string", "null"]
         },
         "hasMemberOrders": {
           "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
@@ -658,7 +658,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the Collection.",
-          "type": "string"
+          "type": ["string", "null"]
         },
         "hasMemberOrders": {
           "description": "Provided sequences or orderings of members of the Collection, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
@@ -909,7 +909,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to the DRO.",
-          "type": "string"
+          "type": ["string", "null"]
         },
         "hasMemberOrders": {
           "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
@@ -1094,7 +1094,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this File.",
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }
@@ -1238,7 +1238,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this Fileset.",
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }
@@ -1414,7 +1414,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this File.",
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }
@@ -1550,7 +1550,7 @@ var (
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this Fileset.",
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }
