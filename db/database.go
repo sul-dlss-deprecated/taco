@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
@@ -45,7 +44,7 @@ func (d *DynamodbDatabase) query(params *dynamodb.QueryInput) (*datautils.Resour
 
 func respToResource(item map[string]*dynamodb.AttributeValue) (*datautils.Resource, error) {
 	var json datautils.JSONObject
-	if err := dynamodbattribute.UnmarshalMap(item, &json); err != nil {
+	if err := UnmarshalMap(item, &json); err != nil {
 		return nil, err
 	}
 

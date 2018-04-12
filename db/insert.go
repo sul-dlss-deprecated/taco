@@ -3,13 +3,12 @@ package db
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
 // Insert create a row in dynamodb
 func (database *DynamodbDatabase) Insert(resource *datautils.Resource) error {
-	row, err := dynamodbattribute.MarshalMap(resource.JSON)
+	row, err := MarshalMap(resource.JSON)
 
 	if err != nil {
 		return err
