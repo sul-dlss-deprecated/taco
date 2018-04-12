@@ -1,6 +1,8 @@
 package db
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -84,9 +86,27 @@ func TestRetrieveLatest(t *testing.T) {
 	if err := database.Insert(resource); err != nil {
 		panic(err)
 	}
-	record, err := database.RetrieveLatest(id)
+	result, err := database.RetrieveLatest(id)
 	assert.Nil(t, err)
-	assert.Equal(t, 3, record.Version())
+	assert.Equal(t, 3, result.Version())
+}
+
+func TestRoundTrip(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+	id := "7777777"
+	database := initDatabase()
+	jsonData := jsonData()
+	jsonData["externalIdentifier"] = id
+	resource := datautils.NewResource(jsonData)
+	err := database.Insert(resource)
+	assert.Nil(t, err)
+
+	result, err := database.RetrieveLatest(id)
+	assert.Nil(t, err)
+	// Data that comes out should be the same as the data that went in.
+	assert.Equal(t, jsonData, result.JSON)
 }
 
 func TestRetrieveLatestNotFound(t *testing.T) {
@@ -103,4 +123,17 @@ func initDatabase() Database {
 		Connection: Connect(aws_session.Connect(testConfig.AwsDisableSSL), testConfig.DynamodbEndpoint),
 		Table:      testConfig.ResourceTableName,
 	}
+}
+
+func jsonData() datautils.JSONObject {
+	byt, err := ioutil.ReadFile("../examples/update_request.json")
+	if err != nil {
+		panic(err)
+	}
+	var postData datautils.JSONObject
+
+	if err := json.Unmarshal(byt, &postData); err != nil {
+		panic(err)
+	}
+	return postData
 }

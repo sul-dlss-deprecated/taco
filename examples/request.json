@@ -31,7 +31,7 @@
   "structural": {
     "hasAgreement": "druid:dd327qr3670",
     "hasMember": [],
-    "isTargetOf": "",
+    "isTargetOf": null,
     "hasMemberOrders": []
   }
 }
