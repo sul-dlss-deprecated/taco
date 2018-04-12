@@ -55,29 +55,6 @@ func (o *UpdateResourceOK) WriteResponse(rw http.ResponseWriter, producer runtim
 
 }
 
-// UpdateResourceBadRequestCode is the HTTP code returned for type UpdateResourceBadRequest
-const UpdateResourceBadRequestCode int = 400
-
-/*UpdateResourceBadRequest Invalid ID supplied
-
-swagger:response updateResourceBadRequest
-*/
-type UpdateResourceBadRequest struct {
-}
-
-// NewUpdateResourceBadRequest creates UpdateResourceBadRequest with default headers values
-func NewUpdateResourceBadRequest() *UpdateResourceBadRequest {
-	return &UpdateResourceBadRequest{}
-}
-
-// WriteResponse to the client
-func (o *UpdateResourceBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
-	rw.WriteHeader(400)
-}
-
 // UpdateResourceUnauthorizedCode is the HTTP code returned for type UpdateResourceUnauthorized
 const UpdateResourceUnauthorizedCode int = 401
 
@@ -99,6 +76,29 @@ func (o *UpdateResourceUnauthorized) WriteResponse(rw http.ResponseWriter, produ
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
 	rw.WriteHeader(401)
+}
+
+// UpdateResourceNotFoundCode is the HTTP code returned for type UpdateResourceNotFound
+const UpdateResourceNotFoundCode int = 404
+
+/*UpdateResourceNotFound Invalid ID supplied
+
+swagger:response updateResourceNotFound
+*/
+type UpdateResourceNotFound struct {
+}
+
+// NewUpdateResourceNotFound creates UpdateResourceNotFound with default headers values
+func NewUpdateResourceNotFound() *UpdateResourceNotFound {
+	return &UpdateResourceNotFound{}
+}
+
+// WriteResponse to the client
+func (o *UpdateResourceNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(404)
 }
 
 // UpdateResourceUnsupportedMediaTypeCode is the HTTP code returned for type UpdateResourceUnsupportedMediaType
