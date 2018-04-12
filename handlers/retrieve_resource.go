@@ -31,7 +31,7 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams, agen
 	}
 
 	if err != nil {
-		if err.Error() == "not found" {
+		if _, ok := err.(*db.RecordNotFound); ok {
 			return operations.NewRetrieveResourceNotFound()
 		}
 		panic(err)

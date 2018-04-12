@@ -28,5 +28,9 @@ func (d *DynamodbDatabase) RetrieveLatest(externalID string) (*datautils.Resourc
 		TableName:        &d.Table,
 	}
 
-	return d.query(params)
+	result, err := d.query(params)
+	if tmp, ok := err.(*RecordNotFound); ok {
+		tmp.ID = &externalID
+	}
+	return result, err
 }

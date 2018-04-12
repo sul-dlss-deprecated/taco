@@ -1,7 +1,7 @@
 package db
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -23,6 +23,21 @@ type DynamodbDatabase struct {
 	Table      string
 }
 
+// RecordNotFound is an error type returned when no record was returnd from the database
+type RecordNotFound struct {
+	ID      *string
+	Version *string
+}
+
+// Error returns the string representation of the error.
+// satisfying the error interface
+func (e RecordNotFound) Error() string {
+	if e.Version != nil {
+		return fmt.Sprintf("Unable to find record for %s with version: %s", *e.ID, *e.Version)
+	}
+	return fmt.Sprintf("Unable to find record for %s", *e.ID)
+}
+
 // Connect creates a dynamodb connection
 func Connect(session *session.Session, dynamodbEndpoint string) *dynamodb.DynamoDB {
 	dynamoConfig := &aws.Config{Endpoint: aws.String(dynamodbEndpoint)}
@@ -35,8 +50,9 @@ func (d *DynamodbDatabase) query(params *dynamodb.QueryInput) (*datautils.Resour
 	if err != nil {
 		return nil, err
 	}
+
 	if len(resp.Items) == 0 {
-		return nil, errors.New("not found")
+		return nil, &RecordNotFound{}
 	}
 
 	return respToResource(resp.Items[0])
