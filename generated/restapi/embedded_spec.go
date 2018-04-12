@@ -261,11 +261,11 @@ func init() {
               "$ref": "#/definitions/ResourceResponse"
             }
           },
-          "400": {
-            "description": "Invalid ID supplied"
-          },
           "401": {
             "description": "You are not authorized to update a resource in TACO."
+          },
+          "404": {
+            "description": "Invalid ID supplied"
           },
           "415": {
             "description": "Unsupported resource type provided. TACO resources should be handed over as JSON or JSON-LD."
