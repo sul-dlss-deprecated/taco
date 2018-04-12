@@ -173,7 +173,7 @@
         },
         "isTargetOf": {
           "description": "An Annotation instance that applies to this File.",
-          "type": "string"
+          "type": ["string", "null"]
         }
       }
     }
