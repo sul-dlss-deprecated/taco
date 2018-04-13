@@ -9,13 +9,13 @@ import (
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
-func TestDeleteResourceHappyPath(t *testing.T) {
+func TestDeleteResourceRecentVersionHappyPath(t *testing.T) {
 	r := gofight.New()
 	json := datautils.JSONObject{}
 	resource := datautils.NewResource(json).
 		WithID("99999").
 		WithType(datautils.ObjectTypes[0])
-	repo := NewMockDatabase(resource)
+	repo := NewMockDatabase(resource, nil)
 	r.DELETE("/v1/resource/oo000oo0001").
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -25,17 +25,18 @@ func TestDeleteResourceHappyPath(t *testing.T) {
 			})
 }
 
-func TestDeleteFileResourceHappyPath(t *testing.T) {
+func TestDeleteResourceSpecificVersionHappyPath(t *testing.T) {
 	r := gofight.New()
 	json := datautils.JSONObject{}
 	resource := datautils.NewResource(json).
 		WithID("99999").
 		WithType(datautils.FileType).
 		WithFileLocation("s3://bucket/my-key")
-	repo := NewMockDatabase(resource)
+	repo := NewMockDatabase(nil, resource)
 	storage := NewMockStorage()
 
 	r.DELETE("/v1/resource/oo000oo0001").
+		SetQuery(gofight.H{"version": "7"}).
 		Run(handler(repo, storage, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNoContent, r.Code)

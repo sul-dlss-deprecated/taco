@@ -29,7 +29,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 	fileSet := datautils.NewResource(nil).
 		WithType(datautils.FilesetType).
 		WithID(filesetID)
-	repo := NewMockDatabase(fileSet)
+	repo := NewMockDatabase(fileSet, nil)
 
 	r.POST(filePath).
 		SetHeader(gofight.H{
@@ -129,7 +129,7 @@ func TestCreateFileFailure(t *testing.T) {
 	fileSet := datautils.NewResource(nil).
 		WithType(datautils.FilesetType).
 		WithID(filesetID)
-	repo := NewMockDatabase(fileSet)
+	repo := NewMockDatabase(fileSet, nil)
 	storage := NewMockErrorStorage()
 	assert.Panics(t,
 		func() {

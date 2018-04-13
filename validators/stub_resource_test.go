@@ -48,6 +48,6 @@ func (f *fakeRepository) Insert(resource *datautils.Resource) error {
 	return errors.New("not implemented")
 }
 
-func (f *fakeRepository) DeleteByID(tacoIdentifier string) error {
+func (f *fakeRepository) DeleteVersion(tacoIdentifier string) error {
 	return errors.New("not implemented")
 }

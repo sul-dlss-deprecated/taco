@@ -12,7 +12,7 @@ import (
 func TestRetrieveFileHappyPath(t *testing.T) {
 	r := gofight.New()
 	json := datautils.JSONObject{"file-location": "s3://bucket/key"}
-	repo := NewMockDatabase(datautils.NewResource(json))
+	repo := NewMockDatabase(datautils.NewResource(json), nil)
 	r.GET("/v1/file/99").
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "lmcrae@stanford.edu",
@@ -47,7 +47,7 @@ func TestRetrieveFileNoBehalfOfHeader(t *testing.T) {
 
 func TestRetrieveFileNoPermissions(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(new(datautils.Resource))
+	repo := NewMockDatabase(new(datautils.Resource), nil)
 	r.GET("/v1/file/99").
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu

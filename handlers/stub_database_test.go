@@ -12,7 +12,7 @@ import (
 
 func handler(database db.Database, storage storage.Storage, identifierService identifier.Service) http.Handler {
 	if database == nil {
-		database = NewMockDatabase(nil)
+		database = NewMockDatabase(nil, nil)
 	}
 	if storage == nil {
 		storage = NewMockStorage()
@@ -26,16 +26,18 @@ func handler(database db.Database, storage storage.Storage, identifierService id
 }
 
 type MockDatabase struct {
-	record           *datautils.Resource
+	current          *datautils.Resource
+	specificVersion  *datautils.Resource
 	CreatedResources []*datautils.Resource
 	DeletedResources []string
 }
 
-func NewMockDatabase(record *datautils.Resource) db.Database {
+func NewMockDatabase(current *datautils.Resource, specificVersion *datautils.Resource) db.Database {
 	return &MockDatabase{
 		CreatedResources: []*datautils.Resource{},
 		DeletedResources: []string{},
-		record:           record,
+		current:          current,
+		specificVersion:  specificVersion,
 	}
 }
 
@@ -45,23 +47,28 @@ func (d *MockDatabase) Insert(params *datautils.Resource) error {
 }
 
 func (d *MockDatabase) RetrieveLatest(externalID string) (*datautils.Resource, error) {
-	if d.record != nil {
-		record := d.record
-		d.record = nil
+	if d.current != nil {
+		record := d.current
+		d.current = nil
 		return record, nil
 	}
 	return nil, &db.RecordNotFound{ID: &externalID}
 }
 
 func (d *MockDatabase) RetrieveVersion(externalID string, version *string) (*datautils.Resource, error) {
-	return nil, errors.New("not implemented")
+	if d.specificVersion != nil {
+		record := d.specificVersion
+		d.specificVersion = nil
+		return record, nil
+	}
+	return nil, errors.New("not found")
 }
 
 func (d *MockDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 
-func (d *MockDatabase) DeleteByID(tacoIdentifier string) error {
+func (d *MockDatabase) DeleteVersion(tacoIdentifier string) error {
 	d.DeletedResources = append(d.DeletedResources, tacoIdentifier)
 	return nil
 }
@@ -89,6 +96,9 @@ func (d *MockErrorDatabase) RetrieveLatest(externalID string) (*datautils.Resour
 }
 
 func (d *MockErrorDatabase) DeleteByID(tacoIdentifier string) error {
+	return errors.New("Broken")
+}
+func (d *MockErrorDatabase) DeleteVersion(tacoIdentifier string) error {
 	return errors.New("Broken")
 }
 

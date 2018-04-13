@@ -165,6 +165,12 @@
           "description": "SDR Identifier for the Resource.",
           "required": true,
           "type": "string"
+        },
+        {
+          "name": "version",
+          "in": "query",
+          "type": "string",
+          "description": "The version of the requested resource"
         }],
         "responses": {
           "204": {

@@ -9,13 +9,27 @@ import (
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
-func TestRetrieveResourceHappyPath(t *testing.T) {
+func TestRetrieveLatestVersionHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(&datautils.Resource{})
+	repo := NewMockDatabase(&datautils.Resource{}, nil)
 	r.GET("/v1/resource/99").
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
+		Run(handler(repo, nil, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusOK, r.Code)
+			})
+}
+
+func TestRetrieveSpecificVersionHappyPath(t *testing.T) {
+	r := gofight.New()
+	repo := NewMockDatabase(nil, &datautils.Resource{})
+	r.GET("/v1/resource/99").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+		}).
+		SetQuery(gofight.H{"version": "7"}).
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
@@ -45,7 +59,7 @@ func TestRetrieveNoBehalfOfHeader(t *testing.T) {
 
 func TestRetrieveNoPermissions(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(new(datautils.Resource))
+	repo := NewMockDatabase(new(datautils.Resource), nil)
 	r.GET("/v1/resource/99").
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu

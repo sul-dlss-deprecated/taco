@@ -11,11 +11,12 @@ import (
 	"github.com/sul-dlss-labs/taco/datautils"
 )
 
+var database = initDatabase()
+
 func TestRetrieveVersion(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
-	database := initDatabase()
 	id := "9999"
 	resource := datautils.NewResource(datautils.JSONObject{}).
 		WithVersion(1).
@@ -39,7 +40,7 @@ func TestRetrieveVersion(t *testing.T) {
 
 	resource = datautils.NewResource(datautils.JSONObject{}).
 		WithVersion(3).
-		WithLabel("Middle one").
+		WithLabel("Hello world").
 		WithExternalIdentifier(id).
 		WithID("7777779")
 
@@ -56,7 +57,6 @@ func TestRetrieveLatest(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
-	database := initDatabase()
 	id := "9999"
 	resource := datautils.NewResource(datautils.JSONObject{}).
 		WithVersion(1).
@@ -96,7 +96,6 @@ func TestRoundTrip(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 	id := "7777777"
-	database := initDatabase()
 	jsonData := jsonData()
 	jsonData["externalIdentifier"] = id
 	resource := datautils.NewResource(jsonData)
@@ -113,7 +112,7 @@ func TestRetrieveLatestNotFound(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
-	_, err := initDatabase().RetrieveLatest("8888")
+	_, err := database.RetrieveLatest("8888")
 	assert.Equal(t, err.Error(), "Unable to find record for 8888")
 }
 
@@ -122,8 +121,51 @@ func TestRetrieveVersionNotFound(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 	version := "9"
-	_, err := initDatabase().RetrieveVersion("8888", &version)
+	_, err := database.RetrieveVersion("8888", &version)
 	assert.Equal(t, err.Error(), "Unable to find record for 8888 with version: 9")
+}
+
+func TestDeleteVersion(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+	id := "9999"
+	json := datautils.JSONObject{
+		"externalIdentifier": id,
+		"tacoIdentifier":     "7777777",
+		"version":            1,
+		"label":              "Hello world",
+	}
+	if err := database.Insert(datautils.NewResource(json)); err != nil {
+		panic(err)
+	}
+
+	json = datautils.JSONObject{
+		"externalIdentifier": id,
+		"tacoIdentifier":     "7777778",
+		"version":            2,
+		"label":              "Middle one",
+	}
+	if err := database.Insert(datautils.NewResource(json)); err != nil {
+		panic(err)
+	}
+	json = datautils.JSONObject{
+		"externalIdentifier": id,
+		"tacoIdentifier":     "7777779",
+		"version":            3,
+		"label":              "Hello world",
+	}
+	if err := database.Insert(datautils.NewResource(json)); err != nil {
+		panic(err)
+	}
+	err := database.DeleteVersion("7777779")
+	assert.Nil(t, err)
+
+	record, err := database.RetrieveLatest(id)
+	assert.Nil(t, err)
+
+	// Version 3 was deleted, so version 2 is now the most recent
+	assert.Equal(t, 2, record.Version())
 }
 
 func initDatabase() Database {
