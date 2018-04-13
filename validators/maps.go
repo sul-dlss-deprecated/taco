@@ -568,7 +568,13 @@ var (
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
       "required": ["sdrPreserve"],
-      "not": {"required": ["created", "isDescribedBy", "lastUpdated"]},
+      "not": {
+        "anyOf": [
+          { "required": ["created"] },
+          { "required": ["isDescribedBy"] },
+          { "required": ["lastUpdated"] }
+        ]
+      },
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -791,7 +797,13 @@ var (
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
       "required": ["sdrPreserve"],
-      "not": {"required": ["created", "isDescribedBy"]},
+      "not": {
+        "anyOf": [
+          { "required": ["created"] },
+          { "required": ["isDescribedBy"] },
+          { "required": ["lastUpdated"] }
+        ]
+      },
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
@@ -1168,7 +1180,12 @@ var (
       "type": "object",
       "description": "Administrative metadata for the SDR resource.",
       "required": ["sdrPreserve"],
-      "not": {"required": ["created"]},
+      "not": {
+        "anyOf": [
+          { "required": ["created"] },
+          { "required": ["lastUpdated"] }
+        ]
+      },
       "properties": {
         "created": {
           "description": "When the resource in SDR was created.",
