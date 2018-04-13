@@ -19,6 +19,8 @@ import (
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
+var port = config.NewConfig().Port
+
 func setupTest() *baloo.Client {
 	remoteHost, ok := os.LookupEnv("TEST_REMOTE_ENDPOINT")
 	if !ok {
