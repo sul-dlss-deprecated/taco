@@ -65,6 +65,7 @@ func structuralValidator(database db.Database) validators.ResourceValidator {
 			validators.NewFilesetStructuralValidator(database),
 			validators.NewDROStructuralValidator(database),
 			validators.NewCollectionStructuralValidator(database),
+			validators.NewAgreementValidator(database),
 			validators.NewSequenceValidator(),
 		})
 }

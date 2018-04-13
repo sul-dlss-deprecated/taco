@@ -1,11 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Deposit Resource",
-  "description": "Deposit Request Domain Resource (Collection, Object, Fileset, or File or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.",
+  "description": "Deposit Request Domain Resource (Collection, Object, Fileset, File or Agreement or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.",
   "type": "object",
   "oneOf": [
     {"$ref": "DepositCollection.json"},
     {"$ref": "DepositDRO.json"},
-    {"$ref": "DepositFileset.json"}
+    {"$ref": "DepositFileset.json"},
+    {"$ref": "DepositAgreement.json"}
   ]
 }

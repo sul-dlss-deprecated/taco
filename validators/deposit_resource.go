@@ -18,7 +18,15 @@ type DepositResourceValidator struct {
 
 // NewDepositResourceValidator creates a new instance of DepositResourceValidator
 func NewDepositResourceValidator(repository db.Database) ResourceValidator {
-	files := []string{"DepositResource.json", "DepositCollection.json", "Sequence.json", "Agent.json", "DepositDRO.json", "DepositFileset.json", "DepositFile.json"}
+	files := []string{
+		"DepositResource.json",
+		"DepositCollection.json",
+		"Sequence.json",
+		"Agent.json",
+		"DepositAgreement.json",
+		"DepositDRO.json",
+		"DepositFileset.json",
+		"DepositFile.json"}
 	schema := BuildSchema("DepositResource.json", files)
 	return &DepositResourceValidator{repository: repository, schema: schema}
 }

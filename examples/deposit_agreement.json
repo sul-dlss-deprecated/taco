@@ -1,0 +1,33 @@
+{
+  "$comment": "This is a fixture used for testing.",
+  "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+  "@type": "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
+  "citation": "Sample agreement. https://purl.stanford.edu/bs646cd8717",
+  "depositor": {
+    "name": "DOR",
+    "sunetID": "DOR"
+  },
+  "label": "Sample agreement",
+  "access": {
+    "access": "world",
+    "copyright": "This work is copyrighted by the creator.",
+    "download": "world",
+    "reuseAndReproductionStatement": "Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Special Collections Public Services Librarian at speccollref@stanford.edu."
+  },
+  "administrative": {
+    "deleted": false,
+    "sdrPreserve": true,
+    "remediatedBy": [
+      {
+        "name": "Laura Wilsey",
+        "sunetID": "lauraw15"
+      }
+    ]
+  },
+  "identification": {
+    "catkey": "4084372",
+    "sourceId": "bib4084372"
+  },
+  "structural": {
+  }
+}
