@@ -71,7 +71,7 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessageSameVersion).
-		Run(handler(repo, nil, nil),
+		Run(handler(&runtime{database: repo}),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
@@ -88,7 +88,7 @@ func TestUpdateResourceNewVersionPath(t *testing.T) {
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessageNewVersion).
-		Run(handler(repo, nil, nil),
+		Run(handler(&runtime{database: repo}),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 				assert.Equal(t, 2, len(repo.(*MockDatabase).CreatedResources))
@@ -107,7 +107,7 @@ func TestUpdateResourceNotFound(t *testing.T) {
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessageSameVersion).
-		Run(handler(nil, nil, nil),
+		Run(handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})
@@ -126,7 +126,7 @@ func TestUpdateInvalidResource(t *testing.T) {
 			"preserve":           true,
 			"publish":            true,
 			"sourceId":           "bib12345678"}).
-		Run(handler(nil, nil, nil),
+		Run(handler(&runtime{updateValidator: &dummyFailValidator{}}),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 				assert.Contains(t, r.Body.String(), "Validation Error")
@@ -136,7 +136,7 @@ func TestUpdateInvalidResource(t *testing.T) {
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
-		Run(handler(nil, nil, nil),
+		Run(handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
