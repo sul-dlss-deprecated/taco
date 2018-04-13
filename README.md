@@ -193,6 +193,12 @@ $ mkdir generated
 $ swagger generate server -t generated --exclude-main --principal authorization.Agent
 ```
 
+### To generate the client code (for Cocinero)
+
+```shell
+$ swagger generate client -t generated
+```
+
 ### To generate the validator and default values```
 ```shell
 go generate
