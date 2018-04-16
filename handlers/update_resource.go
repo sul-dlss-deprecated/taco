@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -54,10 +55,12 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 	}
 
 	// We need to ensure in this case that ID and externalID are NOT overwritten by the incoming JSON
-	newResource = datautils.NewResource(d.mergeJSON(&existingResource.JSON, &newResource.JSON)).
+	merged := d.mergeJSON(&existingResource.JSON, &newResource.JSON)
+	newResource = datautils.NewResource(merged).
 		WithVersion(existingResource.Version()).
-		WithID(existingResource.ID()).
-		WithExternalIdentifier(existingResource.ExternalIdentifier())
+		WithID(existingResource.ID()).                                // Ignore any passed in tacoIdentifier
+		WithExternalIdentifier(existingResource.ExternalIdentifier()) // Don't allow changing druids
+	(*newResource.Administrative())["lastUpdated"] = time.Now().UTC().Format(time.RFC3339)
 
 	err = d.database.Insert(newResource)
 	if err != nil {
@@ -100,6 +103,7 @@ func (d *updateResourceEntry) buildNewResourceVersion(newResource *datautils.Res
 		WithExternalIdentifier(existingResource.ExternalIdentifier()).
 		WithPrecedingVersion(existingResource.ID()).
 		WithVersion(version)
+	(*newResource.Administrative())["lastUpdated"] = time.Now().UTC().Format(time.RFC3339)
 
 	err = d.database.Insert(newResource)
 	if err != nil {

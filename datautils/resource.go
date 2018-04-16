@@ -190,6 +190,11 @@ func (d *Resource) Identification() *JSONObject {
 	return d.JSON.GetObj("identification")
 }
 
+// Administrative returns the administrative subschema
+func (d *Resource) Administrative() *JSONObject {
+	return d.JSON.GetObj("administrative")
+}
+
 func (d *Resource) String() string {
 	buf := bytes.NewBufferString("<Resource")
 	if d.JSON.HasKey("tacoIdentifier") {

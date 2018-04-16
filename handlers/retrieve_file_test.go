@@ -17,7 +17,7 @@ func TestRetrieveFileHappyPath(t *testing.T) {
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
-		Run(handler(repo, nil),
+		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusFound, r.Code)
 				assert.Equal(t, "https://example.com/file-123", r.HeaderMap.Get("Location"))
@@ -30,7 +30,7 @@ func TestRetrieveFileNotFound(t *testing.T) {
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
-		Run(handler(nil, nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNotFound, r.Code)
 			})
@@ -39,7 +39,7 @@ func TestRetrieveFileNotFound(t *testing.T) {
 func TestRetrieveFileNoBehalfOfHeader(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/file/99").
-		Run(handler(nil, nil),
+		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -52,7 +52,7 @@ func TestRetrieveFileNoPermissions(t *testing.T) {
 		SetHeader(gofight.H{
 			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
 		}).
-		Run(handler(repo, nil),
+		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -68,7 +68,7 @@ func TestRetrieveFileError(t *testing.T) {
 				SetHeader(gofight.H{
 					"On-Behalf-Of": "lmcrae@stanford.edu",
 				}).
-				Run(handler(repo, nil),
+				Run(handler(repo, nil, nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 						assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 					})
