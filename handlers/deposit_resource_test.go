@@ -46,6 +46,7 @@ func TestCreateCollectionHappyPath(t *testing.T) {
 				resource := repo.(*MockDatabase).CreatedResources[0]
 				assert.Equal(t, 1, resource.Version())
 				assert.Equal(t, "zt570tx3016", resource.ExternalIdentifier())
+				assert.NotNil(t, (*resource.Administrative())["created"])
 				// assert.Equal(t, "bib12345678", repo.(*MockDatabase).CreatedResources[0].(map[string]interface{})["sourceid"])
 			})
 }

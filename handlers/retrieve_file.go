@@ -25,7 +25,7 @@ type retrieveFileEntry struct {
 func (d *retrieveFileEntry) Handle(params operations.RetrieveFileParams, agent *authorization.Agent) middleware.Responder {
 	resource, err := d.repository.RetrieveLatest(params.ID)
 	if err != nil {
-		if err.Error() == "not found" {
+		if _, ok := err.(*db.RecordNotFound); ok {
 			return operations.NewRetrieveResourceNotFound()
 		}
 		panic(err)

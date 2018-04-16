@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/authorization"
@@ -57,6 +58,7 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		WithID(uuid).
 		WithExternalIdentifier(externalID).
 		WithVersion(1)
+	(*resource.Administrative())["created"] = time.Now().UTC().Format(time.RFC3339)
 
 	if err := d.database.Insert(resource); err != nil {
 		panic(err)
