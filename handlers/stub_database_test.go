@@ -50,7 +50,7 @@ func (d *MockDatabase) RetrieveLatest(externalID string) (*datautils.Resource, e
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) RetrieveVersion(externalId string, version *string) (*datautils.Resource, error) {
+func (d *MockDatabase) RetrieveVersion(externalID string, version *string) (*datautils.Resource, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -58,8 +58,8 @@ func (d *MockDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 
-func (d *MockDatabase) DeleteAllVersions(externalId string) error {
-	d.DeletedResources = append(d.DeletedResources, externalId)
+func (d *MockDatabase) DeleteAllVersions(externalID string) error {
+	d.DeletedResources = append(d.DeletedResources, externalID)
 	return nil
 }
 

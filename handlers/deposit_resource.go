@@ -11,15 +11,13 @@ import (
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 
 	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(database db.Database, stream streaming.Stream, validator validators.ResourceValidator, identifierService identifier.Service) operations.DepositResourceHandler {
+func NewDepositResource(database db.Database, validator validators.ResourceValidator, identifierService identifier.Service) operations.DepositResourceHandler {
 	return &depositResource{
 		database:          database,
-		stream:            stream,
 		validator:         validator,
 		identifierService: identifierService,
 	}
@@ -27,7 +25,6 @@ func NewDepositResource(database db.Database, stream streaming.Stream, validator
 
 type depositResource struct {
 	database          db.Database
-	stream            streaming.Stream
 	validator         validators.ResourceValidator
 	identifierService identifier.Service
 }
@@ -66,15 +63,6 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		panic(err)
 	}
 
-	if err := d.addToStream(externalID); err != nil {
-		panic(err)
-	}
-
 	response := datautils.JSONObject{"id": externalID}
 	return operations.NewDepositResourceCreated().WithPayload(response)
-}
-
-func (d *depositResource) addToStream(id string) error {
-	message := streaming.Message{ID: id, Action: "deposit"}
-	return d.stream.SendMessage(message)
 }
