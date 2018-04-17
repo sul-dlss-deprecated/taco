@@ -8,7 +8,7 @@ services:
       SERVICES: dynamodb,kinesis,s3
       DEBUG: 1
       DATA_DIR: /tmp/localstack/data
-  db:
+  resources:
     build:
       context: .
       dockerfile: Dockerfile.tester
@@ -48,5 +48,5 @@ services:
     command: go test -v test/integration_test.go
     depends_on:
       - localstack
-      - db
+      - resources
       - taco

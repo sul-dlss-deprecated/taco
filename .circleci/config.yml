@@ -28,6 +28,7 @@ jobs:
           command: |
             docker-compose build
             docker-compose up -d
+            docker-compose run resources
             docker-compose run tester
 
   register_image:
@@ -80,16 +81,27 @@ jobs:
 workflows:
   version: 2
 
-  build_and_test:
+  run_tests:
     jobs:
-      - build_and_test:
+      - run_unit_tests:
+          filters:
+            branches:
+              ignore: master
+      - run_e2e_tests:
           filters:
             branches:
               ignore: master
 
   deploy_on_tags:
     jobs:
-      - build_and_test:
+      - run_unit_tests:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only:
+                - /v[0-9]+(\.[0-9]+)*(-demo)/
+      - run_e2e_tests:
           filters:
             branches:
               ignore: /.*/
@@ -98,7 +110,8 @@ workflows:
                 - /v[0-9]+(\.[0-9]+)*(-demo)/
       - register_image:
           requires:
-            - build_and_test
+            - run_unit_tests
+            - run_e2e_tests
           filters:
             branches:
               ignore: /.*/
@@ -116,7 +129,13 @@ workflows:
 
   deploy_master_to_demo:
     jobs:
-      - build_and_test:
+      - run_unit_tests:
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /.*/
+      - run_e2e_tests:
           filters:
             branches:
               only: master
@@ -124,7 +143,8 @@ workflows:
               ignore: /.*/
       - register_image:
           requires:
-            - build_and_test
+            - run_unit_tests
+            - run_e2e_tests
           filters:
             branches:
               only: master
