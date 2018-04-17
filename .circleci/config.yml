@@ -1,66 +1,34 @@
 version: 2
 jobs:
-  build_and_test:
+  run_unit_tests:
     docker:
       - image: circleci/golang:latest
-        environment:
-          AWS_REGION: us-west-2
-          AWS_ACCESS_KEY_ID: 999
-          AWS_SECRET_ACCESS_KEY: 999
-          TACO_PORT: 3000
-      - image: localstack/localstack:latest
-        environment:
-          DEBUG: 1
-          SERVICES: dynamodb,s3,kinesis
-          DATA_DIR: /tmp/localstack/data
-          working_directory: ~/workflows
     working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - checkout
       - run:
           name: Install Dependencies
+          command: make test
+
+  run_e2e_tests:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/sul-dlss-labs/identifier-service
+    steps:
+      - run:
+          name: Install Docker Compose
           command: |
-            go get -u github.com/golang/dep/cmd/dep
-            dep ensure
+            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+      - setup_remote_docker
+      - checkout
       - run:
-          name: Install AWS CLI
+          name: Run End to End Tests
           command: |
-            sudo apt-get install -y python-pip libyaml-dev python-dev
-            sudo pip install awscli
-      - run:
-          name: Create table
-          command: aws dynamodb create-table
-            --endpoint-url=http://localhost:4569 --table-name resources
-            --region localstack
-            --attribute-definitions AttributeName=tacoIdentifier,AttributeType=S
-              AttributeName=externalIdentifier,AttributeType=S
-              AttributeName=version,AttributeType=N
-            --key-schema "AttributeName=tacoIdentifier,KeyType=HASH"
-            --provisioned-throughput=ReadCapacityUnits=10,WriteCapacityUnits=10
-            --global-secondary-indexes "IndexName=ResourceByExternalIDAndVersion,
-            KeySchema=[{AttributeName=externalIdentifier,KeyType=HASH},{AttributeName=version,KeyType=RANGE}],
-            Projection={ProjectionType=ALL},
-            ProvisionedThroughput={ReadCapacityUnits=10,WriteCapacityUnits=10}"
-      - run:
-          name: Create bucket
-          command: aws s3api create-bucket
-            --endpoint-url=http://localhost:4572 --bucket taco-deposited-files
-            --region localstack
-      - run:
-          name: Create stream
-          command: aws kinesis create-stream
-            --endpoint-url=http://localhost:4568 --stream-name deposit --shard-count 3
-            --region localstack
-      - run:
-          name: Start server
-          command: go run main.go
-          background: true
-      - run:
-          name: wait for server
-          command: sleep 15
-      - run:
-          name: Run tests
-          command: go test -v ./...
+            docker-compose build
+            docker-compose up -d
+            docker-compose run tester
 
   register_image:
     docker:
