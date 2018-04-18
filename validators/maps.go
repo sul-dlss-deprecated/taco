@@ -1246,8 +1246,7 @@ var (
   "oneOf": [
     {"$ref": "DepositCollection.json"},
     {"$ref": "DepositDRO.json"},
-    {"$ref": "DepositFileset.json"},
-    {"$ref": "DepositFile.json"}
+    {"$ref": "DepositFileset.json"}
   ]
 }
 `,
