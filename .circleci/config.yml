@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install Dependencies
-          command: make test
+          command: make
 
   run_e2e_tests:
     docker:

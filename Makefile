@@ -1,3 +1,5 @@
+.PHONY: test
+
 PROJECT_UNIT_TESTS     =$(shell go list ./... | grep -v test | grep -v db)
 PROJECT_INT_TESTS      =$(shell go list ./db)
 PROJECT_E2E_TESTS      =$(shell go list ./test)
@@ -15,9 +17,9 @@ PROJ_AWS_ACCESS_KEY_ID =999999
 PROJ_AWS_SECRET_KEY    =999999
 PROJ_ENV_VARS          =AWS_REGION=${PROJ_AWS_REGION} AWS_ACCESS_KEY_ID=${PROJ_AWS_ACCESS_KEY_ID} AWS_SECRET_KEY=${PROJ_AWS_SECRET_KEY}
 
-default: test
+default: dependencies test
 
-test: dependencies
+test:
 	$(PROJ_ENV_VARS) go test -v $(PROJECT_UNIT_TESTS)
 
 compose_tests:
