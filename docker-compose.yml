@@ -1,25 +1,51 @@
-version: '2.1'
-
+version: "2"
 services:
   taco:
     build: .
     ports:
-     - 8080:8080
+      - 8080:8080
     environment:
-      - AWS_ACCESS_KEY_ID=999999
-      - AWS_SECRET_KEY=999999
-      - AWS_REGION=us-west-2
-      - DYNAMO_DB_ENDPOINT=localstack:4569
-      - KINESIS_ENDPOINT=localstack:4568
-      - S3_ENDPOINT=localstack:4572
+      AWS_ACCESS_KEY_ID: 999999
+      AWS_SECRET_KEY: 999999
+      AWS_REGION: us-east-1
+      KINESIS_ENDPOINT: localstack:4568
+      S3_ENDPOINT: localstack:4572
+      DYNAMO_DB_ENDPOINT: localstack:4569
+    depends_on:
+      - localstack
+      - resources
   localstack:
     image: localstack/localstack:latest
     ports:
       - 4567-4583:4567-4583
     environment:
-      - SERVICES=dynamodb,kinesis,s3
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-    volumes:
-      - /tmp/localstack:/tmp/localstack
-      - /var/run/docker.sock:/var/run/docker.sock
+      SERVICES: dynamodb,kinesis,s3
+      DEBUG: 1
+      DATA_DIR: /tmp/localstack/data
+  resources:
+    build:
+      context: .
+      dockerfile: Dockerfile.tester
+    environment:
+      AWS_ACCESS_KEY_ID: 999999
+      AWS_SECRET_ACCESS_KEY: 999999
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_REGION: us-east-1
+      LOCAL_ENDPOINT_HOST: localstack
+    working_dir: /go/src/github.com/sul-dlss-labs/taco
+    command: make resources
+    depends_on:
+      - localstack
+  tester:
+    build:
+      context: .
+      dockerfile: Dockerfile.tester
+    environment:
+      DYNAMO_DB_ENDPOINT: localstack:4569
+      TEST_REMOTE_ENDPOINT: taco:8080
+    working_dir: /go/src/github.com/sul-dlss-labs/taco
+    command: make compose_tests
+    depends_on:
+      - localstack
+      - resources
+      - taco

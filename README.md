@@ -51,16 +51,6 @@ $ docker build -t taco .
 $ docker run -e AWS_REGION=localstack -e AWS_ACCESS_KEY_ID=999999 -e AWS_SECRET_KEY=1231 -p 8080:8080 taco
 ```
 
-### Building TACO Docker container along with the Localstack services
-Running `docker-compose up` will build and run TACO in the foreground with the localstack services in the background. It will also create a directory on your local machine at `/tmp/localstack/data` that stores persistent data for dynamodb, kinesis, and S3. It is safe to remove that directory and rerun `docker-compose up` to reset for testing with new data.
-```shell
-$ docker-compose up
-```
-To stop and remove containers, networks, images, and volumes created by `docker-compose up` run:
-```shell
-$ docker-compose down
-```
-
 ### Build for the local OS
 This will create a binary in your path that you can then run the application with.
 
@@ -107,6 +97,44 @@ Create an uploaded file by doing:
 ```shell
 $ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
 -F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
+```
+
+## Running TACO via docker compose
+Use the following steps to build and run taco with its dependencies. The TACO service will be available at `http://\[::\]:8080`
+```shell
+$ docker-compose build
+$ docker-compose up -d
+$ docker-compose run resources
+$ docker-compose run taco
+```
+
+To run the integration and end to end tests on the containers run:
+```shell
+$ docker-compose build
+$ docker-compose up -d
+$ docker-compose run resources
+$ docker-compose run tester
+```
+
+Docker Compose can also be used to spin up just the localstack services and taco in separate terminal windows to be used together. To do so, open a tab in your terminal and run:
+```shell
+$ docker-compose build
+$ docker-compose up -d
+$ docker-compose run resources
+$ docker-compose run localstack
+```
+Then, in a separate window, start the TACO container. The TACO service will be available at `http://\[::\]:8080`
+```shell
+$ docker-compose run taco
+```
+Logs for any service can be tail'd or followed using the `docker-compose logs` command:
+```shell
+$ docker-compose logs -f taco
+```
+
+To stop and remove containers, networks, images, and volumes created by `docker-compose up` run:
+```shell
+$ docker-compose down
 ```
 
 ## Testing

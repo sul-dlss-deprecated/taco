@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -18,8 +19,12 @@ import (
 )
 
 func setupTest() *baloo.Client {
-	port := config.NewConfig().Port
-	return baloo.New(fmt.Sprintf("http://localhost:%v", port))
+	remoteHost, ok := os.LookupEnv("TEST_REMOTE_ENDPOINT")
+	if !ok {
+		port := config.NewConfig().Port
+		remoteHost = fmt.Sprintf("localhost:%v", port)
+	}
+	return baloo.New(fmt.Sprintf("http://%s", remoteHost))
 }
 
 const resourceSchema = `{
