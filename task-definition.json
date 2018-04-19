@@ -46,6 +46,10 @@
                 {
                     "name": "HONEYBADGER_API_KEY",
                     "value": "REPLACE_HONEYBADGER"
+                },
+                {
+                    "name": "IDENTIFIER_SERVICE_HOST",
+                    "value": "identifier-REPLACE_ENVIRONMENT.sul.stanford.edu"
                 }
             ]
         }
