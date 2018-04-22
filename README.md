@@ -106,7 +106,7 @@ Create an uploaded file by doing:
 
 ```shell
 $ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
--F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
+-F "upload=@examples/myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
 ```
 
 ## Testing
