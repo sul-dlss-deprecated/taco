@@ -9,7 +9,6 @@ LOCAL_ENDPOINT         =--endpoint-url=http://${LOCAL_ENDPOINT_HOST}
 DYNAMO_ENDPOINT        =${LOCAL_ENDPOINT}:4569
 S3_ENDPOINT            =${LOCAL_ENDPOINT}:4572
 PROJ_TABLE_NAME        =resources
-PROJ_STREAM_NAME       =deposit
 PROJ_BUCKET_NAME       =taco-deposited-files
 PROJ_AWS_REGION        =us-east-1
 PROJ_AWS_ACCESS_KEY_ID =999999
@@ -29,7 +28,7 @@ dependencies:
 	go get github.com/golang/dep/cmd/dep
 	dep ensure
 
-resources: table stream bucket
+resources: table bucket
 
 table:
 	$(eval TABLE=$(shell aws $(DYNAMO_ENDPOINT) dynamodb list-tables | jq '.TableNames[0] // ""'))
