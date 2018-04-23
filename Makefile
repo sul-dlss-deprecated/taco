@@ -4,7 +4,7 @@ PROJECT_UNIT_TESTS     =$(shell go list ./... | grep -v test | grep -v db)
 PROJECT_INT_TESTS      =$(shell go list ./db)
 PROJECT_E2E_TESTS      =$(shell go list ./test)
 LOCALSTACK_SERVICES    =dynamodb,s3
-LOCAL_ENDPOINT_HOST    :=${LOCAL_ENDPOINT_HOST}
+LOCAL_ENDPOINT_HOST    ?=localhost
 LOCAL_ENDPOINT         =--endpoint-url=http://${LOCAL_ENDPOINT_HOST}
 DYNAMO_ENDPOINT        =${LOCAL_ENDPOINT}:4569
 S3_ENDPOINT            =${LOCAL_ENDPOINT}:4572
