@@ -36,10 +36,6 @@
                     "value": "resources-REPLACE_ENVIRONMENT"
                 },
                 {
-                    "name": "DEPOSIT_STREAM_NAME",
-                    "value": "deposit-REPLACE_ENVIRONMENT"
-                },
-                {
                     "name": "S3_ENDPOINT",
                     "value": "s3.REPLACE_REGION.amazonaws.com"
                 },
