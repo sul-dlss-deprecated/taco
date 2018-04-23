@@ -3,11 +3,10 @@
 PROJECT_UNIT_TESTS     =$(shell go list ./... | grep -v test | grep -v db)
 PROJECT_INT_TESTS      =$(shell go list ./db)
 PROJECT_E2E_TESTS      =$(shell go list ./test)
-LOCALSTACK_SERVICES    =dynamodb,kinesis,s3
+LOCALSTACK_SERVICES    =dynamodb,s3
 LOCAL_ENDPOINT_HOST    :=${LOCAL_ENDPOINT_HOST}
 LOCAL_ENDPOINT         =--endpoint-url=http://${LOCAL_ENDPOINT_HOST}
 DYNAMO_ENDPOINT        =${LOCAL_ENDPOINT}:4569
-KINESIS_ENDPOINT       =${LOCAL_ENDPOINT}:4568
 S3_ENDPOINT            =${LOCAL_ENDPOINT}:4572
 PROJ_TABLE_NAME        =resources
 PROJ_STREAM_NAME       =deposit
@@ -47,14 +46,6 @@ table:
 					           {AttributeName=version,KeyType=RANGE}], \
 					Projection={ProjectionType=ALL}, \
 					ProvisionedThroughput={ReadCapacityUnits=10,WriteCapacityUnits=10}" ; \
-	fi;
-
-stream:
-	$(eval STREAM=$(shell aws $(KINESIS_ENDPOINT) kinesis list-streams | jq '.StreamNames[0] // ""'))
-	@if [[ $(STREAM) != "" ]]; \
-    then echo "$(STREAM) stream found"; \
-	  else aws $(KINESIS_ENDPOINT) kinesis create-stream --stream-name $(PROJ_STREAM_NAME) --shard-count 3 && \
-		  echo "$(PROJ_STREAM_NAME) stream created"; \
 	fi;
 
 bucket:
