@@ -37,7 +37,7 @@ Some agreements laid out by the development team are listed in the [Development 
 ## Running the Go Code locally without a build
 
 ```shell
-$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go run main.go
+$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go run main.go
 ```
 
 Note: we explain the AWS keys usage below.
@@ -48,7 +48,7 @@ Note: we explain the AWS keys usage below.
 Start external services using [Localstack](docs/localstack.md) then run:
 ```shell
 $ docker build -t taco .
-$ docker run -e AWS_REGION=localstack -e AWS_ACCESS_KEY_ID=999999 -e AWS_SECRET_KEY=1231 -p 8080:8080 taco
+$ docker run -e AWS_REGION=localstack -e AWS_ACCESS_KEY_ID=999999 -e AWS_SECRET_ACCESS_KEY=1231 -p 8080:8080 taco
 ```
 
 ### Build for the local OS
@@ -63,7 +63,7 @@ $ ./tacod
 
 Now start the API server (passing in API keys; these can be fake and are only required for localstack):
 ```shell
-$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 ./tacod
+$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 ./tacod
 ```
 
 Then you can interact with it using `curl`:

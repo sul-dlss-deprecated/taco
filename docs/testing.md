@@ -19,7 +19,7 @@ _Note: The db package test is dependent on [Localstack](docs/localstack.md) runn
 external services._
 
 ```shell
-AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go test -v ./[PACKAGE NAME]/
+AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go test -v ./[PACKAGE NAME]/
 ```
 
 ## Go Integration Tests
