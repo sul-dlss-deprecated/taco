@@ -8,7 +8,6 @@ services:
       AWS_ACCESS_KEY_ID: 999999
       AWS_SECRET_ACCESS_KEY: 999999
       AWS_REGION: us-east-1
-      KINESIS_ENDPOINT: localstack:4568
       S3_ENDPOINT: localstack:4572
       DYNAMO_DB_ENDPOINT: localstack:4569
     depends_on:
@@ -19,7 +18,7 @@ services:
     ports:
       - 4567-4583:4567-4583
     environment:
-      SERVICES: dynamodb,kinesis,s3
+      SERVICES: dynamodb,s3
       DEBUG: 1
       DATA_DIR: /tmp/localstack/data
   resources:

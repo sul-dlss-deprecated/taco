@@ -8,18 +8,16 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/streaming"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(database db.Database, stream streaming.Stream, validator validators.ResourceValidator) operations.UpdateResourceHandler {
-	return &updateResourceEntry{database: database, stream: stream, validator: validator}
+func NewUpdateResource(database db.Database, validator validators.ResourceValidator) operations.UpdateResourceHandler {
+	return &updateResourceEntry{database: database, validator: validator}
 }
 
 type updateResourceEntry struct {
 	database  db.Database
-	stream    streaming.Stream
 	validator validators.ResourceValidator
 }
 
@@ -48,10 +46,6 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 
 	err = d.database.Insert(newResource)
 	if err != nil {
-		panic(err)
-	}
-
-	if err = d.addToStream(id); err != nil {
 		panic(err)
 	}
 
@@ -86,9 +80,4 @@ func (d *updateResourceEntry) mergeJSON(maps ...*datautils.JSONObject) datautils
 		}
 	}
 	return result
-}
-
-func (d *updateResourceEntry) addToStream(id string) error {
-	message := streaming.Message{ID: id, Action: "update"}
-	return d.stream.SendMessage(message)
 }

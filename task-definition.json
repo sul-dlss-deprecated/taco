@@ -36,14 +36,6 @@
                     "value": "resources-REPLACE_ENVIRONMENT"
                 },
                 {
-                    "name": "KINESIS_ENDPOINT",
-                    "value": "kinesis.REPLACE_REGION.amazonaws.com"
-                },
-                {
-                    "name": "DEPOSIT_STREAM_NAME",
-                    "value": "deposit-REPLACE_ENVIRONMENT"
-                },
-                {
                     "name": "S3_ENDPOINT",
                     "value": "s3.REPLACE_REGION.amazonaws.com"
                 },

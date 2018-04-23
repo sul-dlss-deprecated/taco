@@ -13,7 +13,7 @@ Follow the directions on installing `localstack` here: https://github.com/locals
 
 Start localstack by running the command:
 ```shell
-$ SERVICES=dynamodb,kinesis,s3 localstack start
+$ SERVICES=dynamodb,s3 localstack start
 ```
 
 Next we have to set up the services.
@@ -36,9 +36,4 @@ $ awslocal dynamodb create-table --table-name resources \
 #### Create the S3 bucket:
 ```shell
 $ awslocal s3api create-bucket --bucket taco-deposited-files
-```
-
-#### Create the Kinesis stream:
-```shell
-$ awslocal kinesis create-stream --stream-name deposit --shard-count 3
 ```

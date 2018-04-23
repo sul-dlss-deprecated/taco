@@ -19,7 +19,6 @@ import (
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/middleware"
 	"github.com/sul-dlss-labs/taco/storage"
-	"github.com/sul-dlss-labs/taco/streaming"
 )
 
 func main() {
@@ -30,17 +29,13 @@ func main() {
 		Connection: db.Connect(awsSession, config.DynamodbEndpoint),
 		Table:      config.ResourceTableName,
 	}
-	stream := &streaming.KinesisStream{
-		Connection: streaming.Connect(awsSession, config.KinesisEndpoint),
-		StreamName: &config.DepositStreamName,
-	}
 	storage := &storage.S3BucketStorage{
 		Uploader:     connectToStorage(awsSession, config.S3Endpoint),
 		S3BucketName: config.S3BucketName,
 	}
 
 	identifierService := identifier.NewService(config)
-	server := createServer(database, stream, storage, identifierService, config.Port)
+	server := createServer(database, storage, identifierService, config.Port)
 	defer server.Shutdown()
 
 	// serve API
@@ -60,8 +55,8 @@ func connectToStorage(awsSession *session.Session, endpoint string) *s3manager.U
 	return s3manager.NewUploaderWithClient(s3Svc)
 }
 
-func createServer(database db.Database, stream streaming.Stream, storage storage.Storage, identifierService identifier.Service, port int) *restapi.Server {
-	api := handlers.BuildAPI(database, stream, storage, identifierService)
+func createServer(database db.Database, storage storage.Storage, identifierService identifier.Service, port int) *restapi.Server {
+	api := handlers.BuildAPI(database, storage, identifierService)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 

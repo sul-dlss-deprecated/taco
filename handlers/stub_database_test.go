@@ -8,22 +8,18 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
-	"github.com/sul-dlss-labs/taco/streaming"
 )
 
-func handler(database db.Database, stream streaming.Stream, storage storage.Storage) http.Handler {
+func handler(database db.Database, storage storage.Storage) http.Handler {
 	if database == nil {
 		database = NewMockDatabase(nil)
-	}
-	if stream == nil {
-		stream = NewMockStream()
 	}
 	if storage == nil {
 		storage = NewMockStorage()
 	}
 
 	identifierService := identifier.NewUUIDService()
-	return BuildAPI(database, stream, storage, identifierService).Serve(nil)
+	return BuildAPI(database, storage, identifierService).Serve(nil)
 }
 
 type MockDatabase struct {
@@ -54,7 +50,7 @@ func (d *MockDatabase) RetrieveLatest(externalID string) (*datautils.Resource, e
 	return nil, errors.New("not found")
 }
 
-func (d *MockDatabase) RetrieveVersion(externalId string, version *string) (*datautils.Resource, error) {
+func (d *MockDatabase) RetrieveVersion(externalID string, version *string) (*datautils.Resource, error) {
 	return nil, errors.New("not implemented")
 }
 
@@ -62,8 +58,8 @@ func (d *MockDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 
-func (d *MockDatabase) DeleteAllVersions(externalId string) error {
-	d.DeletedResources = append(d.DeletedResources, externalId)
+func (d *MockDatabase) DeleteAllVersions(externalID string) error {
+	d.DeletedResources = append(d.DeletedResources, externalID)
 	return nil
 }
 
