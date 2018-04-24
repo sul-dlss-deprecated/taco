@@ -61,8 +61,8 @@ func (d *MockDatabase) Update(params *datautils.Resource) error {
 	return nil
 }
 
-func (d *MockDatabase) DeleteAllVersions(externalID string) error {
-	d.DeletedResources = append(d.DeletedResources, externalID)
+func (d *MockDatabase) DeleteByID(tacoIdentifier string) error {
+	d.DeletedResources = append(d.DeletedResources, tacoIdentifier)
 	return nil
 }
 
@@ -88,7 +88,7 @@ func (d *MockErrorDatabase) RetrieveLatest(externalID string) (*datautils.Resour
 	return d.record, nil
 }
 
-func (d *MockErrorDatabase) DeleteAllVersions(externalID string) error {
+func (d *MockErrorDatabase) DeleteByID(tacoIdentifier string) error {
 	return errors.New("Broken")
 }
 

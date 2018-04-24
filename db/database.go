@@ -12,7 +12,7 @@ import (
 // Database is a generic connection to a database.
 type Database interface {
 	Insert(*datautils.Resource) error
-	DeleteAllVersions(externalID string) error
+	DeleteByID(tacoIdentifier string) error
 	RetrieveVersion(externalID string, version *string) (*datautils.Resource, error)
 	RetrieveLatest(externalID string) (*datautils.Resource, error)
 }

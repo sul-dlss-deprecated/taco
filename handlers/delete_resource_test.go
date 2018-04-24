@@ -12,19 +12,44 @@ import (
 func TestDeleteResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	json := datautils.JSONObject{}
-	repo := NewMockDatabase(datautils.NewResource(json).WithID("99999"))
+	resource := datautils.NewResource(json).
+		WithID("99999").
+		WithType(datautils.ObjectTypes[0])
+	repo := NewMockDatabase(resource)
 	r.DELETE("/v1/resource/oo000oo0001").
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNoContent, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).DeletedResources))
-				assert.Equal(t, "oo000oo0001", repo.(*MockDatabase).DeletedResources[0])
+				assert.Equal(t, "99999", repo.(*MockDatabase).DeletedResources[0])
+			})
+}
+
+func TestDeleteFileResourceHappyPath(t *testing.T) {
+	r := gofight.New()
+	json := datautils.JSONObject{}
+	resource := datautils.NewResource(json).
+		WithID("99999").
+		WithType(datautils.FileType).
+		WithFileLocation("s3://bucket/my-key")
+	repo := NewMockDatabase(resource)
+	storage := NewMockStorage()
+
+	r.DELETE("/v1/resource/oo000oo0001").
+		Run(handler(repo, storage, nil),
+			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
+				assert.Equal(t, http.StatusNoContent, r.Code)
+				assert.Equal(t, 1, len(repo.(*MockDatabase).DeletedResources))
+				assert.Equal(t, "99999", repo.(*MockDatabase).DeletedResources[0])
+				assert.Equal(t, "s3://bucket/my-key", storage.(*MockStorage).DeletedFiles[0])
 			})
 }
 
 func TestDeleteResourceFailure(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockErrorDatabase(nil)
+	resource := datautils.NewResource(datautils.JSONObject{}).
+		WithID("99999")
+	repo := NewMockErrorDatabase(resource)
 	assert.Panics(t,
 		func() {
 			r.DELETE("/v1/resource/oo000oo0001").

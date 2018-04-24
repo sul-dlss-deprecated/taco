@@ -130,6 +130,15 @@ $ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
 -L http://localhost:8080/v1/file/ef8e96fc-b29a-452e-b311-ca695256e7ca
 ```
 
+You can remove it by deleting the metadata resource:
+
+```shell
+$ curl -X DELETE -H "On-Behalf-Of: lmcrae@stanford.edu" \
+http://localhost:8080/v1/resource/ef8e96fc-b29a-452e-b311-ca695256e7ca
+```
+
+
+
 ## Running TACO via docker compose
 Use the following steps to build and run taco with its dependencies. The TACO service will be available at `http://\[::\]:8080`
 ```shell
