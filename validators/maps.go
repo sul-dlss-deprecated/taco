@@ -28,7 +28,7 @@ var (
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
   "type": "object",
-  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "label", "tacoIdentifier", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -49,20 +49,24 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a DRUID",
+    "dedupeIdentifier": {
+      "description": "Identifier retrieved from identification.sourceId that stands for analog or source identifier that this resource is a digital representation of.",
       "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Collection into SDR.",
       "$ref": "Agent.json"
     },
-    "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. DRUID or UUID depending on resource type. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
       "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a Collection.",
+      "type": "string"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
@@ -164,16 +168,47 @@ var (
       "type": "object",
       "required": ["identifier"],
       "properties": {
-        "catkey": {
-          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same collection being described by the bibliographic record.",
-          "type": "string"
+        "catalogLinks": {
+          "description": "Links to catalog records for the resource that the Collection represents in whole or part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["catalog", "catalogRecordId"],
+            "properties": {
+              "catalog": {
+                "description": "Catalog that is the source of the linked record.",
+                "type": "string"
+              },
+              "catalogRecordId": {
+                "description": "Record identifier that is unique within the context of the linked record's catalog.",
+                "type": "string"
+              },
+              "recordSchema": {
+                "description": "Metadata schema of the linked record.",
+                "type": "string"
+              },
+              "deriveMetadata": {
+                "description": "If the Collection descriptive metadata should be automatically updated when the linked record changes.",
+                "type": "boolean"
+              },
+              "deliverMetadata": {
+                "description": "If the linked record should be automatically updated when the Collection descriptive metadata changes.",
+                "type": "boolean"
+              },
+              "recordScope": {
+                "description": "Whether the linked record describes a resource that is broader than, equivalent to, or narrower than the resource the Collection represents.",
+                "type": "string",
+                "enum": ["broader", "equivalent", "narrower"]
+              }
+            }
+          }
         },
         "DOI": {
           "description": "Digital Object Identifier (DOI) for the Collection within this repository.",
           "type": "string"
         },
         "identifier": {
-          "description": "Identifier for the Collection within SDR.",
+          "description": "Identifier for the Collection within the Stanford Digital Repository system",
           "type": "string"
         },
         "sameAs": {
@@ -181,12 +216,12 @@ var (
           "type": "string"
         },
         "sourceId": {
-          "description": "For anything that cannot cleanly map into isRepresentationOf.",
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the Collection is a digital representation of.",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the Collection within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -229,7 +264,7 @@ var (
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
   "type": "object",
-  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "label", "tacoIdentifier", "version", "administrative", "access", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -260,20 +295,24 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a DRUID",
+    "dedupeIdentifier": {
+      "description": "Identifier retrieved from identification.sourceId that stands for analog or source identifier that this resource is a digital representation of.",
       "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
       "$ref": "Agent.json"
     },
-    "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. DRUID or UUID depending on resource type. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
       "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a DRO.",
+      "type": "string"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
@@ -379,20 +418,47 @@ var (
       "type": "object",
       "required": ["identifier"],
       "properties": {
-        "catkey": {
-          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same digital object being described by the bibliographic record.",
-          "type": "string"
+        "catalogLinks": {
+          "description": "Links to catalog records for the resource that the DRO represents in whole or part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["catalog", "catalogRecordId"],
+            "properties": {
+              "catalog": {
+                "description": "Catalog that is the source of the linked record.",
+                "type": "string"
+              },
+              "catalogRecordId": {
+                "description": "Record identifier that is unique within the context of the linked record's catalog.",
+                "type": "string"
+              },
+              "recordSchema": {
+                "description": "Metadata schema of the linked record.",
+                "type": "string"
+              },
+              "deriveMetadata": {
+                "description": "If the DRO descriptive metadata should be automatically updated when the linked record changes.",
+                "type": "boolean"
+              },
+              "deliverMetadata": {
+                "description": "If the linked record should be automatically updated when the DRO descriptive metadata changes.",
+                "type": "boolean"
+              },
+              "recordScope": {
+                "description": "Whether the linked record describes a resource that is broader than, equivalent to, or narrower than the resource the DRO represents.",
+                "type": "string",
+                "enum": ["broader", "equivalent", "narrower"]
+              }
+            }
+          }
         },
         "doi": {
           "description": "Digital Object Identifier (DOI) for the DRO within this repository.",
           "type": "string"
         },
         "identifier": {
-          "description": "Identifier for the DRO within SDR.",
-          "type": "string"
-        },
-        "isRepresentationOf": {
-          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the DRO is a digital representation of.",
+          "description": "Identifier for the Digital Repository Object within the Stanford Digital Repository system",
           "type": "string"
         },
         "sameAs": {
@@ -400,12 +466,12 @@ var (
           "type": "string"
         },
         "sourceId": {
-          "description": "For anything that cannot cleanly map into is representation of.",
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the DRO is a digital representation of.",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the DRO within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -498,20 +564,24 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a DRUID",
+    "dedupeIdentifier": {
+      "description": "Identifier retrieved from identification.sourceId that stands for analog or source identifier that this resource is a digital representation of.",
       "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Collection into SDR.",
       "$ref": "Agent.json"
     },
-    "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. DRUID or UUID depending on resource type. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
       "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a Collection.",
+      "type": "string"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
@@ -614,16 +684,47 @@ var (
       "type": "object",
       "not": {"required": ["identifier"]},
       "properties": {
-        "catkey": {
-          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same collection being described by the bibliographic record.",
-          "type": "string"
+        "catalogLinks": {
+          "description": "Links to catalog records for the resource that the Collection represents in whole or part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["catalog", "catalogRecordId"],
+            "properties": {
+              "catalog": {
+                "description": "Catalog that is the source of the linked record.",
+                "type": "string"
+              },
+              "catalogRecordId": {
+                "description": "Record identifier that is unique within the context of the linked record's catalog.",
+                "type": "string"
+              },
+              "recordSchema": {
+                "description": "Metadata schema of the linked record.",
+                "type": "string"
+              },
+              "deriveMetadata": {
+                "description": "If the Collection descriptive metadata should be automatically updated when the linked record changes.",
+                "type": "boolean"
+              },
+              "deliverMetadata": {
+                "description": "If the linked record should be automatically updated when the Collection descriptive metadata changes.",
+                "type": "boolean"
+              },
+              "recordScope": {
+                "description": "Whether the linked record describes a resource that is broader than, equivalent to, or narrower than the resource the Collection represents.",
+                "type": "string",
+                "enum": ["broader", "equivalent", "narrower"]
+              }
+            }
+          }
         },
         "DOI": {
           "description": "Digital Object Identifier (DOI) for the Collection within this repository.",
           "type": "string"
         },
         "identifier": {
-          "description": "Identifier for the Collection within SDR.",
+          "description": "Identifier for the Collection within the Stanford Digital Repository system",
           "type": "string"
         },
         "sameAs": {
@@ -631,12 +732,12 @@ var (
           "type": "string"
         },
         "sourceId": {
-          "description": "For anything that cannot cleanly map into isRepresentationOf.",
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the Collection is a digital representation of.",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the Collection within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -717,20 +818,24 @@ var (
       "description": "Citation for the resource, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
       "type": "string"
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a DRUID",
+    "dedupeIdentifier": {
+      "description": "Identifier retrieved from identification.sourceId that stands for analog or source identifier that this resource is a digital representation of.",
       "type": "string"
     },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the DRO into SDR.",
       "$ref": "Agent.json"
     },
-    "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. DRUID or UUID depending on resource type. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
       "type": "string"
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a DRO.",
+      "type": "string"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
@@ -837,20 +942,47 @@ var (
       "type": "object",
       "not": {"required": ["identifier"]},
       "properties": {
-        "catkey": {
-          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same digital object being described by the bibliographic record.",
-          "type": "string"
+        "catalogLinks": {
+          "description": "Links to catalog records for the resource that the DRO represents in whole or part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["catalog", "catalogRecordId"],
+            "properties": {
+              "catalog": {
+                "description": "Catalog that is the source of the linked record.",
+                "type": "string"
+              },
+              "catalogRecordId": {
+                "description": "Record identifier that is unique within the context of the linked record's catalog.",
+                "type": "string"
+              },
+              "recordSchema": {
+                "description": "Metadata schema of the linked record.",
+                "type": "string"
+              },
+              "deriveMetadata": {
+                "description": "If the DRO descriptive metadata should be automatically updated when the linked record changes.",
+                "type": "boolean"
+              },
+              "deliverMetadata": {
+                "description": "If the linked record should be automatically updated when the DRO descriptive metadata changes.",
+                "type": "boolean"
+              },
+              "recordScope": {
+                "description": "Whether the linked record describes a resource that is broader than, equivalent to, or narrower than the resource the DRO represents.",
+                "type": "string",
+                "enum": ["broader", "equivalent", "narrower"]
+              }
+            }
+          }
         },
         "doi": {
           "description": "Digital Object Identifier (DOI) for the DRO within this repository.",
           "type": "string"
         },
         "identifier": {
-          "description": "Identifier for the DRO within SDR.",
-          "type": "string"
-        },
-        "isRepresentationOf": {
-          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the DRO is a digital representation of.",
+          "description": "Identifier for the Digital Repository Object within the Stanford Digital Repository system",
           "type": "string"
         },
         "sameAs": {
@@ -858,12 +990,12 @@ var (
           "type": "string"
         },
         "sourceId": {
-          "description": "For anything that cannot cleanly map into is representation of.",
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the DRO is a digital representation of.",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the DRO within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -950,13 +1082,13 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a UUID",
-      "type": "string"
-    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
       "$ref": "Agent.json"
+    },
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
+      "type": "string"
     },
     "filename": {
       "description": "Filename for a file. Can be same as label.",
@@ -985,6 +1117,10 @@ var (
     "size": {
       "description": "Size of the File (binary) in bytes.",
       "type": "integer"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
+      "type": "string"
     },
     "use": {
       "description": "Use for the File.",
@@ -1075,12 +1211,12 @@ var (
           "type": "string"
         },
         "identifier": {
-          "description": "Identifier for the File within SDR.",
+          "description": "Identifier for the File within the Stanford Digital Repository system",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the File within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -1126,10 +1262,6 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a UUID",
-      "type": "string"
-    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
       "$ref": "Agent.json"
@@ -1138,8 +1270,12 @@ var (
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
+      "type": "string"
+    },
     "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
@@ -1218,12 +1354,12 @@ var (
       "not": {"required": ["identifier"]},
       "properties": {
         "identifier": {
-          "description": "Identifier for the Fileset within SDR.",
+          "description": "Identifier for the Fileset within the Stanford Digital Repository system",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the Fileset within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -1275,13 +1411,13 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
       ]
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a UUID",
-      "type": "string"
-    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the File into SDR.",
       "$ref": "Agent.json"
+    },
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
+      "type": "string"
     },
     "filename": {
       "description": "Filename for a file. Can be same as label.",
@@ -1310,6 +1446,10 @@ var (
     "size": {
       "description": "Size of the File (binary) in bytes.",
       "type": "integer"
+    },
+    "tacoIdentifier": {
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
+      "type": "string"
     },
     "use": {
       "description": "Use for the File.",
@@ -1394,12 +1534,12 @@ var (
           "type": "string"
         },
         "identifier": {
-          "description": "Identifier for the File within SDR.",
+          "description": "Identifier for the File within the Stanford Digital Repository system",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the File within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
@@ -1439,10 +1579,6 @@ var (
         "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
       ]
     },
-    "externalIdentifier": {
-      "description": "The external SDR identifier. Typically a UUID",
-      "type": "string"
-    },
     "depositor": {
       "description": "The Agent (User, Group, Application, Department, other) that deposited the Fileset into SDR.",
       "$ref": "Agent.json"
@@ -1451,8 +1587,12 @@ var (
       "description": "Primary processing label (can be same as title) for a Fileset.",
       "type": "string"
     },
+    "externalIdentifier": {
+      "description": "Identifier for the resource within SDR but outside of TACO. UUID. Constant across resource versions. What clients will use calling TACO. Same as 'identification.identifier'",
+      "type": "string"
+    },
     "tacoIdentifier": {
-      "description": "Identifier for the resource within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+      "description": "Identifier for the resource within TACO. UUID, unique for each new version of a TACO resource.",
       "type": "string"
     },
     "version": {
@@ -1530,12 +1670,12 @@ var (
       "required": ["identifier"],
       "properties": {
         "identifier": {
-          "description": "Identifier for the Fileset within SDR.",
+          "description": "Identifier for the Fileset within the Stanford Digital Repository system",
           "type": "string"
         },
         "sdrUUID": {
           "type": "string",
-          "description": "UUID for the Fileset within TACO."
+          "description": "UUID previously minted for the resource within SDR2 / Fedora 3."
         }
       }
     },
