@@ -92,11 +92,17 @@ $ curl -X PATCH -H "Content-Type: application/json" \ -d@examples/update_request
 -H "On-Behalf-Of: lmcrae@stanford.edu" \ http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
-Create an uploaded file by doing:
+Now, we're going to get a file we can use to test the uploader:
+```shell
+$ curl -Lo test.pdf \
+ https://github.com/samvera/hyrax/raw/master/spec/fixtures/hyrax/hyrax_test4.pdf
+```
+
+Than you can upload that file into TACO by doing:
 
 ```shell
 $ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
--F "upload=@myfile.pdf;type=application/pdf" http://localhost:8080/v1/file
+-F "upload=@test.pdf;type=application/pdf" http://localhost:8080/v1/file
 ```
 
 ## Running TACO via docker compose
