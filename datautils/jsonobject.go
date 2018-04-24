@@ -1,6 +1,8 @@
 package datautils
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // JSONObject represents a JSON object.
 type JSONObject map[string]interface{}
@@ -11,10 +13,10 @@ func (d *JSONObject) GetS(key string) string {
 	return (*d)[key].(string)
 }
 
-// GetI returns the int value at key
-func (d *JSONObject) GetI(key string) int {
+// GetI returns the float64 value at key
+func (d *JSONObject) GetF(key string) float64 {
 	d.ensureKeyExists(key)
-	return (*d)[key].(int)
+	return (*d)[key].(float64)
 }
 
 // GetB returns the boolean value at key
