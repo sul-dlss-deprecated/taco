@@ -56,12 +56,16 @@ func findDefaults(schema *datautils.JSONObject) *datautils.JSONObject {
 	results := &datautils.JSONObject{}
 	for key := range *props {
 		property := props.GetObj(key)
-		if property.HasKey("type") &&
-			property.GetS("type") == "object" &&
-			property.HasKey("properties") {
-			// Add the child defaults to the template.
-			childResults := findDefaults(property)
-			(*results)[key] = childResults
+		if property.HasKey("type") {
+			switch (*property)["type"].(type) {
+			case string:
+				if property.GetS("type") == "object" &&
+					property.HasKey("properties") {
+					// Add the child defaults to the template.
+					childResults := findDefaults(property)
+					(*results)[key] = childResults
+				}
+			}
 		}
 		if property.HasKey("default") {
 			(*results)[key] = (*property)["default"]
