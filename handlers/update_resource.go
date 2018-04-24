@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
+	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
@@ -24,7 +26,7 @@ type updateResourceEntry struct {
 // Handle the update resource request
 func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
 	id := params.ID
-	newResource := datautils.NewResource(params.Payload.(map[string]interface{})).WithID(id)
+	newResource := datautils.NewResource(params.Payload.(map[string]interface{}))
 
 	if errors := d.validator.ValidateResource(newResource); errors != nil {
 		return operations.NewUpdateResourceUnprocessableEntity().
@@ -39,10 +41,24 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	merged := d.mergeJSON(&existingResource.JSON, &newResource.JSON)
-	newResource = datautils.NewResource(merged).
-		WithExternalIdentifier(id).   // Don't allow changing druids
-		WithID(existingResource.ID()) // Ignore any passed in tacoIdentifier
+	err = d.verifyPayload(newResource, existingResource)
+	if err != nil {
+		return operations.NewUpdateResourceUnprocessableEntity()
+	}
+
+	v, _ := newResource.JSON["version"].(json.Number).Float64()
+	version := int(v)
+	if version > existingResource.Version() {
+		d.buildNewResourceVersion(newResource, version, existingResource)
+		response := datautils.JSONObject{"id": id}
+		return operations.NewUpdateResourceOK().WithPayload(response)
+	}
+
+	// We need to ensure in this case that ID and externalID are NOT overwritten by the incoming JSON
+	newResource = datautils.NewResource(d.mergeJSON(&existingResource.JSON, &newResource.JSON)).
+		WithVersion(existingResource.Version()).
+		WithID(existingResource.ID()).
+		WithExternalIdentifier(existingResource.ExternalIdentifier())
 
 	err = d.database.Insert(newResource)
 	if err != nil {
@@ -66,18 +82,46 @@ func (d *updateResourceEntry) mergeJSON(maps ...*datautils.JSONObject) datautils
 				} else {
 					result[k] = v
 				}
-			case json.Number:
-				// Cast "version" to int, otherswise dynamodbattribute.MarshalMap will cast it to String
-				// See https://github.com/aws/aws-sdk-go-v2/issues/115
-				i64, err := v.(json.Number).Int64()
-				if err != nil {
-					panic(err)
-				}
-				result[k] = int(i64)
 			default:
 				result[k] = v
 			}
 		}
 	}
 	return result
+}
+
+func (d *updateResourceEntry) buildNewResourceVersion(newResource *datautils.Resource, version int, existingResource *datautils.Resource) {
+	tacoIdentifier, err := identifier.NewUUIDService().Mint()
+	if err != nil {
+		panic(err)
+	}
+
+	newResource = datautils.NewResource(d.mergeJSON(&existingResource.JSON, &newResource.JSON)).
+		WithID(tacoIdentifier).
+		WithExternalIdentifier(existingResource.ExternalIdentifier()).
+		WithPrecedingVersion(existingResource.ID()).
+		WithVersion(version)
+
+	err = d.database.Insert(newResource)
+	if err != nil {
+		panic(err)
+	}
+
+	deprecatedResource := datautils.NewResource(existingResource.JSON).
+		WithFollowingVersion(tacoIdentifier)
+
+	err = d.database.Insert(deprecatedResource)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (d *updateResourceEntry) verifyPayload(newResource *datautils.Resource, existingResource *datautils.Resource) error {
+	if newResource.ExternalIdentifier() != existingResource.ExternalIdentifier() {
+		return errors.New("Invalid externalIdentifier in payload: does not match record")
+	}
+	if newResource.ID() != existingResource.ID() {
+		return errors.New("Invalid tacoIdentifier in payload: does not match record")
+	}
+	return nil
 }
