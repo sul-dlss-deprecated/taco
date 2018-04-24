@@ -9,16 +9,22 @@ import (
 
 type MockStorage struct {
 	CreatedFiles []*datautils.File
+	DeletedFiles []string
 }
 
 func NewMockStorage() storage.Storage {
-	return &MockStorage{CreatedFiles: []*datautils.File{}}
+	return &MockStorage{CreatedFiles: []*datautils.File{}, DeletedFiles: []string{}}
 }
 
 func (s *MockStorage) UploadFile(id string, file *datautils.File) (*string, error) {
 	s.CreatedFiles = append(s.CreatedFiles, file)
 	path := "s3FileLocation"
 	return &path, nil
+}
+
+func (s *MockStorage) RemoveFile(uri string) error {
+	s.DeletedFiles = append(s.DeletedFiles, uri)
+	return nil
 }
 
 func (s *MockStorage) CreateSignedURL(s3URI string) (*string, error) {
@@ -34,6 +40,10 @@ func NewMockErrorStorage() storage.Storage {
 
 func (f *MockErrorStorage) UploadFile(id string, file *datautils.File) (*string, error) {
 	return nil, errors.New("broken")
+}
+
+func (s *MockErrorStorage) RemoveFile(uri string) error {
+	return errors.New("broken")
 }
 
 func (f *MockErrorStorage) CreateSignedURL(s3URI string) (*string, error) {

@@ -16,6 +16,7 @@ import (
 type Storage interface {
 	UploadFile(id string, file *datautils.File) (*string, error)
 	CreateSignedURL(s3url string) (*string, error)
+	RemoveFile(id string) error
 }
 
 // NewS3Bucket creates a new storage adapter that uses S3 bucket storage to
@@ -80,7 +81,29 @@ func (d *S3BucketStorage) UploadFile(key string, file *datautils.File) (*string,
 	return d.s3URI(key), nil
 }
 
+// RemoveFile removes a file from S3
+func (d *S3BucketStorage) RemoveFile(uri string) error {
+	input := &s3.DeleteObjectInput{
+		Bucket: &d.BucketName,
+		Key:    d.s3key(uri),
+	}
+
+	_, err := d.service.DeleteObject(input)
+	return err
+}
+
 func (d *S3BucketStorage) s3URI(key string) *string {
-	uri := fmt.Sprintf("s3:/%s/%s", d.BucketName, key)
+	uri := fmt.Sprintf("s3://%s/%s", d.BucketName, key)
 	return &uri
+}
+
+// Given an s3 url like this:
+//   s3://my-bucket/my-key
+// return the my-key component
+func (d *S3BucketStorage) s3key(rawuri string) *string {
+	uri, err := url.Parse(rawuri)
+	if err != nil {
+		panic(err)
+	}
+	return &uri.Path
 }
