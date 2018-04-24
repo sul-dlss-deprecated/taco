@@ -48,9 +48,5 @@ func respToResource(item map[string]*dynamodb.AttributeValue) (*datautils.Resour
 		return nil, err
 	}
 
-	// UnmarshalMap coerces all numbers in AWS to float64.
-	// Force version to be an integer
-	json["version"] = int(json["version"].(float64))
-
 	return datautils.NewResource(json), nil
 }

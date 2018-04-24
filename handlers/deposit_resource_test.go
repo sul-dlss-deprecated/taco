@@ -47,9 +47,9 @@ func TestCreateResourceNoApiKey(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetJSON(gofight.D{
-			"tacoIdentifier":       "oo000oo0001",
-			"sourceId": "bib12345678",
-			"title":    "My work",
+			"tacoIdentifier": "oo000oo0001",
+			"sourceId":       "bib12345678",
+			"title":          "My work",
 		}).
 		Run(handler(nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -77,9 +77,9 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
 		SetJSON(gofight.D{
-			"tacoIdentifier":    "oo000oo0001",
-			"@type": "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"title": "My work",
+			"tacoIdentifier": "oo000oo0001",
+			"@type":          "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+			"title":          "My work",
 		}).
 		Run(handler(nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -94,14 +94,14 @@ func TestCreateInvalidResource(t *testing.T) {
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
 		SetJSON(gofight.D{
-			"tacoIdentifier":       "oo000oo0001",
-			"@context": "http://example.com", // This is not a valid context
-			"@type":    "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"access":   "world",
-			"label":    "My work",
-			"preserve": true,
-			"publish":  true,
-			"sourceId": "bib12345678"}).
+			"tacoIdentifier": "oo000oo0001",
+			"@context":       "http://example.com", // This is not a valid context
+			"@type":          "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
+			"access":         "world",
+			"label":          "My work",
+			"preserve":       true,
+			"publish":        true,
+			"sourceId":       "bib12345678"}).
 		Run(handler(nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)

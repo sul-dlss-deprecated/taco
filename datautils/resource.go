@@ -62,7 +62,7 @@ func (d *Resource) ExternalIdentifier() string {
 
 // Version returns the document's version
 func (d *Resource) Version() int {
-	return d.JSON.GetI("version")
+	return int(d.JSON.GetF("version"))
 }
 
 // Type returns the document's type
@@ -132,7 +132,7 @@ func (d *Resource) WithCurrentVersion(flag bool) *Resource {
 
 // WithVersion sets the version
 func (d *Resource) WithVersion(version int) *Resource {
-	d.JSON["version"] = version
+	d.JSON["version"] = float64(version)
 	return d
 }
 
