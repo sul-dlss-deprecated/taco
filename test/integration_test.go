@@ -40,6 +40,10 @@ const resourceSchema = `{
 
 var id string
 
+// ID variables to verify updates
+var externalIdentifier string
+var tacoIdentifier string
+
 func TestCreateAndDestroyResource(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
@@ -121,6 +125,20 @@ func TestUpdateResource(t *testing.T) {
 	if err := json.Unmarshal(byt, &patchData); err != nil {
 		panic(err)
 	}
+
+	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
+		AddQuery("version", "1").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		Expect(t).
+		Status(200).
+		Type("json").
+		AssertFunc(assertRetrieveResponse).
+		Done()
+
+	// This is required to ensure we're not passing an example with
+	// incorrect identifiers
+	patchData["externalIdentifier"] = externalIdentifier
+	patchData["tacoIdentifier"] = tacoIdentifier
 
 	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
@@ -227,6 +245,14 @@ func assertResourceResponse(res *http.Response, req *http.Request) error {
 	buf.ReadFrom(res.Body)
 	jsonID, _ := jsonparser.GetString(buf.Bytes(), "id")
 	id = jsonID
+	return nil
+}
+
+func assertRetrieveResponse(res *http.Response, req *http.Request) error {
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(res.Body)
+	externalIdentifier, _ = jsonparser.GetString(buf.Bytes(), "externalIdentifier")
+	tacoIdentifier, _ = jsonparser.GetString(buf.Bytes(), "tacoIdentifier")
 	return nil
 }
 

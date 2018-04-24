@@ -1,0 +1,41 @@
+{
+  "@context": "http://sdr.sul.stanford.edu/contexts/taco-base.jsonld",
+  "@type": "http://sdr.sul.stanford.edu/models/sdr3-collection.jsonld",
+  "citation": "Leon Kolb Collection of Portraits. https://purl.stanford.edu/bs646cd8717",
+  "depositor": {
+    "name": "DOR",
+    "sunetID": "DOR"
+  },
+  "id": "742a0134-1e20-11e2-979d-022c4a946c80",
+  "label": "UPDATED: Leon Kolb Collection of Portraits",
+  "version": 2,
+  "access": {
+    "access": "world",
+    "copyright": "This work is copyrighted by the creator.",
+    "download": "world",
+    "reuseAndReproductionStatement": "Property rights reside with the repository. Literary rights reside with the creators of the documents or their heirs. To obtain permission to publish or reproduce, please contact the Special Collections Public Services Librarian at speccollref@stanford.edu."
+  },
+  "administrative": {
+    "created": "2011-07-05T17:12:18.779Z",
+    "deleted": false,
+    "isDescribedBy": "https://purl.stanford.edu/bs646cd8717.xml",
+    "lastUpdated": "2016-11-04T18:21:45.889Z",
+    "sdrPreserve": true,
+    "remediatedBy": [{
+      "name": "Laura Wilsey",
+      "sunetID": "lauraw15"
+    }]
+  },
+  "identification": {
+    "catkey": "4084372",
+    "identifier": "druid:bs646cd8717",
+    "sourceId": "bib4084372",
+    "sdrUUID": "742a0134-1e20-11e2-979d-022c4a946c80"
+  },
+  "structural": {
+    "hasAgreement": "druid:dd327qr3670",
+    "hasMember": [],
+    "isTargetOf": "",
+    "hasMemberOrders": []
+  }
+}

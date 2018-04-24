@@ -147,6 +147,20 @@ func (d *Resource) WithVersion(version int) *Resource {
 	return d
 }
 
+// WithPrecedingVersion sets the precedingVersion to
+// the id passed (of the old version)
+func (d *Resource) WithPrecedingVersion(id string) *Resource {
+	d.JSON["precedingVersion"] = id
+	return d
+}
+
+// WithFollowingVersion sets the followingVersion to
+// the id passed (of the new version)
+func (d *Resource) WithFollowingVersion(id string) *Resource {
+	d.JSON["followingVersion"] = id
+	return d
+}
+
 func contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
