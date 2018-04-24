@@ -75,6 +75,11 @@ func (d *Resource) MimeType() string {
 	return d.JSON.GetS("hasMimeType")
 }
 
+// WithFileLocation sets the location of the binary.
+func (d *Resource) FileLocation() string {
+	return d.JSON.GetS("file-location")
+}
+
 // Label returns the document's Label
 func (d *Resource) Label() string {
 	return d.JSON.GetS("label")
@@ -115,6 +120,12 @@ func (d *Resource) WithExternalIdentifier(id string) *Resource {
 // WithMimeType sets the mime type. This should only be used on File resources
 func (d *Resource) WithMimeType(mimeType string) *Resource {
 	d.JSON["hasMimeType"] = mimeType
+	return d
+}
+
+// WithFileLocation sets the location of the binary. This should only be used on File resources
+func (d *Resource) WithFileLocation(fileLocation string) *Resource {
+	d.JSON["file-location"] = fileLocation
 	return d
 }
 

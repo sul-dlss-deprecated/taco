@@ -55,9 +55,7 @@ func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *au
 		panic(err)
 	}
 
-	log.Printf("The location of the file is: %s", *location)
-
-	resource := d.buildPersistableResource(upload.Metadata)
+	resource := d.buildPersistableResource(upload.Metadata, location)
 	resource = resource.
 		WithExternalIdentifier(externalID).
 		WithVersion(1).
@@ -89,10 +87,11 @@ func (d *depositFileEntry) copyFileToStorage(id string, file *datautils.File) (*
 	return d.storage.UploadFile(id, file)
 }
 
-func (d *depositFileEntry) buildPersistableResource(metadata datautils.FileMetadata) *datautils.Resource {
+func (d *depositFileEntry) buildPersistableResource(metadata datautils.FileMetadata, location *string) *datautils.Resource {
 	resource := NewFile()
 	identification := resource.Identification()
 	(*identification)["filename"] = metadata.Filename
 	return resource.WithMimeType(metadata.ContentType).
-		WithLabel(metadata.Filename)
+		WithLabel(metadata.Filename).
+		WithFileLocation(*location)
 }

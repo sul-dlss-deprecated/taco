@@ -30,6 +30,12 @@ func TestWithLabel(t *testing.T) {
 	assert.Equal(t, "My file", resource.Label())
 }
 
+func TestWithFileLocation(t *testing.T) {
+	resource := NewResource(JSONObject{})
+	resource.WithFileLocation("s3://bucket/key")
+	assert.Equal(t, "s3://bucket/key", resource.FileLocation())
+}
+
 func TestWithMimeType(t *testing.T) {
 	resource := NewResource(JSONObject{})
 	resource.WithMimeType("text/plain")

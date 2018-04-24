@@ -39,6 +39,7 @@ func TestCreateFileHappyPath(t *testing.T) {
 				assert.Equal(t, fileName, "foo.txt")
 				assert.Equal(t, fileResource.Label(), "foo.txt")
 				assert.Equal(t, "text/plain", fileResource.MimeType())
+				assert.Equal(t, "s3FileLocation", fileResource.FileLocation())
 
 			})
 }
