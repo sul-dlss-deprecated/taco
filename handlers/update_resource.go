@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/sul-dlss-labs/taco/datautils"
@@ -41,9 +40,9 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 		panic(err)
 	}
 
-	err = d.verifyPayload(newResource, existingResource)
-	if err != nil {
-		return operations.NewUpdateResourceUnprocessableEntity()
+	errors := d.verifyPayload(newResource, existingResource)
+	if errors != nil {
+		return operations.NewUpdateResourceUnprocessableEntity().WithPayload(&models.ErrorResponse{Errors: *errors})
 	}
 
 	v, _ := newResource.JSON["version"].(json.Number).Float64()
@@ -116,12 +115,15 @@ func (d *updateResourceEntry) buildNewResourceVersion(newResource *datautils.Res
 	}
 }
 
-func (d *updateResourceEntry) verifyPayload(newResource *datautils.Resource, existingResource *datautils.Resource) error {
+func (d *updateResourceEntry) verifyPayload(newResource *datautils.Resource, existingResource *datautils.Resource) *models.ErrorResponseErrors {
+	errors := models.ErrorResponseErrors{}
 	if newResource.ExternalIdentifier() != existingResource.ExternalIdentifier() {
-		return errors.New("Invalid externalIdentifier in payload: does not match record")
+		errors = append(errors, &models.Error{Title: "Invalid Update Payload", Detail: "externalIdentifier in payload: does not match existing resource"})
+		return &errors
 	}
 	if newResource.ID() != existingResource.ID() {
-		return errors.New("Invalid tacoIdentifier in payload: does not match record")
+		errors = append(errors, &models.Error{Title: "Invalid Update Payload", Detail: "tacoIdentifier in payload: does not match existing resource"})
+		return &errors
 	}
 	return nil
 }
