@@ -6,7 +6,8 @@
     "name": "DOR",
     "sunetID": "DOR"
   },
-  "id": "742a0134-1e20-11e2-979d-022c4a946c80",
+  "externalIdentifier": "druid:bs646cd8717",
+  "tacoIdentifier": "742a0134-1e20-11e2-979d-022c4a946c80",
   "label": "UPDATED: Leon Kolb Collection of Portraits",
   "version": 2,
   "access": {
