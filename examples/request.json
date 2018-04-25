@@ -17,6 +17,7 @@
   "administrative": {
     "deleted": false,
     "sdrPreserve": true,
+    "isDescribedBy": "https://purl.stanford.edu/bs646cd8717.xml",
     "remediatedBy": [
       {
         "name": "Laura Wilsey",
