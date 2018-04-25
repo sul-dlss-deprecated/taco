@@ -37,7 +37,7 @@ Some agreements laid out by the development team are listed in the [Development 
 ## Running the Go Code locally without a build
 
 ```shell
-$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go run main.go
+$ TACO_SECRET_KEY=s00perSekret AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go run main.go
 ```
 
 Note: we explain the AWS keys usage below.
@@ -48,7 +48,7 @@ Note: we explain the AWS keys usage below.
 Start external services using [Localstack](docs/localstack.md) then run:
 ```shell
 $ docker build -t taco .
-$ docker run -e AWS_REGION=localstack -e AWS_ACCESS_KEY_ID=999999 -e AWS_SECRET_ACCESS_KEY=1231 -p 8080:8080 taco
+$ docker run -e TACO_SECRET_KEY=s00perSekret -e AWS_REGION=localstack -e AWS_ACCESS_KEY_ID=999999 -e AWS_SECRET_ACCESS_KEY=1231 -p 8080:8080 taco
 ```
 
 ### Build for the local OS
@@ -63,13 +63,14 @@ $ ./tacod
 
 Now start the API server (passing in API keys; these can be fake and are only required for localstack):
 ```shell
-$ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 ./tacod
+$ TACO_SECRET_KEY=s00perSekret AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 ./tacod
 ```
+See [Tokens](docs/tokens.md) for information about generating a user token.
 
 Then you can interact with it using `curl`:
 ```shell
 $ curl -H "Content-Type: application/json" \
- -H "On-Behalf-Of: lmcrae@stanford.edu" \
+ -H "Authorization: bearer <token>" \
  -d@examples/request.json http://localhost:8080/v1/resource
 ```
 
@@ -82,7 +83,7 @@ Then you can use the returned identifier to retrieve the original:
 
 ```shell
 $ curl -H "Content-Type: application/json" \
- -H "On-Behalf-Of: lmcrae@stanford.edu" \
+ -H "Authorization: bearer <token>" \
  http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
@@ -95,13 +96,16 @@ Without changing the version number:
 
 ```shell
 $ curl -X PATCH -H "Content-Type: application/json" \ -d@examples/update_request.json \
--H "On-Behalf-Of: lmcrae@stanford.edu" http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+-H "Authorization: bearer <token>" \
+http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 With changing the version number:
 ```shell
-$ curl -X PATCH -H "Content-Type: application/json" \ -d@examples/update_request_new_version.json \
--H "On-Behalf-Of: lmcrae@stanford.edu" http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+$ curl -X PATCH -H "Content-Type: application/json" \
+-d@examples/update_request_new_version.json \
+-H "Authorization: bearer <token>" \
+http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 Now, we're going to get a file we can use to test the uploader:
@@ -113,7 +117,7 @@ $ curl -Lo test.pdf \
 Than you can upload that file into TACO by doing:
 
 ```shell
-$ curl -H "On-Behalf-Of: lmcrae@stanford.edu" \
+$ curl -H "Authorization: bearer <token>" \
 -F "upload=@test.pdf;type=application/pdf" http://localhost:8080/v1/file
 ```
 

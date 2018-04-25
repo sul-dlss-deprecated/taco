@@ -43,7 +43,7 @@ func init() {
         "operationId": "depositFile",
         "security": [
           {
-            "RemoteUser": []
+            "bearer": []
           }
         ],
         "parameters": [
@@ -109,7 +109,7 @@ func init() {
         "operationId": "depositResource",
         "security": [
           {
-            "RemoteUser": []
+            "bearer": []
           }
         ],
         "parameters": [
@@ -158,7 +158,7 @@ func init() {
         "operationId": "retrieveResource",
         "security": [
           {
-            "RemoteUser": []
+            "bearer": []
           }
         ],
         "parameters": [
@@ -292,7 +292,7 @@ func init() {
         "operationId": "getProcessStatus",
         "security": [
           {
-            "RemoteUser": []
+            "bearer": []
           }
         ],
         "parameters": [
@@ -392,9 +392,9 @@ func init() {
     }
   },
   "securityDefinitions": {
-    "RemoteUser": {
+    "bearer": {
       "type": "apiKey",
-      "name": "On-Behalf-Of",
+      "name": "Authorization",
       "in": "header"
     }
   }

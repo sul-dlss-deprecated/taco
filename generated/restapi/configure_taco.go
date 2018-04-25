@@ -39,9 +39,9 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	// Applies when the "On-Behalf-Of" header is set
-	api.RemoteUserAuth = func(token string) (*authorization.Agent, error) {
-		return nil, errors.NotImplemented("api key auth (RemoteUser) On-Behalf-Of from header param [On-Behalf-Of] has not yet been implemented")
+	// Applies when the "Authorization" header is set
+	api.BearerAuth = func(token string) (*authorization.Agent, error) {
+		return nil, errors.NotImplemented("api key auth (bearer) Authorization from header param [Authorization] has not yet been implemented")
 	}
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()

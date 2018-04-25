@@ -14,7 +14,7 @@ func TestRetrieveHappyPath(t *testing.T) {
 	repo := NewMockDatabase(&datautils.Resource{})
 	r.GET("/v1/resource/99").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Authorization": "lmcrae@stanford.edu",
 		}).
 		Run(handler(repo, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -26,7 +26,7 @@ func TestRetrieveNotFound(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/resource/100").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Authorization": "lmcrae@stanford.edu",
 		}).
 		Run(handler(nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -48,7 +48,7 @@ func TestRetrieveNoPermissions(t *testing.T) {
 	repo := NewMockDatabase(new(datautils.Resource))
 	r.GET("/v1/resource/99").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
+			"Authorization": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
 		}).
 		Run(handler(repo, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -62,7 +62,7 @@ func TestRetrieveError(t *testing.T) {
 		func() {
 			r.GET("/v1/resource/100").
 				SetHeader(gofight.H{
-					"On-Behalf-Of": "lmcrae@stanford.edu",
+					"Authorization": "lmcrae@stanford.edu",
 				}).
 				Run(handler(NewMockErrorDatabase(), nil),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})

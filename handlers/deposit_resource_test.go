@@ -29,7 +29,7 @@ func TestCreateResourceHappyPath(t *testing.T) {
 
 	r.POST("/v1/resource").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Authorization": "lmcrae@stanford.edu",
 		}).
 		SetJSON(postData()).
 		Run(handler(repo, nil),
@@ -61,7 +61,7 @@ func TestCreateResourceNoPermissions(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
+			"Authorization": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
 		}).
 		SetJSON(postData()).
 		Run(handler(nil, nil),
@@ -74,7 +74,7 @@ func TestCreateResourceMissingSourceId(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Authorization": "lmcrae@stanford.edu",
 		}).
 		SetJSON(gofight.D{
 			"tacoIdentifier": "oo000oo0001",
@@ -91,7 +91,7 @@ func TestCreateInvalidResource(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetHeader(gofight.H{
-			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Authorization": "lmcrae@stanford.edu",
 		}).
 		SetJSON(gofight.D{
 			"tacoIdentifier": "oo000oo0001",
@@ -115,7 +115,7 @@ func TestCreateResourceFailure(t *testing.T) {
 		func() {
 			r.POST("/v1/resource").
 				SetHeader(gofight.H{
-					"On-Behalf-Of": "lmcrae@stanford.edu",
+					"Authorization": "lmcrae@stanford.edu",
 				}).
 				SetJSON(postData()).
 				Run(handler(NewMockErrorDatabase(), nil),

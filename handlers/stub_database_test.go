@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/identifier"
@@ -19,7 +20,11 @@ func handler(database db.Database, storage storage.Storage) http.Handler {
 	}
 
 	identifierService := identifier.NewUUIDService()
-	return BuildAPI(database, storage, identifierService).Serve(nil)
+	// This is a dummy authentication service
+	authService := func(header string) (*authorization.Agent, error) {
+		return &authorization.Agent{Identifier: header}, nil
+	}
+	return BuildAPI(database, storage, identifierService, authService).Serve(nil)
 }
 
 type MockDatabase struct {

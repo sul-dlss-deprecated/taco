@@ -19,7 +19,7 @@ _Note: The db package test is dependent on [Localstack](docs/localstack.md) runn
 external services._
 
 ```shell
-AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go test -v ./[PACKAGE NAME]/
+TACO_SECRET_KEY=s00perSekret AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go test -v ./[PACKAGE NAME]/
 ```
 
 ## Go Integration Tests
@@ -27,7 +27,7 @@ AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 go tes
 The integration test depends on the taco binary and [Localstack](docs/localstack.md) running.  Once these conditions are met you can run the integration tests using:
 
 ```shell
-$ go test test/integration_test.go
+$ TACO_SECRET_KEY=s00perSekret AWS_REGION=localstack AWS_ACCESS_KEY_ID=999999 AWS_SECRET_KEY=1231 go test test/integration_test.go
 ```
 
 ## Troubleshooting Common Errors

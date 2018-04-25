@@ -84,6 +84,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/dgrijalva/jwt-go"
+  packages = ["."]
+  revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
+  version = "v3.2.0"
+
+[[projects]]
   name = "github.com/docker/go-units"
   packages = ["."]
   revision = "0dadbb0345b35ec7ef35e228dabb8de89a65bf52"
@@ -380,6 +386,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "643e536b6171a41b789e802ae1963ba64f59c42c5e1a8ea3165ecbbed5e4de0a"
+  inputs-digest = "c1ed41fe3c6dad7e3a52ff67411c896b109503b5de678fd52b724fe8fd00c6a0"
   solver-name = "gps-cdcl"
   solver-version = 1

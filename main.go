@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/justinas/alice"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/aws_session"
 	"github.com/sul-dlss-labs/taco/config"
 	"github.com/sul-dlss-labs/taco/db"
@@ -36,7 +37,8 @@ func main() {
 	}
 
 	identifierService := identifier.NewService(config)
-	server := createServer(database, storage, identifierService, config.Port)
+	authService := authorization.Authentication(config.SecretKey)
+	server := createServer(database, storage, identifierService, authService, config.Port)
 	defer server.Shutdown()
 
 	// serve API
@@ -56,8 +58,8 @@ func connectToStorage(awsSession *session.Session, endpoint string) *s3manager.U
 	return s3manager.NewUploaderWithClient(s3Svc)
 }
 
-func createServer(database db.Database, storage storage.Storage, identifierService identifier.Service, port int) *restapi.Server {
-	api := handlers.BuildAPI(database, storage, identifierService)
+func createServer(database db.Database, storage storage.Storage, identifierService identifier.Service, authService authorization.AuthenticationService, port int) *restapi.Server {
+	api := handlers.BuildAPI(database, storage, identifierService, authService)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 

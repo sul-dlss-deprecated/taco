@@ -13,18 +13,34 @@ import (
 	"time"
 
 	"github.com/buger/jsonparser"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/sul-dlss-labs/taco/config"
 	baloo "gopkg.in/h2non/baloo.v3"
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
+var apiToken string
+
 func setupTest() *baloo.Client {
+	conf := config.NewConfig()
+	mySigningKey := []byte(conf.SecretKey)
+
+	// Create the Claims
+	claims := &jwt.StandardClaims{
+		ExpiresAt: time.Date(2099, 10, 10, 12, 0, 0, 0, time.UTC).Unix(),
+		Issuer:    "test",
+		Subject:   "lmcrae@stanford.edu",
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	ss, _ := token.SignedString(mySigningKey)
 	remoteHost, ok := os.LookupEnv("TEST_REMOTE_ENDPOINT")
 	if !ok {
 		port := config.NewConfig().Port
 		remoteHost = fmt.Sprintf("localhost:%v", port)
 	}
-	return baloo.New(fmt.Sprintf("http://%s", remoteHost))
+	return baloo.New(fmt.Sprintf("http://%s", remoteHost)).
+		SetHeader("Authorization", fmt.Sprintf("bearer %s", ss))
 }
 
 const resourceSchema = `{
@@ -60,7 +76,6 @@ func TestCreateAndDestroyResource(t *testing.T) {
 	}
 
 	setupTest().Post("/v1/resource").
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		JSON(postData).
 		Expect(t).
 		Status(201).
@@ -70,7 +85,6 @@ func TestCreateAndDestroyResource(t *testing.T) {
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").
@@ -106,7 +120,6 @@ func TestUpdateResource(t *testing.T) {
 	}
 
 	setupTest().Post("/v1/resource").
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		JSON(postData).
 		Expect(t).
 		Status(201).
@@ -141,7 +154,6 @@ func TestUpdateResource(t *testing.T) {
 	patchData["tacoIdentifier"] = tacoIdentifier
 
 	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		SetHeader("Content-Type", "application/json").
 		JSON(patchData).
 		Expect(t).
@@ -154,7 +166,6 @@ func TestUpdateResource(t *testing.T) {
 	time.Sleep(5 * time.Millisecond)
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").
@@ -204,7 +215,6 @@ func TestCreateFile(t *testing.T) {
 	file := multipart.FormFile{Name: "upload", Reader: strings.NewReader("data")}
 	files := []multipart.FormFile{file}
 	setupTest().Post("/v1/file").
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Files(files).
 		Expect(t).
 		Status(201).
@@ -214,7 +224,6 @@ func TestCreateFile(t *testing.T) {
 		Done()
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
-		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		Expect(t).
 		Status(200).
 		Type("json").

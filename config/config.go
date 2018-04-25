@@ -16,6 +16,7 @@ type Config struct {
 	S3BucketName          string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
 	Port                  int    `envVariable:"TACO_PORT" defaultValue:"8080"`
 	IdentifierServiceHost string `envVariable:"IDENTIFIER_SERVICE_HOST" defaultValue:""`
+	SecretKey             string `envVariable:"TACO_SECRET_KEY" defaultValue:""`
 }
 
 // NewConfig creates a new configuration with values from environment variables
@@ -39,6 +40,9 @@ func NewConfig() *Config {
 		default:
 			setString(fieldSetter, envVariable, defaultValue)
 		}
+	}
+	if configuration.SecretKey == "" {
+		panic("TACO_SECRET_KEY must be set")
 	}
 	return &configuration
 }
