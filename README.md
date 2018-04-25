@@ -94,14 +94,18 @@ the `tacoIdentifier` must be set to the value retrieved in the GET
 Without changing the version number:
 
 ```shell
-$ curl -X PATCH -H "Content-Type: application/json" \ -d@examples/update_request.json \
--H "On-Behalf-Of: lmcrae@stanford.edu" http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+$ curl -X PATCH -H "Content-Type: application/json" \
+-d@examples/update_request.json \
+-H "On-Behalf-Of: lmcrae@stanford.edu" \
+http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 With changing the version number:
 ```shell
-$ curl -X PATCH -H "Content-Type: application/json" \ -d@examples/update_request_new_version.json \
--H "On-Behalf-Of: lmcrae@stanford.edu" http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
+$ curl -X PATCH -H "Content-Type: application/json" \
+-d@examples/update_request_new_version.json \
+-H "On-Behalf-Of: lmcrae@stanford.edu" \
+http://localhost:8080/v1/resource/fe1f66a9-5285-4b28-8240-0482c8fff6c7
 ```
 
 Now, we're going to get a file we can use to test the uploader:
