@@ -1399,7 +1399,7 @@ var (
   "title": "File",
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
   "type": "object",
-  "required": ["@context", "@type", "externalIdentifier", "tacoIdentifier", "label", "version", "administrative", "access", "identification", "structural"],
+  "required": ["@context", "@type", "externalIdentifier", "label", "tacoIdentifier", "version", "access", "administrative", "identification", "structural"],
   "properties": {
     "@context": {
       "description": "URI for the JSON-LD context definitions.",
@@ -1424,6 +1424,10 @@ var (
       "description": "Filename for a file. Can be same as label.",
       "type": "string"
     },
+    "followingVersion": {
+      "description": "Following version for the File within SDR.",
+      "type": "string"
+    },
     "format": {
       "description": "Format of the File.",
       "type": "string"
@@ -1438,6 +1442,15 @@ var (
     },
     "label": {
       "description": "Primary processing label (can be same as title) for a File.",
+      "type": "string"
+    },
+    "location": {
+      "description": "Location for the binary in the persistence filestore. Should be resolvable.",
+      "type": "string",
+      "format": "uri"
+    },
+    "precedingVersion": {
+      "description": "Preceding version for the File within SDR.",
       "type": "string"
     },
     "presentation": {
@@ -1459,14 +1472,6 @@ var (
     "version": {
       "description": "Version for the File within SDR.",
       "type": "integer"
-    },
-    "precedingVersion": {
-      "description": "Preceding version for the File within SDR.",
-      "type": "string"
-    },
-    "followingVersion": {
-      "description": "Following version for the File within SDR.",
-      "type": "string"
     },
     "access": {
       "description": "Access Metadata for the File.",

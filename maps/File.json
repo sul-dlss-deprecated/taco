@@ -50,7 +50,8 @@
     },
     "location": {
       "description": "Location for the binary in the persistence filestore. Should be resolvable.",
-      "type": "IRI"
+      "type": "string",
+      "format": "uri"
     },
     "precedingVersion": {
       "description": "Preceding version for the File within SDR.",
