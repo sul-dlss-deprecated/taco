@@ -60,6 +60,12 @@ func init() {
             "description": "TACO binary ingested, File management metadata created, \u0026 File processing started.",
             "schema": {
               "$ref": "#/definitions/ResourceResponse"
+            },
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "The location of the created resource"
+              }
             }
           },
           "401": {
@@ -128,6 +134,12 @@ func init() {
             "description": "TACO resource created \u0026 processing started.",
             "schema": {
               "$ref": "#/definitions/ResourceResponse"
+            },
+            "headers": {
+              "Location": {
+                "type": "string",
+                "description": "The location of the created resource"
+              }
             }
           },
           "401": {

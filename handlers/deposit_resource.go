@@ -63,6 +63,10 @@ func (d *depositResource) Handle(params operations.DepositResourceParams, agent 
 		panic(err)
 	}
 
-	response := datautils.JSONObject{"id": externalID}
-	return operations.NewDepositResourceCreated().WithPayload(response)
+	response := map[string]interface{}{"id": externalID}
+	url := &operations.RetrieveResourceURL{ID: externalID}
+
+	return operations.NewDepositResourceCreated().
+		WithLocation(url.String()).
+		WithPayload(response)
 }
