@@ -8,22 +8,21 @@ import (
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
-	"github.com/sul-dlss-labs/taco/identifier"
-	"github.com/sul-dlss-labs/taco/storage"
+	"github.com/sul-dlss-labs/taco/runtime"
 	"github.com/sul-dlss-labs/taco/validators"
 )
 
 // BuildAPI create new service API
-func BuildAPI(database db.Database, storage storage.Storage, identifierService identifier.Service) *operations.TacoAPI {
+func BuildAPI(rt *runtime.Runtime) *operations.TacoAPI {
 	api := operations.NewTacoAPI(swaggerSpec())
 	api.RemoteUserAuth = func(identifier string) (*authorization.Agent, error) {
 		return &authorization.Agent{Identifier: identifier}, nil
 	}
-	api.RetrieveResourceHandler = NewRetrieveResource(database)
-	api.DeleteResourceHandler = NewDeleteResource(database)
-	api.DepositResourceHandler = NewDepositResource(database, depositResourceValidator(database), identifierService)
-	api.UpdateResourceHandler = NewUpdateResource(database, updateResourceValidator(database))
-	api.DepositFileHandler = NewDepositFile(database, storage, depositFileValidator(database), identifierService)
+	api.RetrieveResourceHandler = NewRetrieveResource(rt.Database)
+	api.DeleteResourceHandler = NewDeleteResource(rt.Database)
+	api.DepositResourceHandler = NewDepositResource(rt.Database, depositResourceValidator(rt.Database), rt.IdentifierService)
+	api.UpdateResourceHandler = NewUpdateResource(rt.Database, updateResourceValidator(rt.Database))
+	api.DepositFileHandler = NewDepositFile(rt.Database, rt.Storage, depositFileValidator(rt.Database), rt.IdentifierService)
 	api.HealthCheckHandler = NewHealthCheck()
 	return api
 }
