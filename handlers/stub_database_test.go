@@ -47,7 +47,7 @@ func (d *MockDatabase) RetrieveLatest(externalID string) (*datautils.Resource, e
 		d.record = nil
 		return record, nil
 	}
-	return nil, errors.New("not found")
+	return nil, &db.RecordNotFound{ID: &externalID}
 }
 
 func (d *MockDatabase) RetrieveVersion(externalID string, version *string) (*datautils.Resource, error) {

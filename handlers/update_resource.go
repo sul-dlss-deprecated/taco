@@ -34,7 +34,7 @@ func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) mid
 
 	existingResource, err := d.database.RetrieveLatest(id)
 	if err != nil {
-		if err.Error() == "not found" {
+		if _, ok := err.(*db.RecordNotFound); ok {
 			return operations.NewUpdateResourceNotFound()
 		}
 		panic(err)

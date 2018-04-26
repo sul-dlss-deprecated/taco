@@ -34,5 +34,10 @@ func (d *DynamodbDatabase) RetrieveVersion(externalID string, version *string) (
 		TableName:        &d.Table,
 	}
 
-	return d.query(params)
+	result, err := d.query(params)
+	if tmp, ok := err.(*RecordNotFound); ok {
+		tmp.ID = &externalID
+		tmp.Version = version
+	}
+	return result, err
 }

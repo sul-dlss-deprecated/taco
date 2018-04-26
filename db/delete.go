@@ -34,7 +34,7 @@ func (h *DynamodbDatabase) DeleteAllVersions(externalID string) error {
 			panic(err)
 		}
 		resource, err = h.RetrieveLatest(externalID)
-		if err != nil && err.Error() != "not found" {
+		if _, ok := err.(*RecordNotFound); !ok {
 			panic(err)
 		}
 	}

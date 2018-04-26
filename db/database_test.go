@@ -114,7 +114,16 @@ func TestRetrieveLatestNotFound(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 	_, err := initDatabase().RetrieveLatest("8888")
-	assert.NotNil(t, err)
+	assert.Equal(t, err.Error(), "Unable to find record for 8888")
+}
+
+func TestRetrieveVersionNotFound(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+	version := "9"
+	_, err := initDatabase().RetrieveVersion("8888", &version)
+	assert.Equal(t, err.Error(), "Unable to find record for 8888 with version: 9")
 }
 
 func initDatabase() Database {
