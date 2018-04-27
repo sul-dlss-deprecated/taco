@@ -7,6 +7,7 @@ type Agent struct {
 	Identifier string
 }
 
-func (d *Agent) String() string {
-	return d.Identifier
+// String returns a string representation of the Agent
+func (a *Agent) String() string {
+	return a.Identifier
 }

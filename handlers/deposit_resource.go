@@ -16,11 +16,12 @@ import (
 )
 
 // NewDepositResource -- Accepts requests to create resource and pushes them to Kinesis.
-func NewDepositResource(database db.Database, validator validators.ResourceValidator, identifierService identifier.Service) operations.DepositResourceHandler {
+func NewDepositResource(database db.Database, validator validators.ResourceValidator, identifierService identifier.Service, authService authorization.Service) operations.DepositResourceHandler {
 	return &depositResource{
 		database:          database,
 		validator:         validator,
 		identifierService: identifierService,
+		authService:       authService,
 	}
 }
 
@@ -28,20 +29,21 @@ type depositResource struct {
 	database          db.Database
 	validator         validators.ResourceValidator
 	identifierService identifier.Service
+	authService       authorization.Service
 }
 
 // Handle the create resource request
 func (d *depositResource) Handle(params operations.DepositResourceParams, agent *authorization.Agent) middleware.Responder {
 	resource := datautils.NewResource(params.Payload.(map[string]interface{}))
+
+	if !d.authService.CanCreateResourceOfType(agent, resource.Type()) {
+		log.Printf("Agent %s is not permitted to create a resource of type %s", agent, resource.Type())
+		return operations.NewDepositResourceUnauthorized()
+	}
+
 	if errors := d.validator.ValidateResource(resource); errors != nil {
 		return operations.NewDepositResourceUnprocessableEntity().
 			WithPayload(&models.ErrorResponse{Errors: *errors})
-	}
-
-	authService := authorization.NewService(agent)
-	if !authService.CanCreateResourceOfType(resource.Type()) {
-		log.Printf("Agent %s is not permitted to create a resource of type %s", agent, resource.Type())
-		return operations.NewDepositResourceUnauthorized()
 	}
 
 	externalID, err := d.identifierService.Mint(resource)

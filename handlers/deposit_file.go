@@ -16,11 +16,12 @@ import (
 )
 
 // NewDepositFile -- Accepts requests to create a file and pushes it to s3.
-func NewDepositFile(database db.Database, uploader storage.Storage, validator validators.ResourceValidator, identifierService identifier.Service) operations.DepositFileHandler {
+func NewDepositFile(database db.Database, uploader storage.Storage, validator validators.ResourceValidator, identifierService identifier.Service, authService authorization.Service) operations.DepositFileHandler {
 	return &depositFileEntry{database: database,
 		storage:           uploader,
-		identifierService: identifierService,
 		validator:         validator,
+		identifierService: identifierService,
+		authService:       authService,
 	}
 }
 
@@ -29,12 +30,12 @@ type depositFileEntry struct {
 	storage           storage.Storage
 	identifierService identifier.Service
 	validator         validators.ResourceValidator
+	authService       authorization.Service
 }
 
 // Handle the deposit file request
 func (d *depositFileEntry) Handle(params operations.DepositFileParams, agent *authorization.Agent) middleware.Responder {
-	authService := authorization.NewService(agent)
-	if !authService.CanCreateResourceOfType(datautils.FileType) {
+	if !d.authService.CanCreateResourceOfType(agent, datautils.FileType) {
 		log.Printf("Agent %s is not permitted to create a resource of type %s", agent, datautils.FileType)
 		return operations.NewDepositResourceUnauthorized()
 	}

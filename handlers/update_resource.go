@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/authorization"
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/models"
@@ -14,19 +16,29 @@ import (
 )
 
 // NewUpdateResource -- Accepts requests to update a resource.
-func NewUpdateResource(database db.Database, validator validators.ResourceValidator) operations.UpdateResourceHandler {
-	return &updateResourceEntry{database: database, validator: validator}
+func NewUpdateResource(database db.Database, validator validators.ResourceValidator, authService authorization.Service) operations.UpdateResourceHandler {
+	return &updateResourceEntry{
+		database:    database,
+		validator:   validator,
+		authService: authService,
+	}
 }
 
 type updateResourceEntry struct {
-	database  db.Database
-	validator validators.ResourceValidator
+	database    db.Database
+	validator   validators.ResourceValidator
+	authService authorization.Service
 }
 
 // Handle the update resource request
-func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams) middleware.Responder {
+func (d *updateResourceEntry) Handle(params operations.UpdateResourceParams, agent *authorization.Agent) middleware.Responder {
 	id := params.ID
 	newResource := datautils.NewResource(params.Payload.(map[string]interface{}))
+
+	if !d.authService.CanUpdateResource(agent, newResource) {
+		log.Printf("Agent %s is not permitted to update this resource %s", agent, params.ID)
+		return operations.NewUpdateResourceUnauthorized()
+	}
 
 	if errors := d.validator.ValidateResource(newResource); errors != nil {
 		return operations.NewUpdateResourceUnprocessableEntity().

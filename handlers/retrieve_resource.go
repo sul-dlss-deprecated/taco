@@ -11,13 +11,14 @@ import (
 )
 
 // NewRetrieveResource will query DynamoDB with ID for Resource JSON
-func NewRetrieveResource(database db.Database) operations.RetrieveResourceHandler {
-	return &retrieveResource{database: database}
+func NewRetrieveResource(database db.Database, authService authorization.Service) operations.RetrieveResourceHandler {
+	return &retrieveResource{database: database, authService: authService}
 }
 
 // retrieveResource handles a request for finding & returning an entry
 type retrieveResource struct {
-	database db.Database
+	database    db.Database
+	authService authorization.Service
 }
 
 // Handle the retrieve resource request
@@ -37,10 +38,9 @@ func (d *retrieveResource) Handle(params operations.RetrieveResourceParams, agen
 		panic(err)
 	}
 
-	authService := authorization.NewService(agent)
-	if !authService.CanRetrieveResource(resource) {
+	if !d.authService.CanRetrieveResource(agent, resource) {
 		log.Printf("Agent %s is not permitted to retrieve this resource %s", agent, params.ID)
-		return operations.NewDepositResourceUnauthorized()
+		return operations.NewRetrieveResourceUnauthorized()
 	}
 
 	return operations.NewRetrieveResourceOK().WithPayload(resource.JSON)

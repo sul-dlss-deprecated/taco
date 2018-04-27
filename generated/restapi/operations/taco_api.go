@@ -37,7 +37,7 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 		JSONProducer:          runtime.JSONProducer(),
-		DeleteResourceHandler: DeleteResourceHandlerFunc(func(params DeleteResourceParams) middleware.Responder {
+		DeleteResourceHandler: DeleteResourceHandlerFunc(func(params DeleteResourceParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation DeleteResource has not yet been implemented")
 		}),
 		DepositFileHandler: DepositFileHandlerFunc(func(params DepositFileParams, principal *authorization.Agent) middleware.Responder {
@@ -58,7 +58,7 @@ func NewTacoAPI(spec *loads.Document) *TacoAPI {
 		RetrieveResourceHandler: RetrieveResourceHandlerFunc(func(params RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation RetrieveResource has not yet been implemented")
 		}),
-		UpdateResourceHandler: UpdateResourceHandlerFunc(func(params UpdateResourceParams) middleware.Responder {
+		UpdateResourceHandler: UpdateResourceHandlerFunc(func(params UpdateResourceParams, principal *authorization.Agent) middleware.Responder {
 			return middleware.NotImplemented("operation UpdateResource has not yet been implemented")
 		}),
 

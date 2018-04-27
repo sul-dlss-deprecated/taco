@@ -69,7 +69,10 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
 	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99", "version": float64(1), "externalIdentifier": "99"}))
 	r.PATCH("/v1/resource/99").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Content-Type": "application/json",
+		}).
 		SetJSON(updateMessageSameVersion).
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -86,7 +89,10 @@ func TestUpdateResourceNewVersionPath(t *testing.T) {
 	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99", "version": float64(1), "externalIdentifier": "99"}))
 
 	r.PATCH("/v1/resource/99").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Content-Type": "application/json",
+		}).
 		SetJSON(updateMessageNewVersion).
 		Run(handler(repo, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -105,7 +111,10 @@ func TestUpdateResourceNewVersionPath(t *testing.T) {
 func TestUpdateResourceNotFound(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/99").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Content-Type": "application/json",
+		}).
 		SetJSON(updateMessageSameVersion).
 		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
@@ -116,7 +125,10 @@ func TestUpdateResourceNotFound(t *testing.T) {
 func TestUpdateInvalidResource(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
-		SetHeader(gofight.H{"Content-Type": "application/json"}).
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Content-Type": "application/json",
+		}).
 		SetJSON(gofight.D{
 			"externalIdentifier": "oo000oo0001",
 			"@context":           "http://example.com", // This is not a valid context
@@ -136,6 +148,10 @@ func TestUpdateInvalidResource(t *testing.T) {
 func TestUpdateResourceEmptyRequest(t *testing.T) {
 	r := gofight.New()
 	r.PATCH("/v1/resource/100").
+		SetHeader(gofight.H{
+			"On-Behalf-Of": "lmcrae@stanford.edu",
+			"Content-Type": "application/json",
+		}).
 		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)

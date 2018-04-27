@@ -50,7 +50,7 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 	// Example:
 	// api.APIAuthorizer = security.Authorized()
 
-	api.DeleteResourceHandler = operations.DeleteResourceHandlerFunc(func(params operations.DeleteResourceParams) middleware.Responder {
+	api.DeleteResourceHandler = operations.DeleteResourceHandlerFunc(func(params operations.DeleteResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .DeleteResource has not yet been implemented")
 	})
 	api.DepositFileHandler = operations.DepositFileHandlerFunc(func(params operations.DepositFileParams, principal *authorization.Agent) middleware.Responder {
@@ -71,7 +71,7 @@ func configureAPI(api *operations.TacoAPI) http.Handler {
 	api.RetrieveResourceHandler = operations.RetrieveResourceHandlerFunc(func(params operations.RetrieveResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .RetrieveResource has not yet been implemented")
 	})
-	api.UpdateResourceHandler = operations.UpdateResourceHandlerFunc(func(params operations.UpdateResourceParams) middleware.Responder {
+	api.UpdateResourceHandler = operations.UpdateResourceHandlerFunc(func(params operations.UpdateResourceParams, principal *authorization.Agent) middleware.Responder {
 		return middleware.NotImplemented("operation .UpdateResource has not yet been implemented")
 	})
 

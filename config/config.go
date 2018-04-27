@@ -9,13 +9,14 @@ import (
 
 // Config is configuration for the TACO application
 type Config struct {
-	DynamodbEndpoint      string `envVariable:"DYNAMO_DB_ENDPOINT" defaultValue:"localhost:4569"`
-	AwsDisableSSL         bool   `envVariable:"AWS_DISABLE_SSL" defaultValue:"true"`
-	ResourceTableName     string `envVariable:"RESOURCE_TABLE_NAME" defaultValue:"resources"`
-	S3Endpoint            string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
-	S3BucketName          string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
-	Port                  int    `envVariable:"TACO_PORT" defaultValue:"8080"`
-	IdentifierServiceHost string `envVariable:"IDENTIFIER_SERVICE_HOST" defaultValue:""`
+	DynamodbEndpoint         string `envVariable:"DYNAMO_DB_ENDPOINT" defaultValue:"localhost:4569"`
+	AwsDisableSSL            bool   `envVariable:"AWS_DISABLE_SSL" defaultValue:"true"`
+	ResourceTableName        string `envVariable:"RESOURCE_TABLE_NAME" defaultValue:"resources"`
+	S3Endpoint               string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
+	S3BucketName             string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
+	Port                     int    `envVariable:"TACO_PORT" defaultValue:"8080"`
+	IdentifierServiceHost    string `envVariable:"IDENTIFIER_SERVICE_HOST" defaultValue:""`
+	AuthorizationServiceHost string `envVariable:"AUTHORIZATION_SERVICE_HOST" defaultValue:""`
 }
 
 // NewConfig creates a new configuration with values from environment variables

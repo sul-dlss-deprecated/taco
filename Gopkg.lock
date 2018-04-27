@@ -268,6 +268,16 @@
   revision = "aac34c409c4ff56bce354bda3410bb802ecc82e0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/sul-dlss-labs/permissions-service"
+  packages = [
+    "generated/client",
+    "generated/client/operations",
+    "generated/models"
+  ]
+  revision = "3b034626e73d1949520a1c64d2133937b1ef49a1"
+
+[[projects]]
   name = "github.com/tylerb/graceful"
   packages = ["."]
   revision = "4654dfbb6ad53cb5e27f37d99b02e16c1872fbbb"
@@ -380,6 +390,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "643e536b6171a41b789e802ae1963ba64f59c42c5e1a8ea3165ecbbed5e4de0a"
+  inputs-digest = "6054aeeabf27749109a5b867e41959f6cad9e16f2da853fe0a678bbea62b975c"
   solver-name = "gps-cdcl"
   solver-version = 1

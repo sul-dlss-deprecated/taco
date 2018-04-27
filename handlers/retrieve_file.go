@@ -11,14 +11,19 @@ import (
 )
 
 // NewRetrieveFile returns a pre-signed link to a requested file
-func NewRetrieveFile(repository db.Database, storage storage.Storage) operations.RetrieveFileHandler {
-	return &retrieveFileEntry{repository: repository, storage: storage}
+func NewRetrieveFile(repository db.Database, storage storage.Storage, authService authorization.Service) operations.RetrieveFileHandler {
+	return &retrieveFileEntry{
+		repository:  repository,
+		storage:     storage,
+		authService: authService,
+	}
 }
 
 // retrieveFileEntry handles a request for finding & returning an file
 type retrieveFileEntry struct {
-	repository db.Database
-	storage    storage.Storage
+	repository  db.Database
+	storage     storage.Storage
+	authService authorization.Service
 }
 
 // Handle the retrieve file request
@@ -33,8 +38,7 @@ func (d *retrieveFileEntry) Handle(params operations.RetrieveFileParams, agent *
 
 	// TODO: validate that this is a file type https://github.com/sul-dlss-labs/taco/issues/214
 
-	authService := authorization.NewService(agent)
-	if !authService.CanRetrieveResource(resource) {
+	if !d.authService.CanRetrieveResource(agent, resource) {
 		log.Printf("Agent %s is not permitted to retrieve this resource %s", agent, params.ID)
 		return operations.NewRetrieveFileUnauthorized()
 	}
