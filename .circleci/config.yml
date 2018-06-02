@@ -45,9 +45,9 @@ jobs:
       - run:
           name: Build Image & Register Task
           command: |
-            docker build -t suldlss/taco:$CIRCLE_SHA1 .
+            docker build -t suldlss/taco:latest .
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker push suldlss/taco:$CIRCLE_SHA1
+            docker push suldlss/taco:latest
 
   deploy_to_demo:
     docker:
@@ -61,15 +61,6 @@ jobs:
             sudo pip install awscli
       - checkout
       - run:
-          name: Inject Environment Variables into Container (demo)
-          command: |
-            sed -i "s|REPLACE_TAG|$CIRCLE_SHA1|" task-definition.json
-            sed -i "s|REPLACE_REGION|$DEMO_AWS_REGION|g" task-definition.json
-            sed -i "s|REPLACE_ACCOUNT_ID|$AWS_ACCOUNT_ID|" task-definition.json
-            sed -i "s|REPLACE_ENVIRONMENT|demo|g" task-definition.json
-            sed -i "s|REPLACE_HONEYBADGER|$HONEYBADGER_API_KEY|g" task-definition.json
-            cat task-definition.json  # Print task definition in logs
-      - run:
           name: Register Task & Update Service (demo)
           command: |
             export AWS_ACCESS_KEY_ID=$DEMO_AWS_KEY
@@ -77,9 +68,9 @@ jobs:
             aws configure set region $DEMO_AWS_REGION
             aws configure set default.output json
             aws configure list  # Get confirmation it worked in your logs
-            revision_arn=$(aws ecs register-task-definition --cli-input-json file://task-definition.json --region $DEMO_AWS_REGION | jq --raw-output --exit-status '.taskDefinition.taskDefinitionArn')
+            task_arn=$(aws ecs list-task-definitions --family-prefix taco --sort DESC --max-items 1 | jq --raw-output --exit-status '.taskDefinitionArns[]')
             cluster_arn=$(aws ecs list-clusters --region $DEMO_AWS_REGION | jq --raw-output --exit-status '.clusterArns[] | select(contains("infrastucture"))')
-            aws ecs update-service --cluster "$cluster_arn" --service taco --task-definition "$revision_arn" --region $DEMO_AWS_REGION
+            aws ecs update-service --cluster "$cluster_arn" --service taco --task-definition "$task_arn" --region $DEMO_AWS_REGION
 
 workflows:
   version: 2
