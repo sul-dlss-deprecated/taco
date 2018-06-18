@@ -1,3 +1,12 @@
+# define often used filter
+filter_on_master_ignore_tags: &filter_on_master_ignore_tags
+  filters:
+    branches:
+      only: master
+    tags:
+      ignore: /.*/
+
+
 version: 2
 jobs:
   run_unit_tests:
@@ -124,31 +133,15 @@ workflows:
   deploy_master_to_demo:
     jobs:
       - run_unit_tests:
-          filters:
-            branches:
-              only: master
-            tags:
-              ignore: /.*/
+          <<: *filter_on_master_ignore_tags
       - run_e2e_tests:
-          filters:
-            branches:
-              only: master
-            tags:
-              ignore: /.*/
+          <<: *filter_on_master_ignore_tags
       - register_image:
           requires:
             - run_unit_tests
             - run_e2e_tests
-          filters:
-            branches:
-              only: master
-            tags:
-              ignore: /.*/
+          <<: *filter_on_master_ignore_tags
       - deploy_to_demo:
           requires:
             - register_image
-          filters:
-            branches:
-              only: master
-            tags:
-              ignore: /.*/
+          <<: *filter_on_master_ignore_tags
