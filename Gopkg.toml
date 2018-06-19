@@ -84,3 +84,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/sul-dlss-labs/identifier-service"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/santhosh-tekuri/jsonschema"

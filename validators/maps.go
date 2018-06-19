@@ -1464,7 +1464,7 @@ var (
     "location": {
       "description": "Location for the binary in the persistence filestore. Should be resolvable.",
       "type": "string",
-      "format": "uri"
+      "format": "iri"
     },
     "precedingVersion": {
       "description": "Preceding version for the File within SDR.",
