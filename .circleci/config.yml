@@ -17,7 +17,7 @@ jobs:
       - checkout
       - run:
           name: Check for changes when running generator
-          command: go generate && git status | grep modified && sh -c "exit 1" || echo "Success. No changes were found"
+          command: go generate ; if git status | grep modified; then sh -c "exit 1"; else echo "Success. No changes were found"; fi
       - run:
           name: Run unit tests
           command: make
