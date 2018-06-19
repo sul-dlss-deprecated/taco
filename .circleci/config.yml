@@ -9,6 +9,13 @@ filter_on_master_ignore_tags: &filter_on_master_ignore_tags
 
 version: 2
 jobs:
+  alert_honeybadger:
+    docker:
+      - image: ruby:2.5
+    steps:
+      - run:
+          name: Alert Honeybadger
+          command: gem install honeybadger && honeybadger deploy --revision $CIRCLE_SHA1 --user jcoyne --repository https://github.com/sul-dlss-labs/taco
   run_unit_tests:
     docker:
       - image: circleci/golang:latest
@@ -86,6 +93,7 @@ workflows:
 
   run_tests:
     jobs:
+      - alert_honeybadger
       - run_unit_tests:
           filters:
             branches:
