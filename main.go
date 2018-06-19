@@ -22,11 +22,7 @@ func main() {
 	// Initialize our global struct
 	config := config.NewConfig()
 	awsSession := aws_session.Connect(config.AwsDisableSSL)
-	database := &db.DynamodbDatabase{
-		Connection: db.Connect(awsSession, config.DynamodbEndpoint),
-		Table:      config.ResourceTableName,
-	}
-
+	database := db.NewDynamodbDatabase(awsSession, config)
 	storage := storage.NewS3BucketStorage(awsSession, config.S3BucketName, config.S3Endpoint)
 
 	identifierService := identifier.NewService(config)

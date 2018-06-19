@@ -51,3 +51,14 @@ func (f *fakeRepository) Insert(resource *datautils.Resource) error {
 func (f *fakeRepository) DeleteByID(tacoIdentifier string) error {
 	return errors.New("not implemented")
 }
+
+func (f *fakeRepository) DestroyAll() error {
+	return nil
+}
+
+func (f *fakeRepository) AnyWithDedupeIdentifier(dedupeIdentifier string) (bool, error) {
+	if f.record == nil {
+		return false, nil
+	}
+	return f.record.DedupeIdentifier() == dedupeIdentifier, nil
+}

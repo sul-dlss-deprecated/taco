@@ -55,9 +55,9 @@ func TestCreateResourceNoApiKey(t *testing.T) {
 	r := gofight.New()
 	r.POST("/v1/resource").
 		SetJSON(gofight.D{
-			"tacoIdentifier": "oo000oo0001",
-			"sourceId":       "bib12345678",
-			"title":          "My work",
+			"tacoIdentifier":   "oo000oo0001",
+			"dedupeIdentifier": "bib12345678",
+			"title":            "My work",
 		}).
 		Run(handler(nil, nil, nil),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {

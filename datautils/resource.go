@@ -64,6 +64,14 @@ func (d *Resource) ExternalIdentifier() string {
 	return d.JSON.GetS("externalIdentifier")
 }
 
+// DedupeIdentifier returns the document's alternative identifier
+func (d *Resource) DedupeIdentifier() string {
+	if d.JSON.HasKey("dedupeIdentifier") {
+		return d.JSON.GetS("dedupeIdentifier")
+	}
+	return "" // TODO: make these methods return *string, so this can be nil
+}
+
 // Version returns the document's version
 func (d *Resource) Version() int {
 	return int(d.JSON.GetF("version"))

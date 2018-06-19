@@ -66,6 +66,14 @@ func (d *MockDatabase) DeleteByID(tacoIdentifier string) error {
 	return nil
 }
 
+func (f *MockDatabase) AnyWithDedupeIdentifier(sourceID string) (bool, error) {
+	return false, nil
+}
+
+func (f *MockDatabase) DestroyAll() error {
+	return nil
+}
+
 type MockErrorDatabase struct {
 	record *datautils.Resource
 }
@@ -86,6 +94,14 @@ func (d *MockErrorDatabase) Update(params *datautils.Resource) error {
 
 func (d *MockErrorDatabase) RetrieveLatest(externalID string) (*datautils.Resource, error) {
 	return d.record, nil
+}
+
+func (f *MockErrorDatabase) AnyWithDedupeIdentifier(sourceID string) (bool, error) {
+	return false, nil
+}
+
+func (f *MockErrorDatabase) DestroyAll() error {
+	return nil
 }
 
 func (d *MockErrorDatabase) DeleteByID(tacoIdentifier string) error {

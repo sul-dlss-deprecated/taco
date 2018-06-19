@@ -12,6 +12,7 @@ type Config struct {
 	DynamodbEndpoint      string `envVariable:"DYNAMO_DB_ENDPOINT" defaultValue:"localhost:4569"`
 	AwsDisableSSL         bool   `envVariable:"AWS_DISABLE_SSL" defaultValue:"true"`
 	ResourceTableName     string `envVariable:"RESOURCE_TABLE_NAME" defaultValue:"resources"`
+	ResourceIndexName     string `envVariable:"RESOURCE_INDEX_NAME" defaultValue:"ResourceByDedupeIdentifier"`
 	S3Endpoint            string `envVariable:"S3_ENDPOINT" defaultValue:"localhost:4572"`
 	S3BucketName          string `envVariable:"S3_BUCKET_NAME" defaultValue:"taco-deposited-files"`
 	Port                  int    `envVariable:"TACO_PORT" defaultValue:"8080"`
