@@ -19,6 +19,8 @@ import (
 	"gopkg.in/h2non/gentleman.v2/plugins/multipart"
 )
 
+var port = config.NewConfig().Port
+
 func setupTest() *baloo.Client {
 	remoteHost, ok := os.LookupEnv("TEST_REMOTE_ENDPOINT")
 	if !ok {
@@ -50,9 +52,24 @@ func TestCreateAndDestroyResource(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
+	// Create an agreement
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(fromFile("request.json")).
+		JSON(fromFile("deposit_agreement.json")).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	// Create an object that has that agreement
+	depositDRO := fromFile("request.json")
+	depositDRO["structural"].(map[string]interface{})["hasAgreement"] = id
+
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(depositDRO).
 		Expect(t).
 		Status(201).
 		Type("json").
@@ -86,15 +103,34 @@ func TestUpdateResource(t *testing.T) {
 		t.Skip("skpping integration test in short mode")
 	}
 
+	// Create an agreement
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(fromFile("request.json")).
+		JSON(fromFile("deposit_agreement.json")).
 		Expect(t).
 		Status(201).
 		Type("json").
 		JSONSchema(resourceSchema).
 		AssertFunc(assertResourceResponse).
 		Done()
+
+	// Create an object that has that agreement
+	agreementID := id
+	depositDRO := fromFile("request.json")
+	depositDRO["structural"].(map[string]interface{})["hasAgreement"] = agreementID
+
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(depositDRO).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	updateDRO := fromFile("update_request.json")
+	updateDRO["structural"].(map[string]interface{})["hasAgreement"] = agreementID
 
 	setupTest().Get(fmt.Sprintf("/v1/resource/%s", id)).
 		AddQuery("version", "1").
@@ -107,14 +143,13 @@ func TestUpdateResource(t *testing.T) {
 
 	// This is required to ensure we're not passing an example with
 	// incorrect identifiers
-	patchData := fromFile("update_request.json")
-	(*patchData)["externalIdentifier"] = externalIdentifier
-	(*patchData)["tacoIdentifier"] = tacoIdentifier
+	updateDRO["externalIdentifier"] = externalIdentifier
+	updateDRO["tacoIdentifier"] = tacoIdentifier
 
 	setupTest().Patch(fmt.Sprintf("/v1/resource/%s", id)).
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
 		SetHeader("Content-Type", "application/json").
-		JSON(patchData).
+		JSON(updateDRO).
 		Expect(t).
 		Status(200).
 		Type("json").
@@ -138,9 +173,23 @@ func TestRetrieveVersions(t *testing.T) {
 		t.Skip("skipping integration test in short mode")
 	}
 
+	// Create an agreement
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(fromFile("request.json")).
+		JSON(fromFile("deposit_agreement.json")).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	depositDRO := fromFile("request.json")
+	depositDRO["structural"].(map[string]interface{})["hasAgreement"] = id
+
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(depositDRO).
 		Expect(t).
 		Status(201).
 		Type("json").
@@ -161,11 +210,26 @@ func TestCreateFile(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
+	// Create an agreement
+	setupTest().Post("/v1/resource").
+		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
+		JSON(fromFile("deposit_agreement.json")).
+		Expect(t).
+		Status(201).
+		Type("json").
+		JSONSchema(resourceSchema).
+		AssertFunc(assertResourceResponse).
+		Done()
+
+	// Create an object that has that agreement
+	agreementID := id
+	depositDRO := fromFile("deposit_object.json")
+	depositDRO["structural"].(map[string]interface{})["hasAgreement"] = agreementID
 
 	// First create the DRO to attach it to.
 	setupTest().Post("/v1/resource").
 		SetHeader("On-Behalf-Of", "lmcrae@stanford.edu").
-		JSON(fromFile("deposit_object.json")).
+		JSON(depositDRO).
 		Expect(t).
 		Status(201).
 		Type("json").
@@ -259,7 +323,7 @@ func assertUpdatedResourceResponse(res *http.Response, req *http.Request) error 
 	return nil
 }
 
-func fromFile(file string) *datautils.JSONObject {
+func fromFile(file string) datautils.JSONObject {
 	byt, err := ioutil.ReadFile(fmt.Sprintf("../examples/%s", file))
 	if err != nil {
 		panic(err)
@@ -269,5 +333,5 @@ func fromFile(file string) *datautils.JSONObject {
 	if err = json.Unmarshal(byt, &postData); err != nil {
 		panic(err)
 	}
-	return &postData
+	return postData
 }

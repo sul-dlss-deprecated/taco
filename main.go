@@ -16,6 +16,7 @@ import (
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/middleware"
 	"github.com/sul-dlss-labs/taco/storage"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
 func main() {
@@ -40,7 +41,10 @@ func main() {
 }
 
 func createServer(database db.Database, storage storage.Storage, identifierService identifier.Service, port int) *restapi.Server {
-	api := handlers.BuildAPI(database, storage, identifierService)
+	depositValidator := validators.NewDepositValidator(database)
+	updateValidator := validators.NewUpdateValidator(database)
+	fileValidator := validators.NewFileValidator(database)
+	api := handlers.BuildAPI(database, storage, identifierService, depositValidator, updateValidator, fileValidator)
 	server := restapi.NewServer(api)
 	server.SetHandler(BuildHandler(api))
 

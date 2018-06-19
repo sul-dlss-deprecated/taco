@@ -12,7 +12,7 @@ import (
 func TestHealthCheck(t *testing.T) {
 	r := gofight.New()
 	r.GET("/v1/healthcheck").
-		Run(handler(nil, nil, nil),
+		Run(handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusOK, r.Code)
 				stat, _ := jsonparser.GetString(r.Body.Bytes(), "status")

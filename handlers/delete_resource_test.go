@@ -17,7 +17,7 @@ func TestDeleteResourceHappyPath(t *testing.T) {
 		WithType(datautils.ObjectTypes[0])
 	repo := NewMockDatabase(resource)
 	r.DELETE("/v1/resource/oo000oo0001").
-		Run(handler(repo, nil, nil),
+		Run(handler(&runtime{database: repo}),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusNoContent, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).DeletedResources))
@@ -53,7 +53,7 @@ func TestDeleteResourceFailure(t *testing.T) {
 	assert.Panics(t,
 		func() {
 			r.DELETE("/v1/resource/oo000oo0001").
-				Run(handler(repo, nil, nil),
+				Run(handler(&runtime{database: repo}),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

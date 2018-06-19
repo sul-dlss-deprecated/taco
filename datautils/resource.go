@@ -11,11 +11,13 @@ const FileType = "http://sdr.sul.stanford.edu/models/sdr3-file.jsonld"
 // FilesetType is the type URI for filesets
 const FilesetType = "http://sdr.sul.stanford.edu/models/sdr3-fileset.jsonld"
 
+const AgreementType = "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld"
+
 // ObjectTypes is the list of object subtype URIs
 var ObjectTypes = []string{
 	"http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
 	"http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
-	"http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
+	AgreementType,
 	"http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
 	"http://sdr.sul.stanford.edu/models/sdr3-document.jsonld",
 	"http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld",
@@ -102,6 +104,11 @@ func (d *Resource) IsFileset() bool {
 // IsObject returns true if the resource has an object type assertion
 func (d *Resource) IsObject() bool {
 	return contains(ObjectTypes, d.Type())
+}
+
+// IsAgreement returns true if the resource has an agreement type assertion
+func (d *Resource) IsAgreement() bool {
+	return d.Type() == AgreementType
 }
 
 // IsCollection returns true if the resource has an object type assertion

@@ -6,23 +6,74 @@ import (
 
 	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
+	"github.com/sul-dlss-labs/taco/generated/models"
 	"github.com/sul-dlss-labs/taco/identifier"
 	"github.com/sul-dlss-labs/taco/storage"
+	"github.com/sul-dlss-labs/taco/validators"
 )
 
-func handler(database db.Database, storage storage.Storage, identifierService identifier.Service) http.Handler {
-	if database == nil {
-		database = NewMockDatabase(nil)
+type runtime struct {
+	database          db.Database
+	storage           storage.Storage
+	identifierService identifier.Service
+	updateValidator   validators.ResourceValidator
+	depositValidator  validators.ResourceValidator
+	fileValidator     validators.ResourceValidator
+}
+
+type dummySuccessValidator struct {
+}
+
+func (v *dummySuccessValidator) ValidateResource(resource *datautils.Resource) *models.ErrorResponseErrors {
+	return nil
+}
+
+type dummyFailValidator struct {
+}
+
+func (v *dummyFailValidator) ValidateResource(resource *datautils.Resource) *models.ErrorResponseErrors {
+	errors := models.ErrorResponseErrors{}
+	source := &models.ErrorSource{Pointer: "structural.hasMember"}
+	problem := &models.Error{
+		Title:  "Validation Error",
+		Detail: "Stub error",
+		Source: source,
 	}
-	if storage == nil {
-		storage = NewMockStorage()
+	errors = append(errors, problem)
+	return &errors
+}
+
+func handler(opts ...*runtime) http.Handler {
+	var rt *runtime
+	if len(opts) == 0 || opts[0] == nil {
+		rt = &runtime{}
+	} else {
+		rt = opts[0]
+	}
+	if rt.database == nil {
+		rt.database = NewMockDatabase(nil)
+	}
+	if rt.storage == nil {
+		rt.storage = NewMockStorage()
 	}
 
-	if identifierService == nil {
-		identifierService = identifier.NewUUIDService()
+	if rt.identifierService == nil {
+		rt.identifierService = identifier.NewUUIDService()
 	}
 
-	return BuildAPI(database, storage, identifierService).Serve(nil)
+	if rt.depositValidator == nil {
+		rt.depositValidator = &dummySuccessValidator{}
+	}
+
+	if rt.updateValidator == nil {
+		rt.updateValidator = &dummySuccessValidator{}
+	}
+
+	if rt.fileValidator == nil {
+		rt.fileValidator = &dummySuccessValidator{}
+	}
+
+	return BuildAPI(rt.database, rt.storage, rt.identifierService, rt.depositValidator, rt.updateValidator, rt.fileValidator).Serve(nil)
 }
 
 type MockDatabase struct {

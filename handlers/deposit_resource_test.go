@@ -39,7 +39,7 @@ func TestCreateCollectionHappyPath(t *testing.T) {
 			"On-Behalf-Of": "lmcrae@stanford.edu",
 		}).
 		SetJSON(postData("request.json")).
-		Run(handler(repo, nil, idService),
+		Run(handler(&runtime{database: repo, identifierService: idService}),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusCreated, r.Code)
 				assert.Equal(t, 1, len(repo.(*MockDatabase).CreatedResources))
@@ -59,7 +59,7 @@ func TestCreateResourceNoApiKey(t *testing.T) {
 			"sourceId":       "bib12345678",
 			"title":          "My work",
 		}).
-		Run(handler(nil, nil, nil),
+		Run(handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
 			})
@@ -72,26 +72,9 @@ func TestCreateResourceNoPermissions(t *testing.T) {
 			"On-Behalf-Of": "blalbrit@stanford.edu", // The dummy authZ service is set to only allow lmcrae@stanford.edu
 		}).
 		SetJSON(postData("request.json")).
-		Run(handler(nil, nil, nil),
+		Run(handler(),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnauthorized, r.Code)
-			})
-}
-
-func TestCreateResourceMissingSourceId(t *testing.T) {
-	r := gofight.New()
-	r.POST("/v1/resource").
-		SetHeader(gofight.H{
-			"On-Behalf-Of": "lmcrae@stanford.edu",
-		}).
-		SetJSON(gofight.D{
-			"tacoIdentifier": "oo000oo0001",
-			"@type":          "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
-			"title":          "My work",
-		}).
-		Run(handler(nil, nil, nil),
-			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
-				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 			})
 }
 
@@ -110,7 +93,7 @@ func TestCreateInvalidResource(t *testing.T) {
 			"preserve":       true,
 			"publish":        true,
 			"sourceId":       "bib12345678"}).
-		Run(handler(nil, nil, nil),
+		Run(handler(&runtime{depositValidator: &dummyFailValidator{}}),
 			func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {
 				assert.Equal(t, http.StatusUnprocessableEntity, r.Code)
 				assert.Contains(t, r.Body.String(), "Validation Error")
@@ -126,7 +109,7 @@ func TestCreateResourceFailure(t *testing.T) {
 					"On-Behalf-Of": "lmcrae@stanford.edu",
 				}).
 				SetJSON(postData("request.json")).
-				Run(handler(NewMockErrorDatabase(nil), nil, nil),
+				Run(handler(&runtime{database: NewMockErrorDatabase(nil)}),
 					func(r gofight.HTTPResponse, rq gofight.HTTPRequest) {})
 		})
 }

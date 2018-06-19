@@ -3,9 +3,9 @@
 package validators
 
 var (
-  // Data embedded version of the maps/*.json used at generation time
-  Data = map[string]string{
-    "Agent.json": `{
+	// Data embedded version of the maps/*.json used at generation time
+	Data = map[string]string{
+		"Agent.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Agent",
   "description": "An Agent - Person, Group, Organization, or other Acting body.",
@@ -23,7 +23,227 @@ var (
   }
 }
 `,
-    "Collection.json": `{
+		"Agreement.json": `{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Digital Repository Agreement",
+  "description": "Domain-defined abstraction of a deposit agreement.",
+  "type": "object",
+  "required": ["@context", "@type", "currentVersion", "id", "label", "version", "administrative", "access", "identification", "structural"],
+  "properties": {
+    "@context": {
+      "description": "URI for the JSON-LD context definitions.",
+      "type": "string"
+    },
+    "@type": {
+      "description": "The content type of the agreement. Selected from an established set of values.",
+      "type": "string",
+      "const": "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld"
+    },
+    "citation": {
+      "description": "Citation for the agreement, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
+      "type": "string"
+    },
+    "currentVersion": {
+      "description": "If this is the current version (most recent version) for the agreement.",
+      "type": "boolean"
+    },
+    "depositor": {
+      "description": "The Agent (User, Group, Application, Department, other) that deposited the agreement into SDR.",
+      "$ref": "Agent.json"
+    },
+    "id": {
+      "description": "Identifier for the agreement within TACO (should, but may not, overlap with 'identification.identifier', which is the SDR3 Identifier).",
+      "type": "string"
+    },
+    "label": {
+      "description": "Primary processing label (can be same as title) for an agreement.",
+      "type": "string"
+    },
+    "version": {
+      "description": "Version for the agreement within SDR.",
+      "type": "integer"
+    },
+    "precedingVersion": {
+      "description": "Preceding version for the agreement within SDR.",
+      "type": "string"
+    },
+    "followingVersion": {
+      "description": "Following version for the agreement within SDR.",
+      "type": "string"
+    },
+    "access": {
+      "description": "Access Metadata for the agreement.",
+      "type": "object",
+      "required": ["access", "download"],
+      "properties": {
+        "access": {
+          "description": "Access level for the agreement.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        },
+        "copyright": {
+          "description": "The human readable copyright statement that applies to the agreement.",
+          "type": "string"
+        },
+        "download": {
+          "description": "Download level for the agreement metadata.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        },
+        "embargoReleaseDate": {
+          "description": "Date when the agreement is released from an embargo, if an embargo exists.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "license": {
+          "description": "The license governing reuse of the agreement. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).",
+          "type": "string"
+        },
+        "reuseAndReproductionStatement": {
+          "description": "The human readable reuse and reproduction statement that applies to the agreement.",
+          "type": "string"
+        },
+        "termsOfUse": {
+          "description": "License or terms of use governing reuse of the agreement. Should be a text statement.",
+          "type": "string"
+        },
+        "visibility": {
+          "description": "Percentage of the agreement that is visibility during an embargo period",
+          "type": "integer"
+        }
+      }
+    },
+    "administrative": {
+      "type": "object",
+      "description": "Administrative metadata for the SDR agreement.",
+      "required": ["created", "isDescribedBy", "sdrPreserve"],
+      "properties": {
+        "created": {
+          "description": "When the agreement in SDR was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted": {
+          "description": "If the agreement has been deleted (but not purged).",
+          "type": "boolean"
+        },
+        "gravestoneMessage": {
+          "description": "Message describing why the agreement was deleted.",
+          "type": "string"
+        },
+        "isDescribedBy": {
+          "description": "Pointer to the PURL/XML file that is a traditional representation of the metadata for the agreement.",
+          "type": "string"
+        },
+        "lastUpdated": {
+          "description": "When the resource in agreement was last updated.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "partOfProject": {
+          "description": "Administrative or Internal project this agreement is a part of.",
+          "type": "string"
+        },
+        "sdrPreserve": {
+          "description": "If this agreement should be sent to Preservation.",
+          "type": "boolean"
+        },
+        "remediatedBy": {
+          "description": "The Agent (User, Group, Application, Department, other) that remediated a agreement in SDR.",
+          "type": "array",
+          "items": {
+            "$ref": "Agent.json"
+          }
+        }
+      }
+    },
+    "identification": {
+      "description": "Identifying information for the agreement.",
+      "type": "object",
+      "required": ["identifier"],
+      "properties": {
+        "catkey": {
+          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same agreement being described by the bibliographic record.",
+          "type": "string"
+        },
+        "doi": {
+          "description": "Digital Object Identifier (DOI) for the agreement within this repository.",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Identifier for the agreement within SDR.",
+          "type": "string"
+        },
+        "isRepresentationOf": {
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the agreement is a digital representation of.",
+          "type": "string"
+        },
+        "sameAs": {
+          "description": "Another object, either external or internal to the system (if duplication occurs) that is the same digital resource as this agreement.",
+          "type": "string"
+        },
+        "sourceId": {
+          "description": "For anything that cannot cleanly map into is representation of.",
+          "type": "string"
+        },
+        "sdrUUID": {
+          "type": "string",
+          "description": "UUID for the agreement within TACO."
+        }
+      }
+    },
+    "permissions": {
+      "description": "Permissions Metadata for the agreement.",
+      "type": "object",
+      "properties": {
+        "approvalRequired": {
+          "description": "Indicates if approval is required to deposit or manage the resource in SDR.",
+          "type": "boolean"
+        },
+        "approvers": {
+          "description": "Agents who are required to approve deposit or management of this resource in SDR.",
+          "type": "array",
+          "items": {
+            "$ref": "Agent.json"
+          }
+        }
+      }
+    },
+    "structural": {
+      "description": "Structural metadata for the agreement.",
+      "type": "object",
+      "properties": {
+        "contains": {
+          "description": "Filesets that contain the digital representations (Files) of the agreement.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasMember": {
+          "description": "Component or 'children' digital repository objects that are a part or portion of this 'parent' or aggregate agreement.",
+          "type": "array",
+          "items": [{
+            "type": "string"
+          }]
+        },
+        "isTargetOf": {
+          "description": "An Annotation instance that applies to the agreement.",
+          "type": "string"
+        },
+        "hasMemberOrders": {
+          "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
+          "type": "array",
+          "items": [{
+            "$ref": "Sequence.json"
+          }]
+        }
+      }
+    }
+  }
+}
+`,
+		"Collection.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
@@ -259,7 +479,7 @@ var (
   }
 }
 `,
-    "DRO.json": `{
+		"DRO.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
@@ -276,7 +496,6 @@ var (
       "enum": [
         "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
-        "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld",
@@ -532,7 +751,228 @@ var (
   }
 }
 `,
-    "DepositCollection.json": `{
+		"DepositAgreement.json": `{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Digital Repository Agreement",
+  "description": "Domain-defined abstraction of a deposit agreement.",
+  "type": "object",
+  "required": ["@context", "@type", "label", "administrative", "access", "identification", "structural"],
+  "not": {
+    "anyOf": [
+      { "required": ["id"] },
+      { "required": ["version"] },
+      { "required": ["currentVersion"] }
+    ]
+  },
+  "properties": {
+    "@context": {
+      "description": "URI for the JSON-LD context definitions.",
+      "type": "string"
+    },
+    "@type": {
+      "description": "The content type of the agreement. Selected from an established set of values.",
+      "type": "string",
+      "const": "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld"
+    },
+    "citation": {
+      "description": "Citation for the agreement, including identifier, label, version, and a persistent URL to the object with SDR at the very least.",
+      "type": "string"
+    },
+    "depositor": {
+      "description": "The Agent (User, Group, Application, Department, other) that deposited the agreement into SDR.",
+      "$ref": "Agent.json"
+    },
+    "label": {
+      "description": "Primary processing label (can be same as title) for an agreement.",
+      "type": "string"
+    },
+    "precedingVersion": {
+      "description": "Preceding version for the agreement within SDR.",
+      "type": "string"
+    },
+    "followingVersion": {
+      "description": "Following version for the agreement within SDR.",
+      "type": "string"
+    },
+    "access": {
+      "description": "Access Metadata for the agreement.",
+      "type": "object",
+      "required": ["access", "download"],
+      "properties": {
+        "access": {
+          "description": "Access level for the agreement.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        },
+        "copyright": {
+          "description": "The human readable copyright statement that applies to the agreement.",
+          "type": "string"
+        },
+        "download": {
+          "description": "Download level for the agreement metadata.",
+          "type": "string",
+          "enum": ["world", "stanford", "location-based", "citation-only", "dark"]
+        },
+        "embargoReleaseDate": {
+          "description": "Date when the agreement is released from an embargo, if an embargo exists.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "license": {
+          "description": "The license governing reuse of the agreement. Should be an IRI for known licenses (i.e. CC, RightsStatement.org URI, etc.).",
+          "type": "string"
+        },
+        "reuseAndReproductionStatement": {
+          "description": "The human readable reuse and reproduction statement that applies to the agreement.",
+          "type": "string"
+        },
+        "termsOfUse": {
+          "description": "License or terms of use governing reuse of the agreement. Should be a text statement.",
+          "type": "string"
+        },
+        "visibility": {
+          "description": "Percentage of the agreement that is visibility during an embargo period",
+          "type": "integer"
+        }
+      }
+    },
+    "administrative": {
+      "type": "object",
+      "description": "Administrative metadata for the SDR agreement.",
+      "required": ["sdrPreserve"],
+      "not": {
+        "anyOf": [
+          { "required": ["created"] },
+          { "required": ["isDescribedBy"] }
+        ]
+      },
+      "properties": {
+        "created": {
+          "description": "When the agreement in SDR was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "deleted": {
+          "description": "If the agreement has been deleted (but not purged).",
+          "type": "boolean"
+        },
+        "gravestoneMessage": {
+          "description": "Message describing why the agreement was deleted.",
+          "type": "string"
+        },
+        "isDescribedBy": {
+          "description": "Pointer to the PURL/XML file that is a traditional representation of the metadata for the agreement.",
+          "type": "string"
+        },
+        "lastUpdated": {
+          "description": "When the resource in agreement was last updated.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "partOfProject": {
+          "description": "Administrative or Internal project this agreement is a part of.",
+          "type": "string"
+        },
+        "sdrPreserve": {
+          "description": "If this agreement should be sent to Preservation.",
+          "type": "boolean"
+        },
+        "remediatedBy": {
+          "description": "The Agent (User, Group, Application, Department, other) that remediated a agreement in SDR.",
+          "type": "array",
+          "items": {
+            "$ref": "Agent.json"
+          }
+        }
+      }
+    },
+    "identification": {
+      "description": "Identifying information for the agreement.",
+      "type": "object",
+      "not": {"required": ["identifier"]},
+      "properties": {
+        "catkey": {
+          "description": "Catalog bibliographic record identifier (or ‘catkey’) for the same agreement being described by the bibliographic record.",
+          "type": "string"
+        },
+        "doi": {
+          "description": "Digital Object Identifier (DOI) for the agreement within this repository.",
+          "type": "string"
+        },
+        "identifier": {
+          "description": "Identifier for the agreement within SDR.",
+          "type": "string"
+        },
+        "isRepresentationOf": {
+          "description": "A source resource or object (perhaps but not necessarily analog or physical) that the agreement is a digital representation of.",
+          "type": "string"
+        },
+        "sameAs": {
+          "description": "Another object, either external or internal to the system (if duplication occurs) that is the same digital resource as this agreement.",
+          "type": "string"
+        },
+        "sourceId": {
+          "description": "For anything that cannot cleanly map into is representation of.",
+          "type": "string"
+        },
+        "sdrUUID": {
+          "type": "string",
+          "description": "UUID for the agreement within TACO."
+        }
+      }
+    },
+    "permissions": {
+      "description": "Permissions Metadata for the agreement.",
+      "type": "object",
+      "properties": {
+        "approvalRequired": {
+          "description": "Indicates if approval is required to deposit or manage the resource in SDR.",
+          "type": "boolean"
+        },
+        "approvers": {
+          "description": "Agents who are required to approve deposit or management of this resource in SDR.",
+          "type": "array",
+          "items": {
+            "$ref": "Agent.json"
+          }
+        }
+      }
+    },
+    "structural": {
+      "description": "Structural metadata for the agreement.",
+      "type": "object",
+      "properties": {
+        "contains": {
+          "description": "Filesets that contain the digital representations (Files) of the agreement.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hasMember": {
+          "description": "Component or 'children' digital repository objects that are a part or portion of this 'parent' or aggregate agreement.",
+          "type": "array",
+          "items": [{
+            "type": "string"
+          }]
+        },
+        "isTargetOf": {
+          "description": "An Annotation instance that applies to the agreement.",
+          "type": "string"
+        },
+        "hasMemberOrders": {
+          "description": "Provided sequences or orderings of members of the Object, including some metadata about each sequence (i.e. sequence label, sequence type, if the sequence is primary, etc.).",
+          "type": "array",
+          "items": [{
+            "$ref": "Sequence.json"
+          }]
+        }
+      }
+    }
+  }
+}
+`,
+		"DepositCollection.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Digital Repository Collection",
   "description": "A group of Digital Repository Objects that indicate some type of conceptual grouping within the domain that is worth reusing across the system.",
@@ -782,7 +1222,7 @@ var (
   }
 }
 `,
-    "DepositDRO.json": `{
+		"DepositDRO.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Digital Repository Object",
   "description": "Domain-defined abstraction of a 'work'. Digital Repository Objects' abstraction is describable for our domain’s purposes, i.e. for management needs within our system.",
@@ -806,7 +1246,6 @@ var (
       "enum": [
         "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
-        "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld",
@@ -1068,7 +1507,7 @@ var (
   }
 }
 `,
-    "DepositFile.json": `{
+		"DepositFile.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "File",
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
@@ -1250,7 +1689,7 @@ var (
   }
 }
 `,
-    "DepositFileset.json": `{
+		"DepositFileset.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Fileset",
   "description": "Relevant groupings of Files. Also called a File Grouping.",
@@ -1399,19 +1838,20 @@ var (
   }
 }
 `,
-    "DepositResource.json": `{
+		"DepositResource.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Deposit Resource",
-  "description": "Deposit Request Domain Resource (Collection, Object, Fileset, or File or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.",
+  "description": "Deposit Request Domain Resource (Collection, Object, Fileset, File or Agreement or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.",
   "type": "object",
   "oneOf": [
     {"$ref": "DepositCollection.json"},
     {"$ref": "DepositDRO.json"},
-    {"$ref": "DepositFileset.json"}
+    {"$ref": "DepositFileset.json"},
+    {"$ref": "DepositAgreement.json"}
   ]
 }
 `,
-    "File.json": `{
+		"File.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "File",
   "description": "Binaries that are the basis of what our domain manages. Binaries here do not include metadata files generated for the domain's own management purposes.",
@@ -1584,7 +2024,7 @@ var (
   }
 }
 `,
-    "Fileset.json": `{
+		"Fileset.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Fileset",
   "description": "Relevant groupings of Files. Also called a File Grouping.",
@@ -1720,7 +2160,7 @@ var (
   }
 }
 `,
-    "Resource.json": `{
+		"Resource.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Resource",
   "description": "Update / Retrieve Request Domain Resource (Collection, Object, Fileset, or File or any subclass of those) Request Body. For TACO API high-level validation of incoming / outgoing resources.",
@@ -1729,11 +2169,12 @@ var (
     {"$ref": "Collection.json"},
     {"$ref": "DRO.json"},
     {"$ref": "Fileset.json"},
-    {"$ref": "File.json"}
+    {"$ref": "File.json"},
+    {"$ref": "Agreement.json"}
   ]
 }
 `,
-    "Sequence.json": `{
+		"Sequence.json": `{
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Resource Sequence",
   "description": "A sequence or ordering of resources within a Collection or Object.",
@@ -1771,5 +2212,5 @@ var (
   }
 }
 `,
-  }
+	}
 )

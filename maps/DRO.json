@@ -15,7 +15,6 @@
       "enum": [
         "http://sdr.sul.stanford.edu/models/sdr3-object.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-3d.jsonld",
-        "http://sdr.sul.stanford.edu/models/sdr3-agreement.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-book.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-document.jsonld",
         "http://sdr.sul.stanford.edu/models/sdr3-geo.jsonld",
