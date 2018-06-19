@@ -31,7 +31,7 @@ func postData(path string) map[string]interface{} {
 
 func TestCreateCollectionHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(nil)
+	repo := NewMockDatabase(nil, nil)
 	idService := &FakeDruidService{}
 
 	r.POST("/v1/resource").

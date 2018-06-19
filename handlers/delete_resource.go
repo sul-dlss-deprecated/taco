@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/sul-dlss-labs/taco/datautils"
 	"github.com/sul-dlss-labs/taco/db"
 	"github.com/sul-dlss-labs/taco/generated/restapi/operations"
 	"github.com/sul-dlss-labs/taco/storage"
@@ -23,31 +24,50 @@ type deleteResourceEntry struct {
 // Handle the delete entry request. If the resource being deleted is a file,
 // Also delete the associated binary from s3
 func (d *deleteResourceEntry) Handle(params operations.DeleteResourceParams) middleware.Responder {
-	if err := d.DeleteAllVersions(params.ID); err != nil {
+	var err error
+	if params.Version != nil {
+		resource, err := d.repository.RetrieveVersion(params.ID, params.Version)
+		if err == nil {
+			d.deleteVersion(resource)
+		}
+	} else {
+		err = d.deleteAllVersions(params.ID)
+	}
+
+	if err != nil {
+		if _, ok := err.(*db.RecordNotFound); ok {
+			return operations.NewRetrieveResourceNotFound()
+		}
 		panic(err)
 	}
 
 	return operations.NewDeleteResourceNoContent()
 }
 
-// DeleteAllVersions removes all versions with the given external id
-func (d *deleteResourceEntry) DeleteAllVersions(externalID string) error {
+func (d *deleteResourceEntry) deleteVersion(resource *datautils.Resource) error {
+	if resource.IsFile() {
+		if err := d.storage.RemoveFile(resource.FileLocation()); err != nil {
+			return err
+		}
+	}
+
+	if err := d.repository.DeleteVersion(resource.ID()); err != nil {
+		return err
+	}
+	return nil
+}
+
+// deleteAllVersions removes all versions with the given external id
+func (d *deleteResourceEntry) deleteAllVersions(externalID string) error {
 	resource, err := d.repository.RetrieveLatest(externalID)
 	if err != nil {
-		if _, ok := err.(*db.RecordNotFound); !ok {
-			panic(err)
-		}
+		return err
 	}
 	// Delete all versions of the resource
 	for resource != nil {
-		if resource.IsFile() {
-			if err = d.storage.RemoveFile(resource.FileLocation()); err != nil {
-				panic(err)
-			}
-		}
-
-		if err = d.repository.DeleteByID(resource.ID()); err != nil {
-			panic(err)
+		err = d.deleteVersion(resource)
+		if err != nil {
+			return err
 		}
 
 		// retrieve the next resource

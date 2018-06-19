@@ -261,6 +261,12 @@ func init() {
             "name": "ID",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "The version of the requested resource",
+            "name": "version",
+            "in": "query"
           }
         ],
         "responses": {

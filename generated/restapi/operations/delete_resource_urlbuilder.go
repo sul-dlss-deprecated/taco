@@ -16,6 +16,8 @@ import (
 type DeleteResourceURL struct {
 	ID string
 
+	Version *string
+
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -53,6 +55,18 @@ func (o *DeleteResourceURL) Build() (*url.URL, error) {
 		_basePath = "/v1"
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var version string
+	if o.Version != nil {
+		version = *o.Version
+	}
+	if version != "" {
+		qs.Set("version", version)
+	}
+
+	result.RawQuery = qs.Encode()
 
 	return &result, nil
 }

@@ -67,7 +67,8 @@ var updateMessageNewVersion = gofight.D{
 
 func TestUpdateResourceHappyPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99", "version": float64(1), "externalIdentifier": "99"}))
+	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99", "version": float64(1), "externalIdentifier": "99"}), nil)
+
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).
 		SetJSON(updateMessageSameVersion).
@@ -83,7 +84,7 @@ func TestUpdateResourceHappyPath(t *testing.T) {
 
 func TestUpdateResourceNewVersionPath(t *testing.T) {
 	r := gofight.New()
-	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99", "version": float64(1), "externalIdentifier": "99"}))
+	repo := NewMockDatabase(datautils.NewResource(datautils.JSONObject{"tacoIdentifier": "99", "version": float64(1), "externalIdentifier": "99"}), nil)
 
 	r.PATCH("/v1/resource/99").
 		SetHeader(gofight.H{"Content-Type": "application/json"}).

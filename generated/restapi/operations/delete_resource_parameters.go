@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -35,6 +36,10 @@ type DeleteResourceParams struct {
 	  In: path
 	*/
 	ID string
+	/*The version of the requested resource
+	  In: query
+	*/
+	Version *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -43,8 +48,15 @@ func (o *DeleteResourceParams) BindRequest(r *http.Request, route *middleware.Ma
 	var res []error
 	o.HTTPRequest = r
 
+	qs := runtime.Values(r.URL.Query())
+
 	rID, rhkID, _ := route.Params.GetOK("ID")
 	if err := o.bindID(rID, rhkID, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qVersion, qhkVersion, _ := qs.GetOK("version")
+	if err := o.bindVersion(qVersion, qhkVersion, route.Formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -61,6 +73,20 @@ func (o *DeleteResourceParams) bindID(rawData []string, hasKey bool, formats str
 	}
 
 	o.ID = raw
+
+	return nil
+}
+
+func (o *DeleteResourceParams) bindVersion(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+
+	o.Version = &raw
 
 	return nil
 }
