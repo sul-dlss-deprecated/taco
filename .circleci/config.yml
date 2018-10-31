@@ -59,16 +59,11 @@ jobs:
             docker push suldlss/taco:latest
 
   deploy_to_demo:
-    docker:
-      - image: circleci/golang:latest
-    working_directory: /go/src/github.com/sul-dlss-labs/taco
+    docker: # NOT the default (awscli is python-based)
+      - image: circleci/python:3.7-stretch-node-browsers
+    working_directory: ~
     steps:
-      - run:
-          name: Install AWS CLI
-          command: |
-            sudo apt-get install -y python-pip libyaml-dev python-dev jq
-            sudo pip install awscli
-      - checkout
+      - run: sudo pip install awscli
       - run:
           name: Register Task & Update Service (demo)
           command: |
