@@ -15,6 +15,8 @@ jobs:
     working_directory: /go/src/github.com/sul-dlss-labs/taco
     steps:
       - checkout
+      - run: echo $DOCKER_USER
+      - run: echo $DOCKER_PASS
       - run:
           name: Check for changes when running generator
           command: go generate && git status | grep modified && sh -c "exit 1" || echo "Success. No changes were found"
